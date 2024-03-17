@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cart extends Model
 {
-    protected $connection = "mysql_sg";
     protected $table = "g5_shop_cart";
     protected $primaryKey = "ct_id";
     protected $fillable = ["ct_price"];

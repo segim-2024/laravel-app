@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Enums;
+
+enum {{class}}
+{
+    // Enum properties and methods can be added here
+}

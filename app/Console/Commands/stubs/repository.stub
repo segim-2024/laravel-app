@@ -1,0 +1,14 @@
+<?php
+namespace App\Repositories\Eloquent;
+
+use App\Repositories\Interfaces\{{class}}Interface;
+use Illuminate\Database\Eloquent\Model;
+
+class {{class}} extends BaseRepository implements {{class}}Interface
+{
+    public function __construct(Model $model)
+    {
+        parent::__construct($model);
+    }
+
+}

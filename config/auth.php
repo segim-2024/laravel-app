@@ -62,13 +62,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Member::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+//        'members' => [
+//            'driver' => 'database',
+//            'model' => App\Models\Member::class,
+//        ],
     ],
 
     /*

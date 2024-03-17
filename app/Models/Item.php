@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Item extends Model
 {
-    protected $connection = "mysql_sg";
     protected $table = "g5_shop_item";
     protected $primaryKey = "it_id";
     protected $fillable = ["it_price", "it_cust_price"];

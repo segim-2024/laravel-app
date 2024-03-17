@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Services;
+
+use App\Services\Interfaces\{{class}}Interface;
+
+class {{class}} implements {{class}}Interface {
+    public function __construct(
+
+    ) {}
+}
