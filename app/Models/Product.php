@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property MemberSubscribeProduct $subscribe
+ * @property Collection|MemberSubscribeProduct[] $subscribes
  */
 class Product extends Model
 {
@@ -35,5 +36,10 @@ class Product extends Model
     {
         return $this->hasOne(MemberSubscribeProduct::class, 'product_id')
             ->where('member_id', '=', Auth::user()->mb_id);
+    }
+
+    public function subscribes():HasMany
+    {
+        return $this->hasMany(MemberSubscribeProduct::class, 'product_id');
     }
 }

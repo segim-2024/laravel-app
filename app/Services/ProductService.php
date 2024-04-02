@@ -18,7 +18,7 @@ class ProductService implements ProductServiceInterface {
      */
     public function find(int|string $id): ?Product
     {
-        return $this->repository->findById($id);
+        return $this->repository->find($id);
     }
 
     /**
@@ -27,5 +27,10 @@ class ProductService implements ProductServiceInterface {
     public function getList(Member $member): Collection
     {
         return $this->repository->getList($member);
+    }
+
+    public function getSubscribes(Product $product): Collection
+    {
+        return $this->repository->getSubscribes($product);
     }
 }

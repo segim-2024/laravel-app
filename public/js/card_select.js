@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let selectedProductId = localStorage.getItem('selectedProductId');
+    // let selectedProductId = localStorage.getItem('selectedProductId');
+    let selectedProductId = 1;
     let selectedCardId = null; // 선택된 카드 ID 저장
     document.querySelectorAll('.card_box').forEach(function(cardBox) {
         cardBox.addEventListener('click', function() {

@@ -2,6 +2,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Member;
+use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,16 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         parent::__construct($model);
     }
 
+    public function find(int|string $id): ?Product
+    {
+        return Product::with([
+                'subscribe' => [
+                    'card'
+                ]
+            ])
+            ->find($id);
+    }
+
     /**
      * @inheritDoc
      */
@@ -24,6 +35,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                     'card'
                 ]
             ])
+            ->get();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubscribes(Product $product): Collection
+    {
+        return MemberSubscribeProduct::where('product_id', '=', $product->id)
             ->get();
     }
 }

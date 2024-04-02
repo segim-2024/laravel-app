@@ -9,7 +9,8 @@
             </div>
             <div class="campus-name">
                 <span>E-Cash 관리자</span><br />
-                {{request()->user()->mb_nick}}
+                죽전 캠퍼스
+                {{--{{request()->user()->mb_nick}}--}}
             </div>
             <div class="blue_box use">
                 E-cash 월간 정기 결제 이용중
