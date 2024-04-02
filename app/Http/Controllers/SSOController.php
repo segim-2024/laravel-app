@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Services\Interfaces\MemberCashServiceInterface;
+use App\Services\Interfaces\MemberServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 class SSOController extends Controller
 {
     public function __construct(
-        protected MemberCashServiceInterface $cashService
+        protected MemberCashServiceInterface $cashService,
+        protected MemberServiceInterface $memberService
     ) {}
 
     public function handleSSO(Request $request): RedirectResponse
@@ -28,6 +30,10 @@ class SSOController extends Controller
 
         if (! $member->cash) {
             $this->cashService->create($member);
+        }
+
+        if (! $member->toss_customer_key) {
+            $this->memberService->updateTossCustomerKey($member);
         }
 
         // Laravel 내부 인증 시스템을 사용하여 사용자 세션 생성

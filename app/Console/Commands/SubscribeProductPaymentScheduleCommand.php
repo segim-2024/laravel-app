@@ -39,6 +39,7 @@ class SubscribeProductPaymentScheduleCommand extends Command
             ->whereHas('subscribes', function (Builder $query) {
                 $query->whereHas('member');
             })
+            ->with('subscribes')
             ->get();
 
         if ($products->count() < 1) {

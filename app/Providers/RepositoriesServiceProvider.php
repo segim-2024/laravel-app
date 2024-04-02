@@ -16,6 +16,7 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Interfaces\ProductRepositoryInterface::class, \App\Repositories\Eloquent\ProductRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\MemberCashRepositoryInterface::class, \App\Repositories\Eloquent\MemberCashRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\MemberPaymentRepositoryInterface::class, \App\Repositories\Eloquent\MemberPaymentRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\MemberRepositoryInterface::class, \App\Repositories\Eloquent\MemberRepository::class);
     }
 
     public function boot()

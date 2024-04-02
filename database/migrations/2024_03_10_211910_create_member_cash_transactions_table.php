@@ -32,12 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('member_cash_transactions', function (Blueprint $table) {
-            // 외래키 관계를 선언했다면, 리버스 마이그레이션 할때 에러를 피하기 위해
-            // 테이블을 삭제하기 전에 외래키를 먼저 삭제하는 것이 중요하다.
-            $table->dropForeign('member_cash_transactions_member_id_foreign');
-        });
-
         Schema::dropIfExists('member_cash_transactions');
     }
 };

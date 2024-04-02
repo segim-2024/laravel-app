@@ -42,5 +42,7 @@
         </div>
     </div>
 
+    <input type="hidden" name="customerKey" id="customerKey" value="{{request()->user()->toss_customer_key}}">
+    <input type="hidden" name="tossCk" id="tossCk" value="{{$tossClientKey}}">
     <script src="{{ asset('js/payment.js') }}"></script>
 @endsection

@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string $mb_email 이메일
  * @property string $mb_homepage 홈페이지
  * @property string $mb_level 레벨
+ * @property ?string $toss_customer_key 토스 Customer 키
  * @property ?string $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

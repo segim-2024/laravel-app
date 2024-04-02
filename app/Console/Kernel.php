@@ -13,8 +13,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:subscribe-product-payment-schedule-command')
-            ->runInBackground()->dailyAt('00:05');
+//        $schedule->command('app:subscribe-product-payment-schedule-command')
+//            ->runInBackground()
+//            ->dailyAt('00:05');
     }
 
     /**

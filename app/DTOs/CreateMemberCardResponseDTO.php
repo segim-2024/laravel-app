@@ -3,6 +3,8 @@
 namespace App\DTOs;
 
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class CreateMemberCardResponseDTO
 {
@@ -28,7 +30,8 @@ class CreateMemberCardResponseDTO
     {
         $data = $response->object();
         if (! $data) {
-            throw new \RuntimeException("결제 정보 조회 이상 : {$response->body()}", $response->status());
+            Log::error("빌링키 정보 조회 이상 : {$response->body()}");
+            throw new RuntimeException("빌링키 정보 조회 이상 : {$response->body()}", $response->status());
         }
 
         return new self(

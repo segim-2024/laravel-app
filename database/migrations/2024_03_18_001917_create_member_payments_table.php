@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('title')->comment('결제 제목');
             $table->integer('amount')->unsigned()->comment('결제 제목');
             $table->integer('cancelled_amount')->nullable()->unsigned()->comment('결제 제목');
-            $table->string('reason')->comment('결제 취소/실패 사유');
+            $table->string('reason')->nullable()->comment('결제 취소/실패 사유');
             $table->mediumText('api')->nullable()->comment('결제 응답 데이터');
             $table->mediumText('receipt_url')->nullable()->comment('영수증 URL');
             $table->timestamp('paid_at')->nullable()->comment('결제 제목');
