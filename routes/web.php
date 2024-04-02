@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('sso.auth');
+    return view('welcome');
 });
 
 Route::get('/sso-auth', [SSOController::class, 'handleSSO'])->name('sso.auth');
