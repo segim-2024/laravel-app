@@ -2,6 +2,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\CreateMemberPaymentDTO;
+use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -19,11 +20,36 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function getList(Member $member): Collection
+    public function getList(GetMemberPaymentListDTO $DTO): Collection
     {
-        return MemberPayment::with('card')
-            ->where('member_id', '=', $member->mb_id)
+        return MemberPayment::with([
+                'card'
+            ])
+            ->when($DTO->start, fn($query) => $query->where('created_at', '>=', $DTO->start))
+            ->when($DTO->end, fn($query) => $query->where('created_at', '<=', $DTO->end))
+            ->when($DTO->keyword, fn($query) => $query->where('title', 'like', "%{$DTO->keyword}%"))
+            ->where('member_id', '=', $DTO->member->mb_id)
             ->get();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalAmount(Member $member): int
+    {
+        return MemberPayment::where('member_id', '=', $member->mb_id)
+            ->where('state', '=', 'DONE')
+            ->sum('amount');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalPaymentCount(Member $member): int
+    {
+        return MemberPayment::where('member_id', '=', $member->mb_id)
+            ->where('state', '=', 'DONE')
+            ->count();
     }
 
     /**
@@ -34,9 +60,11 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment = new MemberPayment();
         $payment->payment_id = $DTO->paymentId;
         $payment->member_id = $DTO->member->mb_id;
+        $payment->card_id = $DTO->card?->id ?? null;
         $payment->method = $DTO->method;
         $payment->title = $DTO->title;
         $payment->amount = $DTO->amount;
+        $payment->productable()->associate($DTO->product);
         $payment->save();
         return $payment;
     }

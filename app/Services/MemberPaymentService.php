@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\CreateMemberPaymentDTO;
+use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -18,9 +19,25 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getList(Member $member): Collection
+    public function getList(GetMemberPaymentListDTO $DTO): Collection
     {
-        return $this->repository->getList($member);
+        return $this->repository->getList($DTO);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalAmount(Member $member): int
+    {
+        return $this->repository->getTotalAmount($member);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalPaymentCount(Member $member): int
+    {
+        return $this->repository->getTotalPaymentCount($member);
     }
 
     /**

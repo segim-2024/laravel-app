@@ -5,6 +5,7 @@ $(document).ready(function() {
         searching: false,
         lengthChange: false,
         ajax: "/products/list",
+        dom: 'lfrtp',  // 'i'를 제거하여 정보 요약 숨김
         columns: [
             { data: 'name' },
             { data: 'price', render: function(data, type, row) {

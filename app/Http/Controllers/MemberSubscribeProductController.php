@@ -37,7 +37,7 @@ class MemberSubscribeProductController extends Controller
         ]);
     }
 
-    public function getProducts(Request $request): JsonResponse
+    public function list(Request $request): JsonResponse
     {
         $products = $this->productService->getList($request->user());
         return DataTables::of($products)->make();

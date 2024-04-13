@@ -30,6 +30,7 @@ Route::get('/home', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/payments', [MemberPaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/list', [MemberPaymentController::class, 'list'])->name('payments.list');
 
     Route::get('/cards', [MemberCardController::class, 'index'])->name('cards.index');
     Route::get('/cards/is-exists', [MemberCardController::class, 'isExists'])->name('cards.is-exists');
@@ -38,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cards', [MemberCardController::class, 'store'])->name('cards.store');
 
     Route::get('/products', [MemberSubscribeProductController::class, 'index'])->name('products.index');
-    Route::get('/products/list', [MemberSubscribeProductController::class, 'getProducts'])->name('products.list');
+    Route::get('/products/list', [MemberSubscribeProductController::class, 'list'])->name('products.list');
     Route::post('/products/subscribe', [MemberSubscribeProductController::class, 'subscribe'])->name('products.subscribe');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

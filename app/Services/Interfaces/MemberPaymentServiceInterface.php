@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberPaymentDTO;
+use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -11,10 +12,22 @@ use Illuminate\Support\Collection;
 interface MemberPaymentServiceInterface
 {
     /**
-     * @param Member $member
+     * @param GetMemberPaymentListDTO $DTO
      * @return Collection
      */
-    public function getList(Member $member):Collection;
+    public function getList(GetMemberPaymentListDTO $DTO):Collection;
+
+    /**
+     * @param Member $member
+     * @return int
+     */
+    public function getTotalAmount(Member $member): int;
+
+    /**
+     * @param Member $member
+     * @return int
+     */
+    public function getTotalPaymentCount(Member $member): int;
 
     /**
      * @param CreateMemberPaymentDTO $DTO
