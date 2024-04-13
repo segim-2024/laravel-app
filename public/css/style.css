@@ -9,6 +9,7 @@ div {box-sizing: border-box;}
     height: 100%;
     font-size: 18px;
     background-color: #f1f4f9;
+    overflow: hidden;
 }
 
 .modal {
@@ -36,10 +37,10 @@ div {box-sizing: border-box;}
 
 @keyframes roading_rotate {
     from {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
@@ -48,7 +49,7 @@ div {box-sizing: border-box;}
     font-size: 28px;
 }
 .content-right .box {
-    padding: 5.2083vw 2.0833vw 4.1667vw;
+    min-height: 600px;
 }
 table {
     width: 100%;
@@ -70,7 +71,7 @@ table td img {
     width: 90px;
     padding-right: 20px;
 }
-table td.num {
+table .num {
     color: #3f51b5;
     text-decoration: underline;
     cursor: pointer;
@@ -99,8 +100,8 @@ table .btn{
 
 
 .paging {
-     margin-top: 4.6296vh;
-     text-align: center;
+    margin-top: 4.6296vh;
+    text-align: center;
 }
 .paging a {
     display: inline-block;
@@ -139,7 +140,11 @@ table .btn{
     width: 72.6041%;
 }
 .content-right .box {
-    padding: 1.5625vw 1.0417vw;
+    padding: 5.2083vw 2.0833vw 4.1667vw;
+}
+
+.m_content-right {
+    display: none;
 }
 
 .sort_bar {
@@ -168,7 +173,8 @@ table .btn{
     height: 24px;
     padding: 0 10px 0 34px;
     color: #9fa0a0;
-    background: url(../images/icn_calendar.png) 8px 2px no-repeat;
+    background: url(../images/icn_calendar.png) 8px center no-repeat;
+    background-color: #fff;
     cursor: pointer;
 }
 
@@ -201,13 +207,70 @@ table .btn{
     box-sizing: border-box;
 }
 
-
+input[type="radio"].pick {
+    display: none;
+}
+input[type="radio"].pick + div {
+    margin-right:4px;
+    box-sizing: border-box;
+    position:relative;
+    padding-left:20px;
+    display: inline-block;
+    line-height: 16px;
+    vertical-align: baseline;
+}
+input[type="radio"].pick + div:hover {
+    color:#3f51b5;cursor: pointer;
+}
+input[type="radio"].pick + div:before {
+    position:absolute;
+    top:1px;
+    left:0;
+    display:inline-block;
+    content:'';
+    border:1px solid #3f51b5;
+    border-radius: 20px;
+    background: #ffffff;
+    box-sizing:border-box;
+    width: 20px;
+    height: 20px;
+    cursor:pointer;
+}
+input[type="radio"].pick:checked + div {
+    color:#202020;
+}
+input[type="radio"].pick:checked + div:after {
+    content: "";
+    display: inline-block;
+    width:14px;
+    height:14px;
+    background: #3f51b5;
+    position: absolute;
+    top:4px;
+    left:3px;
+    border-radius:20px;
+}
+input[type="radio"].pick:disabled + div:before {
+    border-color:#8491a7; background:#f4f6fa;
+}
+input[type="radio"].pick:checked:disabled + div:after {
+    background:#8491a7;
+}
 
 @media (max-width: 1600px) {
     table th, table td, .btn {
         font-size: 14px;
     }
 }
+
+@media (max-width: 768px) {
+    .e-cash {
+        min-height: 100%;
+        height: auto;
+        padding-bottom: 80px;
+    }
+}
+
 
 /* 고정 상태창 */
 .content-left {
@@ -391,7 +454,7 @@ table .btn{
     position: absolute;
     top: -16px;
     left: 4.6296vw;
-    z-index: 1;
+    z-index: 3;
     line-height: initial;
     -webkit-user-select: none;
     user-select: none;
@@ -475,8 +538,6 @@ table .btn{
 
 .m_top_nav .state .blue_box_title {
     margin-bottom: 20px;
-}
-.m_top_nav .state .blue_box_title span {
     font-weight: 700;
 }
 
@@ -530,6 +591,21 @@ table .btn{
     width: 100%;
 }
 
+.m_top_nav_bg {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+
+.m_top_nav_bg.on {
+    display: block;
+}
+
 @media (max-width: 1024px) {
     .m_top_nav .nav .nav-wrap li {
         font-size: 16px;
@@ -549,7 +625,7 @@ table .btn{
         line-height: 50px;
     }
     .m_top_nav .nav_wrap span.buger_bar {
-        width: 25px;
+        width: 26px;
         height: 2px;
     }
     .m_top_nav .nav_wrap {
@@ -586,14 +662,45 @@ table .btn{
     }
 }
 
+@media (max-width: 480px) {
+    .m_top_nav .nav {
+        padding: 13vw 0 0 0
+    }
+    .m_top_nav .state .box {
+        padding: 4.6296vw;
+    }
+    .m_top_nav .state .blue_box {
+        padding: 14px 15px;
+    }
+    .m_top_nav .state .blue_box_title {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    .m_top_nav .state .blue_box .blue_box_con {
+        padding: 0 0 6px 0;
+    }
+    .m_top_nav .state .blue_box .blue_box_con:last-child {
+        padding-bottom: 0;
+    }
+
+    .state .blue_box.use:before {
+        width: 20px;
+        height: 20px;
+    }
+    .m_top_nav .state .blue_box.use:before {
+        margin-right: 2px;
+    }
+    .m_top_nav .nav .nav-wrap li {
+        font-size: 12px;
+    }
+
+}
+
 /* payment_detail */
 .content-right.card_detail .txt_wrap {
     padding-bottom: 0.5208vw;
 }
-.content-right.card_detail .txt_wrap p {
-    padding-bottom: 0.5208vw
-}
-.content-right.card_detail .txt_wrap p span {
+.txt_wrap p span {
     color: #3f51b5;
     font-weight: 600;
 }
@@ -618,6 +725,10 @@ table .btn{
     line-height: 29px;
     padding: 0;
     font-size: 14px;
+}
+
+.card_radio {
+    padding-top: 10px;
 }
 
 /* payment_management */
@@ -663,7 +774,7 @@ table .btn{
 .card_box .card_name {
     padding-top: 1vw;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .card_box .ellipsis_vertical {
@@ -693,7 +804,7 @@ table .btn{
 }
 
 .card_management .card_box.registration p {
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .card_management .txt_wrap {
@@ -704,7 +815,7 @@ table .btn{
 /* payment_e_cash */
 .card_detail .btn_excel {
     position: absolute;
-    top: 90px;
+    top: 4.6875vw;
     right: 1.5625vw;
     width: 8.3333vw;
     max-width: 150px;
@@ -715,8 +826,8 @@ table .btn{
 
 /* layer */
 .layer_basic {
-    width: 28.6458vw;
-    height: 16.6667vw;
+    width: 550px;
+    height: 320px;
     background-color: #f1f4f9;
 }
 
@@ -727,13 +838,16 @@ table .btn{
 }
 
 .layer_basic .btn_wrap {
-    padding-top: 3.1250vw;
+    padding-top: 60px;
     text-align: center;
 }
 .layer .btn_wrap .btn {
     margin-right: 1.5625vw;
-    padding: 0.5208vw 2.7604vw;
-    font-size: 25px;
+    width: 160px;
+    height: 52px;
+    line-height: 52px;
+    font-size: 22px;
+    font-weight: 600;
 }
 .layer .btn_wrap .btn:last-child {
     margin-right: 0;
@@ -751,9 +865,16 @@ table .btn{
     font-weight: 700;
 }
 
+.layer_card_set .card_box_pick {
+    text-align: center;
+}
+.layer_card_set .card_box_pick:last-child .card_box {
+    margin-right: 0;
+}
+
 .layer_card_set .card_box {
-    width: 390px;
-    height: 240px;
+    width: 260px;
+    height: 180px;
 }
 
 .layer_card_set .date {
@@ -791,6 +912,7 @@ table .btn{
     height: 50px;
     padding: 0 25px;
     line-height: 50px;
+    font-size: 18px;
     color: #fff;
     background-color: #595757;
 }
@@ -805,6 +927,9 @@ table .btn{
 .layer_order_detail .content_wrap {
     padding: 36px 24px 24px;
     font-size: 14px;
+}
+.layer_order_detail .content_wrap p {
+    font-weight: 500;
 }
 .layer_order_detail .content_wrap p span {
     font-weight: 600;
@@ -883,7 +1008,64 @@ table .btn{
     color: #fff;
 }
 
+/* mobile */
+.m_content-right .box {
+    padding: 3.7037vw 3.7037vw;
+}
+.m_content-right h2 {
+    padding: 5.5556vw 0;
+}
+.m_content-right .sort_bar {
+    padding-bottom: 12px;
+    text-align: center;
+}
+.m_content-right .sort_bar input, .m_content-right .sort_bar select {
+    font-size: 13px;
+    height: 30px;
+}
+.m_content-right .sort_bar .date {
+    width: 73.6296vw;
+}
+.m_content-right .sort_bar .date input {
+    margin-right: 2.3148vw;
+    width: 46%;
+}
+.m_content-right .sort_bar .date input:last-child {
+    margin: 0 0 0 2.3148vw;
+}
+.m_content-right .sort_bar select {
+    margin-left: 1.3889vw;
+    width: 16vw;
+}
+.m_content-right .sort_bar .search {
+    margin-top: 8px;
+    width: auto;
+    height: 30px;
+    border: none;
+    background: none;
+}
+.m_content-right .sort_bar .search input {
+    width: 73.6296vw;
+    height: 30px;
+    border: 1px solid #c9caca;
+}
+.m_content-right .sort_bar .search button {
+    margin: 0 0 0 1.3889vw;
+    width: 16vw;
+    height: 30px;
+    color: #fff;
+    background: none;
+    background-color: #3f51b5;
+    vertical-align: bottom;
+}
+.m_content-right .txt_wrap {
+    padding-bottom: 20px;
+}
+
 @media (max-width: 1600px) {
+    .content-left .state .logo-wrap .logo {
+        top: 10vh;
+    }
     .content-left .state .blue_box.use {
         font-size: 13px;
     }
@@ -898,28 +1080,20 @@ table .btn{
         font-size: 22px;
     }
     .card_management .card_box.registration p {
-        font-size: 12px;
+        font-size: 11.5px;
     }
     .card_detail .btn_excel {
-        top: 60px;
+        top: 4vw;
+        width: 130px;
     }
     .content-right .box {
         min-height: 41.6667vw;
-    }
-    .layer_basic .content {
-        font-size: 16px;
-    }
-    .layer .btn_wrap .btn {
-        font-size: 18px;
-    }
-    .layer_card_set .title {
-        padding-bottom: 16px;
     }
     .layer_card_set .btn_wrap .btn {
         font-size: 22px;
     }
     .layer_basic .content {
-        padding-top: 3.6458vw;
+        padding-top: 80px;
     }
     .layer_card_set .card_box .card_name {
         padding-top: 20px;
@@ -946,40 +1120,135 @@ table .btn{
     .content-right h2 {
         font-size: 33px;
     }
+    .content-right.card_detail .txt_wrap {
+        padding-bottom: 10px;
+    }
     .layer_card_set {
-         width: 600px;
-         height: 450px;
+        width: 700px;
+        height: 450px;
     }
     .layer_card_set .card_box {
-        width: 240px;
-        height: 150px;
+        width: 200px;
+        height: 140px;
     }
     .layer_card_set .btn_wrap {
-        padding-top: 100px;
+        padding-top: 70px;
     }
     .layer_card_set .card_box .card_name {
         padding-top: 10px;
         font-size: 14px;
     }
+    .card_box {
+        margin-right: 1.5vw;
+        width: 28vw;
+        height: 17.5417vw;
+        padding: 1.5625vw 0;
+    }
+    .card_detail .btn_excel {
+        top: 5vw;
+        right: 3.7037vw;
+    }
+    .card_management.content-right .box {
+        padding: 30px;
+    }
+    .card_management .card_box.registration .content {
+        padding: 5.2083vw 0 5.8vw;
+    }
+    .card_management .card_box.registration p {
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 768px) {
+    .e_card {height: auto;}
+    .card_detail, .card_list {display: none;}
+    .sort_bar div {display: flex;}
+    .m_content-right {
+        display: block;
+        padding: 0 4.6296vw;
+        width: 100%;
+        box-sizing: border-box;
+    }
     .content-right h2 {
         font-size: 24px;
+    }
+    .m_content-right .box {
+        height: 58vh
+    }
+    .card_box_wrap {
+        display: block;
+    }
+    .card_box {
+        display: block;
+        width: 75%;
+        height: 36.5vw;
+        padding: 3vw 0;
+    }
+    .card_box:last-child {
+        margin-right: auto;
+    }
+    .card_box .card_name {
+        padding-top: 10px;
+    }
+    .card_management .card_box.registration .content {
+        padding: 12vw 0 12vw;
+        font-size: 18px;
+    }
+    .card_management .card_box.registration p {
+        font-size: 14px;
+    }
+    .card_management .card_box.registration .content:before {
+        width: 3vw;
+        height: 3vw;
+    }
+    .card_management .txt_wrap {
+        padding-left: 3vw;
+    }
+    .layer_basic {
+        width: 450px;
+        height: 260px;
+    }
+    .layer_basic .content {
+        padding-top: 60px;
+    }
+    .layer_basic .btn_wrap {
+        padding-top: 35px;
+    }
+    .m_content-right .txt_wrap {
+        font-size: 16px;
+    }
+    .m_content-right .txt_wrap p {
+        padding-bottom: 5px;
+    }
+    .layer_order_detail {
+        width: 470px;
+    }
+    .m_content-right table td.card_name .btn_green {
+        margin-left: 10px;
+    }
+    .m_content-right table td.card_name img {
+        padding-right: 5px;
+    }
+    .layer_card_set {
+        width: 470px;
+        padding: 40px 20px;
     }
     .layer_card_set .card_box_wrap {
         display: block;
     }
     .layer_card_set {
-         width: 300px;
-         height: auto;
-         padding: 20px 30px;
+        width: 460px;
+        height: 780px;
+        padding: 20px 30px;
     }
     .layer_card_set .card_box {
-        margin-bottom: 20px;
-        width: 100%;
+        margin: 0 auto;
+        width: 240px;
         height: 140px;
         padding: 10px 0 20px;
+    }
+    .layer_card_set .card_box_pick:last-child .card_box {
+        margin: auto;
     }
     .layer_card_set .card_box .card {
         width: 65%;
@@ -988,6 +1257,94 @@ table .btn{
         padding-top: 40px;
     }
     .layer_card_set .btn_wrap .btn {
-        padding: 10px 30px;
+
+    }
+    .layer_card_set .card_radio {
+        padding: 0 0 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card_box {
+        margin: 20px auto 0;
+        width: 95%;
+        height: 44.5vw;
+    }
+    .m_content-right h2 {
+        font-size: 20px;
+    }
+    .m_content-right .sort_bar .date input {
+        margin-right: 2vw;
+    }
+    .m_content-right .sort_bar .date input:last-child {
+        margin-left: 2vw;
+    }
+    .m_content-right table th, table td, .m_top_nav .state .blue_box, .bottom_option div {
+        font-size: 13px;
+    }
+    .card_management .card_box.registration p {
+        font-size: 13px;
+    }
+    .card_management .txt_wrap {
+        padding-top: 10vw;
+    }
+    .layer_basic {
+        width: 300px;
+        height: 200px;
+    }
+    .layer_basic .content {
+        padding-top: 45px;
+        font-size: 16px;
+    }
+    .layer_basic .btn_wrap {
+        padding-top: 30px;
+    }
+    .layer .btn_wrap .btn {
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    .layer_order_detail {
+        width: 310px;
+    }
+    .layer_order_detail .content_wrap {
+        padding: 20px;
+    }
+    .layer_order_detail .content_wrap .price_box {
+        width: 100%;
+    }
+    .m_content-right table td.card_name img {
+        width: 80px;
+    }
+    .m_content-right table td.card_name .btn_green {
+        margin: 6px 0 0 0;
+    }
+    .m_content-right table td.card_name .btn {
+        padding: 6px 17px;
+    }
+    .layer_card_set {
+        width: 300px;
+        height: 540px;
+        padding: 25px 30px;
+    }
+    .layer_card_set .title {
+        padding-bottom: 14px;
+        text-align: center;
+    }
+    .layer_card_set .card_box_pick {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .layer_card_set .card_box {
+        width: 180px;
+        height: 110px;
+    }
+    .layer_card_set .card_box .card_name {
+        padding-top: 4px;
+    }
+    .layer_card_set .btn_wrap {
+        padding-top: 20px;
     }
 }

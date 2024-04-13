@@ -9,8 +9,7 @@
             </div>
             <div class="campus-name">
                 <span>E-Cash 관리자</span><br />
-                죽전 캠퍼스
-                {{--{{request()->user()->mb_nick}}--}}
+                {{request()->user()->mb_nick}}
             </div>
             <div class="blue_box use">
                 E-cash 월간 정기 결제 이용중
@@ -95,7 +94,7 @@
                                 잔여 E-cash
                             </div>
                             <div class="r-con">
-                                800,000
+                                {{request()->user()->mb_nick}}
                             </div>
                         </div>
                     </div>
@@ -121,11 +120,12 @@
                 </ul>
             </div>
             <div class="bottom_option">
-                <div class="setting">편집</div>
+                <div class="setting"></div>
                 <div class="bar"></div>
                 <div class=""><a href="{{ route('auth.logout') }}">로그아웃</a></div>
             </div>
         </div>
     </div>
+    <div class="m_top_nav_bg"></div>
 </div>
 <!-- 고정 상태창 끝 -->

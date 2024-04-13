@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpsertMemberSubscribeProductRequest;
-use App\Http\Resources\MemberSubscribeProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\MemberCard;
 use App\Models\Product;
@@ -14,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class MemberSubscribeProductController extends Controller
 {
@@ -35,6 +35,12 @@ class MemberSubscribeProductController extends Controller
             'products' => $products,
             'cards' => $cards
         ]);
+    }
+
+    public function getProducts(Request $request): JsonResponse
+    {
+        $products = $this->productService->getList($request->user());
+        return DataTables::of($products)->make();
     }
 
     public function subscribe(UpsertMemberSubscribeProductRequest $request): JsonResponse

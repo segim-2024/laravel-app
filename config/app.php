@@ -174,6 +174,7 @@ return [
          */
         App\Providers\RepositoriesServiceProvider::class,
         App\Providers\ServicesServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -190,5 +191,4 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
-
 ];

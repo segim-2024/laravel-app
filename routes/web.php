@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cards', [MemberCardController::class, 'store'])->name('cards.store');
 
     Route::get('/products', [MemberSubscribeProductController::class, 'index'])->name('products.index');
+    Route::get('/products/list', [MemberSubscribeProductController::class, 'getProducts'])->name('products.list');
     Route::post('/products/subscribe', [MemberSubscribeProductController::class, 'subscribe'])->name('products.subscribe');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

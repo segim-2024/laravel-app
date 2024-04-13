@@ -1,15 +1,25 @@
 <!-- 모달창 시작 -->
 <div class="modal" id="selectCard" style="display: none">
+    <input type="hidden" id="selectProductId" name="selectProductId" value="">
+
     <!-- 레이어_결제 카드 설정 시작 -->
-    <div class="layer layer_card_set" style="position:absolute; top: 50%; left: 60%; transform: translate(-50%, -50%);">
+    <div class="layer layer_card_set" style="display: block; position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <p class="title">결제 카드 설정</p>
         <div class="card_box_wrap">
             @foreach($cards as $card)
-            <div class="card_box" data-id="{{$card->id}}">
-                <div class="card">
-                    <img src="{{asset("images/ex_card.png")}}" alt="">
+            <div class="card_box_pick">
+                <div class="card_box" data-id="{{$card->id}}">
+                    <div class="card">
+                        <img src="{{asset("images/ex_card.png")}}" alt="">
+                    </div>
+                    <p class="card_name">{{$card->name}} ({{$card->number}})</p>
                 </div>
-                <p class="card_name">{{$card->name}} ({{$card->number}})</p>
+                <div class="card_radio">
+                    <label>
+                        <input class="pick" type="radio" name="card" value="{{$card->id}}">
+                        <div></div>
+                    </label>
+                </div>
             </div>
             @endforeach
         </div>
