@@ -1349,6 +1349,10 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
 }
 
+.dataTables_wrapper .dataTables_paginate {
+    width: 100%;
+    padding-top: 30px;
+}
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous, .dataTables_wrapper .dataTables_paginate .paginate_button.next {
     width: 28px;
@@ -1357,7 +1361,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     text-align: center;
     border: 2px solid #9fa0a0;
     border-radius: 8px;
-    text-indent: -999px;
+    text-indent: 9999px;
     background: url(../images/paging_arrow.png) center no-repeat;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.next:hover {
@@ -1372,8 +1376,8 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 .dataTables_wrapper .dataTables_paginate span .paginate_button {
-    margin: 0 6px;
-    padding: 5px 10px;
+    margin: 0 8px;;
+    padding: 4px 10px;
     border: none;
     vertical-align: top;
 }
