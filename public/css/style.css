@@ -1352,6 +1352,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 .dataTables_wrapper .dataTables_paginate {
     width: 100%;
     padding-top: 30px;
+    text-align: center;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous, .dataTables_wrapper .dataTables_paginate .paginate_button.next {
@@ -1361,7 +1362,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     text-align: center;
     border: 2px solid #9fa0a0;
     border-radius: 8px;
-    text-indent: 9999px;
+    text-indent: -9999px;
     background: url(../images/paging_arrow.png) center no-repeat;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.next:hover {
