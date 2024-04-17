@@ -59,7 +59,9 @@
                 </div>
                 <div class="bar"></div>--}}
                 <div class="">
-                    <a href="{{ route('auth.logout') }}">로그아웃</a>
+{{--                    <a href="{{ route('auth.logout') }}">로그아웃</a>--}}
+                    회사명 : 새김교육(주) | 대표 : 한선덕 | 사업자등록번호 : 809-81-00876 | 경기도 용인시 기흥구 보정로 117 리베로3
+                    통신판매업신고 : 제2018-용인기흥-0223호 | E-mail : segimedu@naver.com | 개인정보관리책임자 : 신주현
                 </div>
             </div>
         </div>
