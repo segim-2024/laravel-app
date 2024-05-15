@@ -14,11 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $(".date input").datepicker();
     $(".date input:last-child").datepicker();
 
-    // From의 초기값을 전달 날짜로 설정
-    $('.date input').datepicker('setDate', '-1M');
-    // To의 초기값을 오늘 날짜로 설정
-    $('.date input:last-child').datepicker('setDate', 'today');
-
     // 모달을 표시하는 버튼에 대한 이벤트 리스너 설정
     document.querySelectorAll('[data-role="detail"]').forEach(function(button) {
         button.addEventListener('click', function() {

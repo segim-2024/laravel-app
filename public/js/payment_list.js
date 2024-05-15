@@ -60,11 +60,6 @@ $(document).ready(function() {
     $(".date input").datepicker();
     $(".date input:last-child").datepicker();
 
-    // From의 초기값을 전달 날짜로 설정
-    $('.date input').datepicker('setDate', '-1M');
-    // To의 초기값을 오늘 날짜로 설정
-    $('.date input:last-child').datepicker('setDate', 'today');
-
     // 검색 버튼 클릭 이벤트 핸들러
     $('#searchButton').click(function() {
         table.ajax.reload();  // DataTables 다시 로드하여 서버로부터 데이터 재요청
