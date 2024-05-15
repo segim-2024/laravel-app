@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 use App\Models\Member;
 use App\Models\MemberCash;
 use App\Repositories\Interfaces\MemberCashRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
 
 class MemberCashRepository extends BaseRepository implements MemberCashRepositoryInterface
 {

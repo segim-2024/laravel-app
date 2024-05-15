@@ -28,15 +28,14 @@ class MemberPaymentController extends Controller
 
     public function list(Request $request): JsonResponse
     {
-        $start = $request->input('start') ? Carbon::parse($request->input('start'))->startOfDay() : null;
-        $end = $request->input('end') ? Carbon::parse($request->input('end'))->endOfDay() : null;
-        $payments = $this->service->getList(new GetMemberPaymentListDTO(
+        $start = $request->input('periodStart') ? Carbon::parse($request->input('periodStart'))->startOfDay() : null;
+        $end = $request->input('periodEnd') ? Carbon::parse($request->input('periodEnd'))->endOfDay() : null;
+
+        return $this->service->getList(new GetMemberPaymentListDTO(
             member: $request->user(),
             start: $start,
             end: $end,
             keyword: $request->input('keyword'),
         ));
-
-        return DataTables::of($payments)->make();
     }
 }

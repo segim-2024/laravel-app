@@ -14,7 +14,7 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
      * @param GetMemberPaymentListDTO $DTO
      * @return Collection
      */
-    public function getList(GetMemberPaymentListDTO $DTO):Collection;
+    public function getList(GetMemberPaymentListDTO $DTO);
 
     /**
      * @param Member $member

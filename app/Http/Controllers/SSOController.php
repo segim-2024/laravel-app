@@ -8,6 +8,7 @@ use App\Services\Interfaces\MemberServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class SSOController extends Controller
 {
@@ -45,6 +46,21 @@ class SSOController extends Controller
 
     private function authenticateWithSSO(Request $request): ?Member
     {
+//        $key = Config::get('sso.key');
+//
+//        // 쿼리스트링에서 암호화된 데이터 받기
+//        $secureData = $request->input('data');
+//        [$dataEncoded, $signature] = explode('.', $secureData);
+//
+//        // 서명 검증
+//        if (hash_equals(hash_hmac('sha256', $dataEncoded, $key), $signature)) {
+//            $data = json_decode(base64_decode($dataEncoded), true, 512, JSON_THROW_ON_ERROR);
+//            // 데이터 사용, 예: 사용자 인증
+//            return Member::where('mb_id', '=', $data['mb_id'])->first();
+//        }
+//
+//        return null;
+
         return Member::where('mb_id', '=', 'test01')->first();
     }
 }

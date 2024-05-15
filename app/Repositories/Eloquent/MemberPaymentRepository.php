@@ -9,6 +9,7 @@ use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Yajra\DataTables\Facades\DataTables;
 
 class MemberPaymentRepository extends BaseRepository implements MemberPaymentRepositoryInterface
 {
@@ -20,16 +21,18 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function getList(GetMemberPaymentListDTO $DTO): Collection
+    public function getList(GetMemberPaymentListDTO $DTO)
     {
-        return MemberPayment::with([
+        $query = MemberPayment::with([
                 'card'
             ])
             ->when($DTO->start, fn($query) => $query->where('created_at', '>=', $DTO->start))
             ->when($DTO->end, fn($query) => $query->where('created_at', '<=', $DTO->end))
             ->when($DTO->keyword, fn($query) => $query->where('title', 'like', "%{$DTO->keyword}%"))
-            ->where('member_id', '=', $DTO->member->mb_id)
-            ->get();
+            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED', 'ABORTED'])
+            ->where('member_id', '=', $DTO->member->mb_id);
+
+        return DataTables::eloquent($query)->make();
     }
 
     /**
@@ -38,7 +41,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function getTotalAmount(Member $member): int
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
-            ->where('state', '=', 'DONE')
+            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED'])
             ->sum('amount');
     }
 
@@ -48,7 +51,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function getTotalPaymentCount(Member $member): int
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
-            ->where('state', '=', 'DONE')
+            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED', 'ABORTED'])
             ->count();
     }
 

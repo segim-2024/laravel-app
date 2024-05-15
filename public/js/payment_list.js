@@ -9,8 +9,8 @@ $(document).ready(function() {
         ajax: {
             url: "/payments/list",
             data: function(d) {
-                d.start = $('#start').val();
-                d.end = $('#end').val();
+                d.periodStart = $('#start').val();
+                d.periodEnd = $('#end').val();
                 d.keyword = $('#keyword').val();
             }
         },
@@ -28,7 +28,7 @@ $(document).ready(function() {
             { data: 'amount', render: function(data, type, row) {
                 return `${parseInt(data).toLocaleString()}원`;
             }},
-            { data: null, render: function(data, type, row) {
+            { data: null, orderable:false, render: function(data, type, row) {
                 return `<button class="btn btn_green" data-role="receipt">
                     전표 출력
                 </button>`;

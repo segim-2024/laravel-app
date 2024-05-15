@@ -9,7 +9,6 @@ use App\Models\Member;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
-use Illuminate\Support\Collection;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
@@ -19,7 +18,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getList(GetMemberPaymentListDTO $DTO): Collection
+    public function getList(GetMemberPaymentListDTO $DTO)
     {
         return $this->repository->getList($DTO);
     }
@@ -62,6 +61,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
 
     private function processDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
+
+
         return $this->repository->updateDone($payment, $DTO);
     }
 

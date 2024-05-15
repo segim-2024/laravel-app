@@ -35,13 +35,9 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
         $subscribeProduct = $this->subscribeProduct;
         $paymentService = app(MemberPaymentServiceInterface::class);
         $tossService = app(TossServiceInterface::class);
-
-        Log::info(1111);
         $payment = $paymentService->save(
             CreateMemberPaymentDTO::createFromMemberSubscribe($subscribeProduct)
         );
-
-        Log::info($payment->jsonSerialize());
 
         $response = $tossService->requestBillingPayment($payment, $subscribeProduct);
         $paymentService->process($payment, $response);
