@@ -30,4 +30,14 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
             ]
         );
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct
+    {
+        $subscribeProduct->latest_payment_at = now();
+        $subscribeProduct->save();
+        return $subscribeProduct;
+    }
 }

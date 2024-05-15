@@ -3,6 +3,7 @@ namespace App\Repositories\Interfaces;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -40,4 +41,11 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
      * @return MemberPayment
      */
     public function updateDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment;
+
+    /**
+     * @param MemberPayment $payment
+     * @param RequestBillingPaymentFailedResponseDTO $DTO
+     * @return MemberPayment
+     */
+    public function updateFailed(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment;
 }

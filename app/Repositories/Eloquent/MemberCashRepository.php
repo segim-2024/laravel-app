@@ -22,4 +22,40 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
         $cash->save();
         return $cash;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function lock(Member $member): MemberCash
+    {
+        return MemberCash::where('member_id', '=', $member->mb_id)->lockForUpdate()->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function charge(MemberCash $cash, int $amount): MemberCash
+    {
+        $cash->amount += $amount;
+        $cash->save();
+        return $cash;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function spend(MemberCash $cash, int $amount): MemberCash
+    {
+        $cash->amount -= $amount;
+        $cash->save();
+        return $cash;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canSpendCheck(Member $member, int $amount): bool
+    {
+        return $member->cash->amount >= $amount;
+    }
 }

@@ -4,14 +4,19 @@ namespace App\Services;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\MemberCashDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\Enums\MemberCashTransactionTypeEnum;
 use App\Models\Member;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
+use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
+        protected MemberCashServiceInterface $cashService,
         protected MemberPaymentRepositoryInterface $repository
     ) {}
 
@@ -50,18 +55,24 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
+    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
-        return match ($DTO->status) {
+        return match ($DTO->responseStatus) {
             'DONE' => $this->processDone($payment, $DTO),
             'CANCELED', 'PARTIAL_CANCELED' => $this->processCancelled($payment, $DTO),
-            'ABORTED' => $this->processAborted($payment, $DTO),
+            default => $this->processAborted($payment, $DTO),
         };
     }
 
     private function processDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
-
+        $this->cashService->charge(new MemberCashDTO(
+            $payment->member,
+            $payment->amount,
+            MemberCashTransactionTypeEnum::Increased,
+            $payment->title,
+            $payment->productable
+        ));
 
         return $this->repository->updateDone($payment, $DTO);
     }
@@ -71,8 +82,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         return $this->repository->updateDone($payment, $DTO);
     }
 
-    private function processAborted(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
+    private function processAborted(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment
     {
-        return $this->repository->updateDone($payment, $DTO);
+        return $this->repository->updateFailed($payment, $DTO);
     }
 }

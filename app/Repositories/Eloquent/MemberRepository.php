@@ -16,6 +16,14 @@ class MemberRepository extends BaseRepository implements MemberRepositoryInterfa
     /**
      * @inheritDoc
      */
+    public function find(string $id): ?Member
+    {
+        return Member::where('mb_id', '=', $id)->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function updateTossCustomerKey(Member $member): Member
     {
         $member->toss_customer_key = Str::orderedUuid();

@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ECashController;
+use App\Http\Controllers\MemberCashController;
+use App\Http\Middleware\CheckFromPamusMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/orders/e-cash', [ECashController::class, 'account']);
+Route::group(['middleware' => CheckFromPamusMiddleware::class], static function () {
+    Route::post('/e-cash/order', [MemberCashController::class, 'order']);
+    Route::post('/e-cash/manual-charge', [MemberCashController::class, 'manualCharge']);
+    Route::post('/e-cash/manual-spend', [MemberCashController::class, 'manualSpend']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

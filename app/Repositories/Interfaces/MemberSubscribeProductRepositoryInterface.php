@@ -11,4 +11,10 @@ interface MemberSubscribeProductRepositoryInterface extends BaseRepositoryInterf
      * @return MemberSubscribeProduct
      */
     public function upsertCard(UpsertMemberSubscribeProductDTO $DTO):MemberSubscribeProduct;
+
+    /**
+     * @param MemberSubscribeProduct $subscribeProduct
+     * @return MemberSubscribeProduct
+     */
+    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct;
 }

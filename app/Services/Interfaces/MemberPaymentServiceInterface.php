@@ -4,6 +4,7 @@ namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -36,8 +37,8 @@ interface MemberPaymentServiceInterface
 
     /**
      * @param MemberPayment $payment
-     * @param RequestBillingPaymentResponseDTO $DTO
+     * @param RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO
      * @return MemberPayment
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment;
+    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment;
 }

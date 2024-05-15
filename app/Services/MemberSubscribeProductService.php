@@ -26,4 +26,12 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
         /** @var Collection|Product[] $products */
         return $this->productService->getList($DTO->member);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct
+    {
+        return $this->repository->updateLatestPayment($subscribeProduct);
+    }
 }

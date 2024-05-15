@@ -3,6 +3,7 @@ namespace App\Repositories\Eloquent;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberPayment;
@@ -81,6 +82,18 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->api = $DTO->responseBody;
         $payment->receipt_url = $DTO->receiptUrl ?? null;
         $payment->paid_at = Carbon::parse($DTO->approvedAt);
+        $payment->save();
+        return $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateFailed(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment
+    {
+        $payment->state = $DTO->responseStatus;
+        $payment->reason = $DTO->message;
+        $payment->api = $DTO->responseBody;
         $payment->save();
         return $payment;
     }

@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberCardResponseDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\MemberPayment;
 use App\Models\MemberSubscribeProduct;
@@ -19,7 +20,7 @@ interface TossServiceInterface
     /**
      * @param MemberPayment $payment
      * @param MemberSubscribeProduct $subscribeProduct
-     * @return RequestBillingPaymentResponseDTO
+     * @return RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO
      */
-    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentResponseDTO;
+    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO;
 }

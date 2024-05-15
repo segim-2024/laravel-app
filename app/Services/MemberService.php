@@ -14,6 +14,14 @@ class MemberService implements MemberServiceInterface {
     /**
      * @inheritDoc
      */
+    public function find(string $id): ?Member
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function updateTossCustomerKey(Member $member): Member
     {
         return $this->repository->updateTossCustomerKey($member);

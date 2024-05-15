@@ -3,14 +3,17 @@
 namespace App\Services;
 
 use App\DTOs\MemberCashDTO;
+use App\Exceptions\MemberCashNotEnoughToSpendException;
 use App\Models\Member;
 use App\Models\MemberCash;
 use App\Repositories\Interfaces\MemberCashRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
+use App\Services\Interfaces\MemberCashTransactionServiceInterface;
 
 class MemberCashService implements MemberCashServiceInterface {
     public function __construct(
-        protected MemberCashRepositoryInterface $repository
+        protected MemberCashRepositoryInterface $repository,
+        protected MemberCashTransactionServiceInterface $transactionService
     ) {}
 
     /**
@@ -21,31 +24,29 @@ class MemberCashService implements MemberCashServiceInterface {
         return $this->repository->save($member);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function spend(MemberCashDTO $DTO): MemberCash
+    public function charge(MemberCashDTO $DTO): MemberCash
     {
-        if (! $this->check($DTO->company, $DTO->amount)) {
-            throw new CompanyPointException('포인트가 부족합니다.', 422);
-        }
-
-        $point = $this->repository->lock($DTO->company);
-        $companyPoint = $this->repository->spend($point, $DTO->amount);
+        $cash = $this->repository->lock($DTO->member);
         $this->transactionService->create($DTO);
-        CompanyPointEvent::dispatch($DTO->company, EventTypeEnum::UPDATED);
-        return $companyPoint;
+        return $this->repository->charge($cash, $DTO->amount);
     }
 
     /**
      * @inheritDoc
      */
-    public function charge(CompanyPointDTO $DTO): CompanyPoint
+    public function spend(MemberCashDTO $DTO): MemberCash
     {
-        $point = $this->repository->lock($DTO->company);
-        $companyPoint = $this->repository->charge($point, $DTO->amount);
+        if (! $this->check($DTO->member, $DTO->amount)) {
+            throw new MemberCashNotEnoughToSpendException('포인트가 부족합니다.');
+        }
+
+        $cash = $this->repository->lock($DTO->member);
         $this->transactionService->create($DTO);
-        CompanyPointEvent::dispatch($DTO->company, EventTypeEnum::UPDATED);
-        return $companyPoint;
+        return $this->repository->spend($cash, $DTO->amount);
+    }
+
+    public function check(Member $member, int $amount): bool
+    {
+        return $this->repository->canSpendCheck($member, $amount);
     }
 }

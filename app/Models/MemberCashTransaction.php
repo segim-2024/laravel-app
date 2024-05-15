@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Enums\MemberCashTransactionTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id ID
@@ -22,6 +23,16 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class MemberCashTransaction extends Model
 {
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string, string, boolean>
+     */
+    protected $casts = [
+        'type' => MemberCashTransactionTypeEnum::class,
+    ];
+
     public function member():BelongsTo
     {
         return $this->belongsTo(Member::class, 'member_id', 'mb_id');

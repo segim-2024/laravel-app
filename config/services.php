@@ -34,4 +34,8 @@ return [
     'sso' => [
         'key' => env('SSO_KEY'),
     ],
+
+    'pamus' => [
+        'api_key' => env('PAMUS_API_KEY'),
+    ],
 ];

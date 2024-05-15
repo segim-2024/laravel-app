@@ -13,4 +13,10 @@ interface MemberSubscribeProductServiceInterface
      * @return Collection
      */
     public function subscribe(UpsertMemberSubscribeProductDTO $DTO):Collection;
+
+    /**
+     * @param MemberSubscribeProduct $subscribeProduct
+     * @return MemberSubscribeProduct
+     */
+    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct;
 }

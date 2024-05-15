@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\CreateMemberCardResponseDTO;
+use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\MemberPayment;
 use App\Models\MemberSubscribeProduct;
@@ -31,7 +32,7 @@ class TossService implements TossServiceInterface {
     /**
      * @inheritDoc
      */
-    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentResponseDTO
+    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO
     {
         $response = Http::toss()
             ->post("https://api.tosspayments.com/v1/billing/{$subscribeProduct->card->key}", [
@@ -43,6 +44,10 @@ class TossService implements TossServiceInterface {
                 'customerName' => $payment->member->mb_name,
                 'taxFreeAmount' => 0,
             ]);
+
+        if ($response->failed()) {
+            return RequestBillingPaymentFailedResponseDTO::createFromResponse($response);
+        }
 
         return RequestBillingPaymentResponseDTO::createFromResponse($response);
     }
