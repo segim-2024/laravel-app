@@ -25,7 +25,7 @@ class MemberCashDTO
         return new self(
             $request->member,
             $request->validated('amount'),
-            MemberCashTransactionTypeEnum::Increased,
+            MemberCashTransactionTypeEnum::Decreased,
             $request->validated('title'),
             $request->order
         );
