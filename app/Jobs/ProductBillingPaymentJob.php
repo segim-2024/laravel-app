@@ -16,9 +16,34 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ProductBillingPaymentJob implements ShouldQueue
+class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public int $tries = 1;
+
+    /**
+     * The number of seconds after which the job's unique lock will be released.
+     *
+     * @var int
+     */
+    public int $uniqueFor = 60;
+
+    /**
+     * The unique ID of the job.
+     *
+     * @return integer
+     */
+    public function uniqueId()
+    {
+        return $this->subscribeProduct->id;
+    }
 
     /**
      * Create a new job instance.
