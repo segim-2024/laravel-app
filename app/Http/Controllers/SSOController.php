@@ -47,7 +47,7 @@ class SSOController extends Controller
 
     private function authenticateWithSSO(Request $request): ?Member
     {
-        $key = Config::get('sso.key');
+        $key = Config::get('services.sso.key');
 
         // 쿼리스트링에서 암호화된 데이터 받기
         $secureData = $request->input('data');
