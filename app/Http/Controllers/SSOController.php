@@ -53,6 +53,10 @@ class SSOController extends Controller
         $secureData = $request->input('data');
         [$dataEncoded, $signature] = explode('.', $secureData);
 
+        Log::info($secureData);
+        Log::info($dataEncoded);
+        Log::info($signature);
+        Log::info($key);
         // 서명 검증
         if (hash_equals(hash_hmac('sha256', $dataEncoded, $key), $signature)) {
             $data = json_decode(base64_decode($dataEncoded), true, 512, JSON_THROW_ON_ERROR);
