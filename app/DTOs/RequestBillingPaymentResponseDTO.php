@@ -39,7 +39,6 @@ class RequestBillingPaymentResponseDTO
      */
     public static function createFromResponse(Response $response): self
     {
-        Log::info($response->body());
         $data = $response->object();
         if (!$data) {
             Log::error("응답 정보 조회 이상 : {$response->body()}");

@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\GetMemberPaymentListDTO;
+use App\Http\Requests\PaymentRetryRequest;
+use App\Http\Resources\MemberPaymentResource;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Yajra\DataTables\DataTables;
+use Symfony\Component\HttpFoundation\Response;
 
 class MemberPaymentController extends Controller
 {
@@ -37,5 +41,21 @@ class MemberPaymentController extends Controller
             end: $end,
             keyword: $request->input('keyword'),
         ));
+    }
+
+    public function retry(PaymentRetryRequest $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $payment = $this->service->retry($request->toDTO());
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return (new MemberPaymentResource($payment))
+            ->response()->setStatusCode(Response::HTTP_OK);
     }
 }

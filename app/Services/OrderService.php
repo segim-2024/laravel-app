@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Member;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Services\Interfaces\OrderServiceInterface;
@@ -17,5 +19,29 @@ class OrderService implements OrderServiceInterface {
     public function find(int|string $id): ?Order
     {
         return $this->repository->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalAmount(Member $member): int
+    {
+        return $this->repository->getTotalAmount($member);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalPaymentCount(Member $member): int
+    {
+        return $this->repository->getTotalPaymentCount($member);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getList(GetMemberOrderListDTO $DTO)
+    {
+        return $this->repository->getList($DTO);
     }
 }

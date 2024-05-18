@@ -18,6 +18,12 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
     public function getList(GetMemberPaymentListDTO $DTO);
 
     /**
+     * @param string $paymentId
+     * @return MemberPayment|null
+     */
+    public function findFailedPayment(string $paymentId): ?MemberPayment;
+
+    /**
      * @param Member $member
      * @return int
      */
@@ -41,6 +47,9 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
      * @return MemberPayment
      */
     public function updateDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment;
+
+    // TODO : CANCELLED 처리
+    // public function updateCancelled(MemberPayment $payment): MemberPayment;
 
     /**
      * @param MemberPayment $payment

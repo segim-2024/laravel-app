@@ -5,11 +5,11 @@ use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\Enums\MemberPaymentStatusEnum;
 use App\Models\Member;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Yajra\DataTables\Facades\DataTables;
 
 class MemberPaymentRepository extends BaseRepository implements MemberPaymentRepositoryInterface
@@ -30,7 +30,12 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
             ->when($DTO->start, fn($query) => $query->where('created_at', '>=', $DTO->start))
             ->when($DTO->end, fn($query) => $query->where('created_at', '<=', $DTO->end))
             ->when($DTO->keyword, fn($query) => $query->where('title', 'like', "%{$DTO->keyword}%"))
-            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED', 'ABORTED'])
+            ->whereIn('state', [
+                MemberPaymentStatusEnum::Done,
+                MemberPaymentStatusEnum::Canceled,
+                MemberPaymentStatusEnum::PartialCanceled,
+                MemberPaymentStatusEnum::Aborted,
+            ])
             ->where('member_id', '=', $DTO->member->mb_id);
 
         return DataTables::eloquent($query)->make();
@@ -39,10 +44,24 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
+    public function findFailedPayment(string $paymentId): ?MemberPayment
+    {
+        return MemberPayment::where('payment_id', '=', $paymentId)
+            ->where('state', '=', MemberPaymentStatusEnum::Aborted)
+            ->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTotalAmount(Member $member): int
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
-            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED'])
+            ->whereIn('state', [
+                MemberPaymentStatusEnum::Done,
+                MemberPaymentStatusEnum::Canceled,
+                MemberPaymentStatusEnum::PartialCanceled,
+            ])
             ->sum('amount');
     }
 
@@ -52,7 +71,12 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function getTotalPaymentCount(Member $member): int
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
-            ->whereIn('state', ['DONE', 'CANCELED', 'PARTIAL_CANCELED', 'ABORTED'])
+            ->whereIn('state', [
+                MemberPaymentStatusEnum::Done,
+                MemberPaymentStatusEnum::Canceled,
+                MemberPaymentStatusEnum::PartialCanceled,
+                MemberPaymentStatusEnum::Aborted,
+            ])
             ->count();
     }
 
@@ -91,7 +115,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
      */
     public function updateFailed(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment
     {
-        $payment->state = $DTO->responseStatus;
+        $payment->state = $DTO->status;
         $payment->reason = $DTO->message;
         $payment->api = $DTO->responseBody;
         $payment->save();

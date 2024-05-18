@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/products/subscribe', [MemberSubscribeProductController::class, 'subscribe'])->name('products.subscribe');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/list', [OrderController::class, 'list'])->name('orders.list');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });

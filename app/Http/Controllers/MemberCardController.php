@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\CreateMemberCardDTO;
-use App\DTOs\CreateMemberCardResponseDTO;
 use App\Http\Requests\CreateMemberCardRequest;
 use App\Models\MemberCard;
 use App\Services\Interfaces\MemberCardServiceInterface;
@@ -13,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 
 class MemberCardController extends Controller
 {

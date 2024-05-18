@@ -3,11 +3,11 @@
 namespace App\DTOs;
 
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Log;
 
 class RequestBillingPaymentFailedResponseDTO
 {
     public function __construct(
+        public readonly string $status,
         public readonly string $message,
         public readonly string $code,
         public readonly string $responseStatus,
@@ -21,11 +21,9 @@ class RequestBillingPaymentFailedResponseDTO
      */
     public static function createFromResponse(Response $response): self
     {
-        Log::error($response->status());
-        Log::error($response->body());
         $data = $response->object();
-
         return new self(
+            status: "ABORTED",
             message: $data->message ?? "",
             code: $data->code ?? "Unknown",
             responseStatus: $response->status(),

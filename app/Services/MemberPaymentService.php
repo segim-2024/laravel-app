@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\MemberCashDTO;
+use App\DTOs\PaymentRetryDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Enums\MemberCashTransactionTypeEnum;
@@ -13,11 +14,14 @@ use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
+use App\Services\Interfaces\TossServiceInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
         protected MemberCashServiceInterface $cashService,
-        protected MemberPaymentRepositoryInterface $repository
+        protected MemberPaymentRepositoryInterface $repository,
     ) {}
 
     /**
@@ -26,6 +30,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     public function getList(GetMemberPaymentListDTO $DTO)
     {
         return $this->repository->getList($DTO);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findFailedPayment(string $paymentId): ?MemberPayment
+    {
+        return $this->repository->findFailedPayment($paymentId);
     }
 
     /**
@@ -55,9 +67,20 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
+    public function retry(PaymentRetryDTO $DTO): MemberPayment
+    {
+        $response = app(TossServiceInterface::class)
+            ->requestBillingPayment($DTO->payment, $DTO->subscribe);
+
+        return $this->process($DTO->payment, $response);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
-        return match ($DTO->responseStatus) {
+        return match ($DTO->status) {
             'DONE' => $this->processDone($payment, $DTO),
             'CANCELED', 'PARTIAL_CANCELED' => $this->processCancelled($payment, $DTO),
             default => $this->processAborted($payment, $DTO),

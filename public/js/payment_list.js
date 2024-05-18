@@ -1,9 +1,18 @@
 $(document).ready(function() {
+    const getPaymentStateMessage = (data) => ({
+        'READY': '결제 준비',
+        'ABORTED': '결제 실패',
+        'DONE': '결제 완료',
+        'CANCELED': '결제 취소',
+        'PARTIAL_CANCELED': '부분 취소',
+    }[data] || '결제 에러');
+
     let table = $('#oTable').DataTable({
         processing: true,
         serverSide: true,
         searching: false,
         lengthChange: false,
+        order: [[0, 'desc']],
         pageLength: $('#perPage').val(),
         dom: 'lfrtp',  // 'i'를 제거하여 정보 요약 숨김
         ajax: {
@@ -18,6 +27,9 @@ $(document).ready(function() {
             { data: 'paid_at', render: function(data, type, row) {
                 return data ? new Date(data).toLocaleDateString() : '';
             }},
+            { data: 'state', render: function(data, type, row) {
+                return getPaymentStateMessage(data);
+            }},
             { data: 'payment_id', render: function(data, type, row) {
                 return data;
             }},
@@ -28,7 +40,9 @@ $(document).ready(function() {
             { data: 'amount', render: function(data, type, row) {
                 return `${parseInt(data).toLocaleString()}원`;
             }},
-            { data: null, orderable:false, render: function(data, type, row) {
+            { data: 'receipt_url', orderable:false, render: function(data, type, row) {
+                if (!data) return '';
+
                 return `<button class="btn btn_green" data-role="receipt">
                     전표 출력
                 </button>`;

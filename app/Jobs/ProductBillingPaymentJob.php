@@ -41,8 +41,6 @@ class ProductBillingPaymentJob implements ShouldQueue
             CreateMemberPaymentDTO::createFromMemberSubscribe($subscribeProduct)
         );
 
-        Log::info(1111);
-
         // 결제 요청
         $response = $tossService->requestBillingPayment($payment, $subscribeProduct);
 
@@ -50,6 +48,7 @@ class ProductBillingPaymentJob implements ShouldQueue
         DB::beginTransaction();
         try {
             $paymentService->process($payment, $response);
+            DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);

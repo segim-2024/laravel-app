@@ -9,7 +9,7 @@
             <img src="{{asset("/images/icn_layer_close.png")}}" alt="닫기">
         </div>
         <div class="content_wrap">
-            <p>주문번호 <span>20240315 - 12472226</span></p>
+            <p>주문번호 <span id="detail_od_id">20240315 - 12472226</span></p>
             <div class="layer_table">
                 <table>
                     <thead>
@@ -25,7 +25,7 @@
                         <th>상태</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="cart_list">
                     <tr>
                         <td>CoCo Phonics 1</td>
                         <td>2</td>
@@ -72,26 +72,26 @@
                     <div class="wh_box_wrap">
                         <div class="price_txt">
                             <div class="price_title">주문 총액</div>
-                            <div class="price">110,000원</div>
+                            <div class="price" id="detail_od_cart_price"></div>
                         </div>
                         <div class="price_txt">
                             <div class="price_title">취소 금액</div>
-                            <div class="price">0원</div>
+                            <div class="price" id="detail_od_cancel_price"></div>
                         </div>
                         <div class="price_txt">
                             <div class="price_title">E-Cash</div>
-                            <div class="price">0원</div>
+                            <div class="price" id="detail_od_receipt_ecash">0원</div>
                         </div>
                     </div>
                     <div class="wh_box_wrap blue_bg">
                         <div class="price_txt">
                             <div class="price_title">총 구매액</div>
-                            <div class="price">110,000원</div>
+                            <div class="price" id="detail_od_receipt_total">110,000원</div>
                         </div>
-                        <div class="price_txt">
-                            <div class="price_title">결 제 액</div>
-                            <div class="price">110,000원</div>
-                        </div>
+{{--                        <div class="price_txt">--}}
+{{--                            <div class="price_title">결 제 액</div>--}}
+{{--                            <div class="price">110,000원</div>--}}
+{{--                        </div>--}}
                     </div>
                 </div>
             </div>

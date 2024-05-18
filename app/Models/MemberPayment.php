@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MemberPaymentStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -13,7 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string $payment_id 결제 고유 키
  * @property string $member_id 학원 ID
  * @property int $card_id 학원 ID
- * @property string $state 결제 상태
+ * @property MemberPaymentStatusEnum $state 결제 상태
  * @property ?string $method 결제 방식
  * @property string $title 결제 제목
  * @property int $amount 결제 금액
@@ -38,6 +39,10 @@ class MemberPayment extends Model
      */
     protected $hidden = [
         'api'
+    ];
+
+    protected $casts = [
+        'state' => MemberPaymentStatusEnum::class,
     ];
 
     public function member(): BelongsTo

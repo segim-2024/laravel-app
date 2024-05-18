@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\UpsertMemberSubscribeProductDTO;
+use App\Models\MemberCard;
 use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
 use App\Repositories\Interfaces\MemberSubscribeProductRepositoryInterface;
@@ -15,6 +16,14 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
         protected ProductServiceInterface $productService,
         protected MemberSubscribeProductRepositoryInterface $repository
     ) {}
+
+    /**
+     * @inheritDoc
+     */
+    public function findByCardAndProduct(MemberCard $card, Product $product): ?MemberSubscribeProduct
+    {
+        return $this->repository->findByCardAndProduct($card, $product);
+    }
 
     /**
      * @inheritDoc

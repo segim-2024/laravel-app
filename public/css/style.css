@@ -282,7 +282,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 .content-left .state {
     margin-bottom: 3.7037vh;
-    height: 53.4259vh;
+    height: 51.4259vh;
     padding: 6px 0 0 6px;
 }
 .content-left .state .box {
@@ -360,7 +360,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     padding: 6px 0 0 6px;
 }
 .nav .box {
-    height: 41.6667vh;
+    height: 43.6667vh;
     padding: 1.5625vw 0 1.5625vw;
     font-weight: 700;
 }
