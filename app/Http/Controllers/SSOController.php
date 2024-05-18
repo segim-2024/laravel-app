@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class SSOController extends Controller
 {
@@ -55,6 +56,7 @@ class SSOController extends Controller
         // 서명 검증
         if (hash_equals(hash_hmac('sha256', $dataEncoded, $key), $signature)) {
             $data = json_decode(base64_decode($dataEncoded), true, 512, JSON_THROW_ON_ERROR);
+            Log::info(json_encode($data));
             // 데이터 사용, 예: 사용자 인증
             return Member::where('mb_id', '=', $data['mb_id'])->first();
         }
