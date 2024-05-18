@@ -35,7 +35,7 @@ $(document).ready(function() {
             }},
             { data: 'title' },
             { data: 'method', render: function(data, type, row) {
-                return row.card.name;
+                return row.card?.name ?? "삭제된 카드";
             }},
             { data: 'amount', render: function(data, type, row) {
                 return `${parseInt(data).toLocaleString()}원`;
