@@ -2,11 +2,10 @@
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\UpsertMemberSubscribeProductDTO;
-use App\Models\MemberCard;
+use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
 use App\Repositories\Interfaces\MemberSubscribeProductRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
 
 class MemberSubscribeProductRepository extends BaseRepository implements MemberSubscribeProductRepositoryInterface
 {
@@ -18,9 +17,9 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
     /**
      * @inheritDoc
      */
-    public function findByCardAndProduct(MemberCard $card, Product $product): ?MemberSubscribeProduct
+    public function findByMemberAndProduct(Member $member, Product $product): ?MemberSubscribeProduct
     {
-        return MemberSubscribeProduct::where('card_id', '=', $card->id)
+        return MemberSubscribeProduct::where('member_id', '=', $member->mb_id)
             ->where('product_id', '=', $product->id)
             ->first();
     }

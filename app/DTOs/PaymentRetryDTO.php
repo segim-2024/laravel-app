@@ -9,7 +9,7 @@ use App\Models\MemberSubscribeProduct;
 class PaymentRetryDTO
 {
     public function __construct(
-        public readonly MemberPayment $payment,
+        public MemberPayment $payment,
         public readonly MemberSubscribeProduct $subscribe
     ) {}
 

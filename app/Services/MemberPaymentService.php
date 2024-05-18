@@ -10,6 +10,7 @@ use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Enums\MemberCashTransactionTypeEnum;
 use App\Models\Member;
+use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
@@ -69,10 +70,22 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function retry(PaymentRetryDTO $DTO): MemberPayment
     {
+        if ($DTO->payment->card_id !== $DTO->subscribe->card_id) {
+            $DTO->payment = $this->updateCard($DTO->payment, $DTO->subscribe->card);
+        }
+
         $response = app(TossServiceInterface::class)
             ->requestBillingPayment($DTO->payment, $DTO->subscribe);
 
         return $this->process($DTO->payment, $response);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateCard(MemberPayment $payment, MemberCard $card): MemberPayment
+    {
+        return $this->repository->updateCard($payment, $card);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
 use App\Models\Member;
+use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use Illuminate\Support\Carbon;
@@ -94,6 +95,15 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->amount = $DTO->amount;
         $payment->productable()->associate($DTO->product);
         $payment->save();
+        return $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateCard(MemberPayment $payment, MemberCard $card):MemberPayment
+    {
+        $payment->card_id = $card->id;
         return $payment;
     }
 

@@ -8,6 +8,7 @@ use App\DTOs\PaymentRetryDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
+use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use App\Models\MemberSubscribeProduct;
 use Illuminate\Support\Collection;
@@ -48,6 +49,13 @@ interface MemberPaymentServiceInterface
      * @return MemberPayment
      */
     public function retry(PaymentRetryDTO $DTO): MemberPayment;
+
+    /**
+     * @param MemberPayment $payment
+     * @param MemberCard $card
+     * @return MemberPayment
+     */
+    public function updateCard(MemberPayment $payment, MemberCard $card): MemberPayment;
 
     /**
      * @param MemberPayment $payment

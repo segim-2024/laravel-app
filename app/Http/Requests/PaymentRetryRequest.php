@@ -64,9 +64,9 @@ class PaymentRetryRequest extends FormRequest
                     throw new ConflictHttpException("이미 처리된 결제에요.");
                 }
 
-                $subscribe = $this->memberSubscribeProductService->findByCardAndProduct($payment->card, $payment->productable);
+                $subscribe = $this->memberSubscribeProductService->findByMemberAndProduct($payment->member, $payment->productable);
                 if (! $subscribe) {
-                    throw new PreconditionRequiredHttpException("결제 내역에 해당하는 구독 정보를 찾을 수 없어요.");
+                    throw new PreconditionRequiredHttpException("결제 상품에 해당하는 구독 정보를 찾을 수 없어요.");
                 }
 
                 $this->payment = $payment;

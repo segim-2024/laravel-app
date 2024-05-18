@@ -6,6 +6,7 @@ use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
 use App\Models\Member;
+use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use Illuminate\Support\Collection;
 
@@ -43,12 +44,19 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
 
     /**
      * @param MemberPayment $payment
+     * @param MemberCard $card
+     * @return MemberPayment
+     */
+    public function updateCard(MemberPayment $payment, MemberCard $card):MemberPayment;
+
+    /**
+     * @param MemberPayment $payment
      * @param RequestBillingPaymentResponseDTO $DTO
      * @return MemberPayment
      */
     public function updateDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment;
-
     // TODO : CANCELLED 처리
+
     // public function updateCancelled(MemberPayment $payment): MemberPayment;
 
     /**
