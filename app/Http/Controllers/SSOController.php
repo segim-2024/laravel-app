@@ -46,21 +46,19 @@ class SSOController extends Controller
 
     private function authenticateWithSSO(Request $request): ?Member
     {
-//        $key = Config::get('sso.key');
-//
-//        // 쿼리스트링에서 암호화된 데이터 받기
-//        $secureData = $request->input('data');
-//        [$dataEncoded, $signature] = explode('.', $secureData);
-//
-//        // 서명 검증
-//        if (hash_equals(hash_hmac('sha256', $dataEncoded, $key), $signature)) {
-//            $data = json_decode(base64_decode($dataEncoded), true, 512, JSON_THROW_ON_ERROR);
-//            // 데이터 사용, 예: 사용자 인증
-//            return Member::where('mb_id', '=', $data['mb_id'])->first();
-//        }
-//
-//        return null;
+        $key = Config::get('sso.key');
 
-        return Member::where('mb_id', '=', 'test01')->first();
+        // 쿼리스트링에서 암호화된 데이터 받기
+        $secureData = $request->input('data');
+        [$dataEncoded, $signature] = explode('.', $secureData);
+
+        // 서명 검증
+        if (hash_equals(hash_hmac('sha256', $dataEncoded, $key), $signature)) {
+            $data = json_decode(base64_decode($dataEncoded), true, 512, JSON_THROW_ON_ERROR);
+            // 데이터 사용, 예: 사용자 인증
+            return Member::where('mb_id', '=', $data['mb_id'])->first();
+        }
+
+        return null;
     }
 }
