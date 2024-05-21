@@ -72,7 +72,7 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
         // 결제 처리
         DB::beginTransaction();
         try {
-            $paymentService->process($payment, $response);
+            $paymentService->process($payment, $subscribeProduct, $response);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

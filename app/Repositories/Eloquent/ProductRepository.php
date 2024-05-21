@@ -44,6 +44,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getSubscribes(Product $product): Collection
     {
         return MemberSubscribeProduct::where('product_id', '=', $product->id)
+            ->where('is_activated','=',true)
+            ->where('is_started','=',true)
             ->get();
     }
 }

@@ -13,6 +13,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('app:member-subscribe-product-make-start-command')
+            ->runInBackground()
+            ->withoutOverlapping()
+            ->monthlyOn(1, '00:10');
+
         $schedule->command('app:subscribe-product-payment-schedule-command')
             ->runInBackground()
             ->withoutOverlapping()

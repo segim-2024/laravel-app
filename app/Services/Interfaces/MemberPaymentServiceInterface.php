@@ -59,8 +59,9 @@ interface MemberPaymentServiceInterface
 
     /**
      * @param MemberPayment $payment
+     * @param MemberSubscribeProduct $subscribe
      * @param RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO
      * @return MemberPayment
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment;
+    public function process(MemberPayment $payment, MemberSubscribeProduct $subscribe, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment;
 }

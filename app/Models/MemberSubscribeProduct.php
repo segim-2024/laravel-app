@@ -12,6 +12,8 @@ use Illuminate\Support\Carbon;
  * @property int $product_id 상품 ID
  * @property int $card_id 카드 ID
  * @property ?Carbon $latest_payment_at 최근 결제일
+ * @property bool $is_started 시작 여부
+ * @property bool $is_activated 활성화 여부
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Member $member
@@ -29,8 +31,20 @@ class MemberSubscribeProduct extends Model
         'member_id',
         'product_id',
         'card_id',
+        'is_started',
+        'is_activated',
         'created_at',
         'updated_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_started' => 'boolean',
+        'is_activated' => 'boolean',
     ];
 
     public function member(): BelongsTo

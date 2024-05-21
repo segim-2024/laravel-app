@@ -12,17 +12,18 @@ use App\Enums\MemberCashTransactionTypeEnum;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
+use App\Models\MemberSubscribeProduct;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
+use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\TossServiceInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
         protected MemberCashServiceInterface $cashService,
         protected MemberPaymentRepositoryInterface $repository,
+        protected MemberSubscribeProductServiceInterface $subscribeService
     ) {}
 
     /**
@@ -77,7 +78,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         $response = app(TossServiceInterface::class)
             ->requestBillingPayment($DTO->payment, $DTO->subscribe);
 
-        return $this->process($DTO->payment, $response);
+        return $this->process($DTO->payment, $DTO->subscribe, $response);
     }
 
     /**
@@ -91,16 +92,16 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment
+    public function process(MemberPayment $payment, MemberSubscribeProduct $subscribe, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
         return match ($DTO->status) {
-            'DONE' => $this->processDone($payment, $DTO),
+            'DONE' => $this->processDone($payment, $subscribe, $DTO),
             'CANCELED', 'PARTIAL_CANCELED' => $this->processCancelled($payment, $DTO),
             default => $this->processAborted($payment, $DTO),
         };
     }
 
-    private function processDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
+    private function processDone(MemberPayment $payment, MemberSubscribeProduct $subscribe, RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
         $this->cashService->charge(new MemberCashDTO(
             $payment->member,
@@ -109,6 +110,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
             $payment->title,
             $payment->productable
         ));
+
+        $this->subscribeService->updateLatestPayment($subscribe);
 
         return $this->repository->updateDone($payment, $DTO);
     }
