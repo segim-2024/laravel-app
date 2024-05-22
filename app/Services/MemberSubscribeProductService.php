@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
@@ -42,5 +43,13 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
     public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct
     {
         return $this->repository->updateLatestPayment($subscribeProduct);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct
+    {
+        return $this->repository->updateActivate($DTO);
     }
 }

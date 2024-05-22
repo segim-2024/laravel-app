@@ -17,9 +17,11 @@ class MemberSubscribeProductResource extends JsonResource
             'product_id' => $this->product_id,
             'card_id' => $this->card_id,
             'latest_payment_at' => $this->latest_payment_at,
+            'is_started' => $this->is_started,
+            'is_activated' => $this->is_activated,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'card' => new MemberCardResource($this->whenLoaded('card')),
+            'card' => new MemberCardResource($this->card),
         ];
     }
 }

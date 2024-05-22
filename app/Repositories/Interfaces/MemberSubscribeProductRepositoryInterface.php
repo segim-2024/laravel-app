@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Interfaces;
 
+use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
@@ -26,4 +27,10 @@ interface MemberSubscribeProductRepositoryInterface extends BaseRepositoryInterf
      * @return MemberSubscribeProduct
      */
     public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct;
+
+    /**
+     * @param UpdateActivateMemberSubscribeProductDTO $DTO
+     * @return MemberSubscribeProduct
+     */
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct;
 }

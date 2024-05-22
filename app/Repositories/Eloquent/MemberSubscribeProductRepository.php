@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
@@ -50,5 +51,16 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
         $subscribeProduct->latest_payment_at = now();
         $subscribeProduct->save();
         return $subscribeProduct;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct
+    {
+        $subscribe = $DTO->subscribe;
+        $subscribe->is_activated = $DTO->isActive;
+        $subscribe->save();
+        return $subscribe;
     }
 }

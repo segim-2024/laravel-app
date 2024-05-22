@@ -17,12 +17,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function find(int|string $id): ?Product
     {
-        return Product::with([
-                'subscribe' => [
-                    'card'
-                ]
-            ])
-            ->find($id);
+        return Product::find($id);
     }
 
     /**

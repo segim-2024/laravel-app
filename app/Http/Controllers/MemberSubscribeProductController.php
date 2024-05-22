@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateActivateMemberSubscribeProductRequest;
 use App\Http\Requests\UpsertMemberSubscribeProductRequest;
+use App\Http\Resources\MemberSubscribeProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\MemberCard;
 use App\Models\Product;
@@ -47,6 +49,13 @@ class MemberSubscribeProductController extends Controller
     {
         $products = $this->service->subscribe($request->toDTO());
         return ProductResource::collection($products)
+            ->response()->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function updateActivate(UpdateActivateMemberSubscribeProductRequest $request): JsonResponse
+    {
+        $subscribe = $this->service->updateActivate($request->toDTO());
+        return (new MemberSubscribeProductResource($subscribe))
             ->response()->setStatusCode(Response::HTTP_OK);
     }
 }
