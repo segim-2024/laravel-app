@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
+use App\DTOs\UnsubscribeProductDTO;
 use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
@@ -14,7 +14,7 @@ use Illuminate\Validation\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 
-class UpdateActivateMemberSubscribeProductRequest extends FormRequest
+class UnsubscribeProductRequest extends FormRequest
 {
     public Member $member;
     public Product $product;
@@ -45,8 +45,7 @@ class UpdateActivateMemberSubscribeProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mb_id' => ['required', 'string'],
-            'is_active' => ['required', 'boolean'],
+            'mb_id' => ['required', 'string']
         ];
     }
 
@@ -83,8 +82,8 @@ class UpdateActivateMemberSubscribeProductRequest extends FormRequest
         ];
     }
 
-    public function toDTO():UpdateActivateMemberSubscribeProductDTO
+    public function toDTO(): UnsubscribeProductDTO
     {
-        return UpdateActivateMemberSubscribeProductDTO::createFromRequest($this);
+        return UnsubscribeProductDTO::createFromRequest($this);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\MemberSubscribeProductLogDTO;
+use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
@@ -24,6 +25,12 @@ interface MemberSubscribeProductServiceInterface
      * @return Collection
      */
     public function subscribe(UpsertMemberSubscribeProductDTO $DTO):Collection;
+
+    /**
+     * @param UnsubscribeProductDTO $DTO
+     * @return void
+     */
+    public function unsubscribe(UnsubscribeProductDTO $DTO): void;
 
     /**
      * @param MemberSubscribeProduct $subscribeProduct

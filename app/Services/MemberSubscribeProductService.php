@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\MemberSubscribeProductLogDTO;
+use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
@@ -10,6 +11,7 @@ use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
 use App\Repositories\Interfaces\MemberSubscribeProductLogRepositoryInterface;
 use App\Repositories\Interfaces\MemberSubscribeProductRepositoryInterface;
+use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Support\Collection;
@@ -39,6 +41,15 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
 
         /** @var Collection|Product[] $products */
         return $this->productService->getList($DTO->member);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unsubscribe(UnsubscribeProductDTO $DTO): void
+    {
+        app(MemberCardServiceInterface::class)->delete($DTO->subscribe->card);
+        $this->logging(MemberSubscribeProductLogDTO::unsubscribed($DTO->subscribe));
     }
 
     /**

@@ -39,4 +39,12 @@ class MemberCardService implements MemberCardServiceInterface {
     {
         return $this->repository->save($DTO);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(MemberCard $card): void
+    {
+        $this->repository->delete($card);
+    }
 }

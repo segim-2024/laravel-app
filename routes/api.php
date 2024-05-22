@@ -24,6 +24,7 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/e-cash/manual-spend', [MemberCashController::class, 'manualSpend']);
     Route::post('/payments/retry', [MemberPaymentController::class, 'retry']);
     Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
+    Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

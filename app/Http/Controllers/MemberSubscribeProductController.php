@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UnsubscribeProductRequest;
 use App\Http\Requests\UpdateActivateMemberSubscribeProductRequest;
 use App\Http\Requests\UpsertMemberSubscribeProductRequest;
 use App\Http\Resources\MemberSubscribeProductResource;
@@ -78,5 +79,20 @@ class MemberSubscribeProductController extends Controller
 
         return (new MemberSubscribeProductResource($subscribe))
             ->response()->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function unsubscribe(UnsubscribeProductRequest $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $this->service->unsubscribe($request->toDTO());
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception);
+            return response()->json(['message' => 'Failed to unsubscribe'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

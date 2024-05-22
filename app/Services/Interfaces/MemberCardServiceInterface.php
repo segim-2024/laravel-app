@@ -31,4 +31,10 @@ interface MemberCardServiceInterface
      * @return MemberCard
      */
     public function save(CreateMemberCardDTO $DTO):MemberCard;
+
+    /**
+     * @param MemberCard $card
+     * @return void
+     */
+    public function delete(MemberCard $card): void;
 }
