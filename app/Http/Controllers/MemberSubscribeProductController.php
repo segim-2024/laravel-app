@@ -11,9 +11,12 @@ use App\Models\Product;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -47,14 +50,32 @@ class MemberSubscribeProductController extends Controller
 
     public function subscribe(UpsertMemberSubscribeProductRequest $request): JsonResponse
     {
-        $products = $this->service->subscribe($request->toDTO());
+        DB::beginTransaction();
+        try {
+            $products = $this->service->subscribe($request->toDTO());
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return ProductResource::collection($products)
             ->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function updateActivate(UpdateActivateMemberSubscribeProductRequest $request): JsonResponse
     {
-        $subscribe = $this->service->updateActivate($request->toDTO());
+        DB::beginTransaction();
+        try {
+            $subscribe = $this->service->updateActivate($request->toDTO());
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception);
+            return response()->json(['message' => 'Failed to update activation status'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return (new MemberSubscribeProductResource($subscribe))
             ->response()->setStatusCode(Response::HTTP_OK);
     }

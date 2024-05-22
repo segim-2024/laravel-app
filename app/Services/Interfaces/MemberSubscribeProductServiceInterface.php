@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Member;
@@ -35,4 +36,10 @@ interface MemberSubscribeProductServiceInterface
      * @return MemberSubscribeProduct
      */
     public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct;
+
+    /**
+     * @param MemberSubscribeProductLogDTO $DTO
+     * @return void
+     */
+    public function logging(MemberSubscribeProductLogDTO $DTO):void;
 }

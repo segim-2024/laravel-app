@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\MemberCashDTO;
+use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\RequestBillingPaymentResponseDTO;
@@ -22,8 +23,8 @@ use App\Services\Interfaces\TossServiceInterface;
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
         protected MemberCashServiceInterface $cashService,
+        protected MemberSubscribeProductServiceInterface $subscribeService,
         protected MemberPaymentRepositoryInterface $repository,
-        protected MemberSubscribeProductServiceInterface $subscribeService
     ) {}
 
     /**
@@ -94,6 +95,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function process(MemberPayment $payment, MemberSubscribeProduct $subscribe, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment
     {
+        $this->subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribe));
+
         return match ($DTO->status) {
             'DONE' => $this->processDone($payment, $subscribe, $DTO),
             'CANCELED', 'PARTIAL_CANCELED' => $this->processCancelled($payment, $DTO),
