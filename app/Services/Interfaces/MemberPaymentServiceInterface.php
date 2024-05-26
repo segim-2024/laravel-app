@@ -4,17 +4,22 @@ namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\DTOs\TossPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
-use App\Models\MemberSubscribeProduct;
-use Illuminate\Support\Collection;
 
 interface MemberPaymentServiceInterface
 {
+    /**
+     * @param string $key
+     * @return MemberPayment|null
+     */
+    public function findByKey(string $key): ?MemberPayment;
+
     /**
      * @param GetMemberPaymentListDTO $DTO
      */
@@ -51,6 +56,12 @@ interface MemberPaymentServiceInterface
     public function retry(PaymentRetryDTO $DTO): MemberPayment;
 
     /**
+     * @param PaymentCancelDTO $DTO
+     * @return MemberPayment
+     */
+    public function cancel(PaymentCancelDTO $DTO): MemberPayment;
+
+    /**
      * @param MemberPayment $payment
      * @param MemberCard $card
      * @return MemberPayment
@@ -59,9 +70,8 @@ interface MemberPaymentServiceInterface
 
     /**
      * @param MemberPayment $payment
-     * @param MemberSubscribeProduct $subscribe
-     * @param RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO
+     * @param RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO $DTO
      * @return MemberPayment
      */
-    public function process(MemberPayment $payment, MemberSubscribeProduct $subscribe, RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO $DTO): MemberPayment;
+    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO $DTO): MemberPayment;
 }

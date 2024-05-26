@@ -47,6 +47,10 @@ class SSOController extends Controller
 
     private function authenticateWithSSO(Request $request): ?Member
     {
+        if (Config::get('app.env') === 'local') {
+            return Member::where('mb_id', '=', 'test01')->first();
+        }
+
         $key = Config::get('services.sso.key');
 
         // 쿼리스트링에서 암호화된 데이터 받기

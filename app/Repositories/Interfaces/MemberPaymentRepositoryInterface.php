@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\DTOs\TossPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -12,6 +12,12 @@ use Illuminate\Support\Collection;
 
 interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
 {
+    /**
+     * @param string $key
+     * @return MemberPayment|null
+     */
+    public function findByKey(string $key): ?MemberPayment;
+
     /**
      * @param GetMemberPaymentListDTO $DTO
      * @return Collection
@@ -48,16 +54,19 @@ interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
      * @return MemberPayment
      */
     public function updateCard(MemberPayment $payment, MemberCard $card):MemberPayment;
+    /**
+     * @param MemberPayment $payment
+     * @param TossPaymentResponseDTO $DTO
+     * @return MemberPayment
+     */
+    public function updateDone(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment;
 
     /**
      * @param MemberPayment $payment
-     * @param RequestBillingPaymentResponseDTO $DTO
+     * @param TossPaymentResponseDTO $DTO
      * @return MemberPayment
      */
-    public function updateDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment;
-    // TODO : CANCELLED 처리
-
-    // public function updateCancelled(MemberPayment $payment): MemberPayment;
+    public function updateCanceled(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment;
 
     /**
      * @param MemberPayment $payment

@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\DTOs\TossPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
 use App\Models\Member;
 use App\Models\MemberCard;
@@ -18,6 +18,14 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function __construct(MemberPayment $model)
     {
         parent::__construct($model);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByKey(string $key): ?MemberPayment
+    {
+        return MemberPayment::where('payment_id', '=', $key)->first();
     }
 
     /**
@@ -110,12 +118,28 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function updateDone(MemberPayment $payment, RequestBillingPaymentResponseDTO $DTO): MemberPayment
+    public function updateDone(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
     {
+        $payment->toss_key = $DTO->paymentKey;
         $payment->state = $DTO->status;
         $payment->api = $DTO->responseBody;
         $payment->receipt_url = $DTO->receiptUrl ?? null;
         $payment->paid_at = Carbon::parse($DTO->approvedAt);
+        $payment->save();
+        return $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateCanceled(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
+    {
+        $payment->state = $DTO->status;
+        $payment->cancelled_amount = $DTO->cancels->sum('cancelAmount');
+        $payment->reason = $DTO->cancels->pluck('cancelReason')->implode("\n");
+        $payment->receipt_url = $DTO->receiptUrl ?? null;
+        $payment->cancelled_at = $DTO->cancels[0]->canceledAt;
+        $payment->api = $DTO->responseBody;
         $payment->save();
         return $payment;
     }

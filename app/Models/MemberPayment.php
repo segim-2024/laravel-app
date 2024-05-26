@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property string $toss_key 토스 고유 키
  * @property string $payment_id 결제 고유 키
  * @property string $member_id 학원 ID
  * @property int $card_id 학원 ID
@@ -38,6 +39,7 @@ class MemberPayment extends Model
      * @var array<string, string>
      */
     protected $hidden = [
+        'toss_key',
         'api'
     ];
 

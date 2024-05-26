@@ -2,11 +2,13 @@
 
 namespace App\DTOs;
 
+use App\Http\Requests\TossWebHookRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
-class RequestBillingPaymentResponseDTO
+class TossPaymentResponseDTO
 {
     public function __construct(
         public readonly string $mId,
@@ -31,6 +33,8 @@ class RequestBillingPaymentResponseDTO
         public readonly string $method,
         public readonly string $responseBody,
         public readonly int $responseStatus,
+        /* @var null|Collection|TossPaymentCancelDTO[]  */
+        public readonly ?Collection $cancels
     ) {}
 
     /**
@@ -43,6 +47,12 @@ class RequestBillingPaymentResponseDTO
         if (!$data) {
             Log::error("응답 정보 조회 이상 : {$response->body()}");
             throw new RuntimeException("응답 정보 조회 이상 : {$response->body()}", $response->status());
+        }
+
+        if (isset($data->cancels)) {
+            $cancels = collect($data->cancels)->map(fn ($cancel) => TossPaymentCancelDTO::createFromPaymentResponse($cancel));
+        } else {
+            $cancels = collect([]);
         }
 
         return new self(
@@ -68,6 +78,44 @@ class RequestBillingPaymentResponseDTO
             method: $data->method,
             responseBody: $response->body(),
             responseStatus: $response->status(),
+            cancels: $cancels,
+        );
+    }
+
+    public static function createFromWebHook(TossWebHookRequest $request): self
+    {
+        $data = $request->validated('data');
+
+        if (isset($data['cancels'])) {
+            $cancels = collect($data['cancels'])->map(fn ($cancel) => TossPaymentCancelDTO::createFromPaymentWebHook($cancel));
+        } else {
+            $cancels = collect([]);
+        }
+
+        return new self(
+            mId: $data['mId'],
+            version: $data['version'],
+            paymentKey: $data['paymentKey'],
+            status: $data['status'],
+            lastTransactionKey: $data['lastTransactionKey'],
+            orderId: $data['orderId'],
+            orderName: $data['orderName'],
+            requestedAt: $data['requestedAt'],
+            approvedAt: $data['approvedAt'],
+            type: $data['type'],
+            receiptUrl: $data['receipt']['url'] ?? null,
+            checkoutUrl: $data['checkout']['url'] ?? null,
+            currency: $data['currency'],
+            totalAmount: $data['totalAmount'],
+            balanceAmount: $data['balanceAmount'],
+            suppliedAmount: $data['suppliedAmount'],
+            vat: $data['vat'],
+            taxFreeAmount: $data['taxFreeAmount'],
+            taxExemptionAmount: $data['taxExemptionAmount'],
+            method: $data['method'],
+            responseBody: $request->collect()->toJson(),
+            responseStatus: 200,
+            cancels: $cancels,
         );
     }
 }

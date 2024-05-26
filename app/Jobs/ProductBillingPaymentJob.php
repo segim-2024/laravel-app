@@ -3,8 +3,10 @@
 namespace App\Jobs;
 
 use App\DTOs\CreateMemberPaymentDTO;
+use App\DTOs\MemberSubscribeProductLogDTO;
 use App\Models\MemberSubscribeProduct;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
+use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\TossServiceInterface;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -60,6 +62,7 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
         $subscribeProduct = $this->subscribeProduct;
         $paymentService = app(MemberPaymentServiceInterface::class);
         $tossService = app(TossServiceInterface::class);
+        $subscribeService = app(MemberSubscribeProductServiceInterface::class);
 
         // 결재 생성
         $payment = $paymentService->save(
@@ -72,7 +75,9 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
         // 결제 처리
         DB::beginTransaction();
         try {
-            $paymentService->process($payment, $subscribeProduct, $response);
+            $subscribeService->updateLatestPayment($subscribeProduct);
+            $subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribeProduct));
+            $paymentService->process($payment, $response);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

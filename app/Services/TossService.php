@@ -3,13 +3,15 @@
 namespace App\Services;
 
 use App\DTOs\CreateMemberCardResponseDTO;
+use App\DTOs\PaymentCancelDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\RequestBillingPaymentResponseDTO;
+use App\DTOs\TossPaymentResponseDTO;
 use App\Models\MemberPayment;
 use App\Models\MemberSubscribeProduct;
 use App\Services\Interfaces\TossServiceInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class TossService implements TossServiceInterface {
     /**
@@ -32,10 +34,10 @@ class TossService implements TossServiceInterface {
     /**
      * @inheritDoc
      */
-    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentFailedResponseDTO|RequestBillingPaymentResponseDTO
+    public function requestBillingPayment(MemberPayment $payment, MemberSubscribeProduct $subscribeProduct): RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO
     {
         $response = Http::toss()
-            ->post("https://api.tosspayments.com/v1/billing/{$subscribeProduct->card->key}", [
+            ->post("/billing/{$subscribeProduct->card->key}", [
                 'customerKey' => $subscribeProduct->member->toss_customer_key,
                 'amount' => $subscribeProduct->product->price,
                 'orderId' => $payment->payment_id,
@@ -49,6 +51,28 @@ class TossService implements TossServiceInterface {
             return RequestBillingPaymentFailedResponseDTO::createFromResponse($response);
         }
 
-        return RequestBillingPaymentResponseDTO::createFromResponse($response);
+        return TossPaymentResponseDTO::createFromResponse($response);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function requestCancel(PaymentCancelDTO $DTO): TossPaymentResponseDTO
+    {
+        $response = Http::toss()
+            ->post(
+                "/payments/{$DTO->payment->toss_key}/cancel",
+                [
+                    'paymentKey' => $DTO->payment->toss_key,
+                    'cancelAmount' => $DTO->amount,
+                    'cancelReason' => $DTO->reason,
+                ]
+            );
+
+        if ($response->failed()) {
+            throw new RuntimeException($response->body());
+        }
+
+        return TossPaymentResponseDTO::createFromResponse($response);
     }
 }
