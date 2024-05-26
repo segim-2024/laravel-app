@@ -96,9 +96,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function cancel(PaymentCancelDTO $DTO): MemberPayment
     {
-        $response = app(TossServiceInterface::class)
-            ->requestBillingCancel($DTO->payment);
-
+        $response = app(TossServiceInterface::class)->requestCancel($DTO);
         return $this->process($DTO->payment, $response);
     }
 
