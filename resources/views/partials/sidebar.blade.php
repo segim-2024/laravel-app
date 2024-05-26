@@ -12,9 +12,37 @@
                 {{request()->user()->mb_nick}}
             </div>
             <div class="blue_box use">
-                E-Cash 월간 정기 결제 이용중
+                @if(request()->user()->subscribes()->count() > 0)
+                    E-Cash 월간 정기 결제 이용중
+                @else
+                    E-Cash 월간 정기 결제 대기중
+                @endif
             </div>
             <div class="blue_box">
+                <div class="blue_box_con">
+                    <div class="l-title">
+                        다음 청구일
+                    </div>
+                    <div class="r-con">
+                        @php
+                            $nextPayment = request()->user()->subscribes()->first();
+                            $today = \Illuminate\Support\Carbon::now();
+                        @endphp
+                        @if (! $nextPayment)
+                            카드 등록 후 상품에 설정해주세요.
+                        @elseif (! $nextPayment->is_started)
+                            {{$today->copy()->addMonthNoOverflow()->day($nextPayment->product->payment_day)->toDateString()}}
+                        @elseif ($nextPayment->is_started)
+                            @if ($today->day < $nextPayment->product->payment_day)
+                                {{$today->copy()->day($nextPayment->product->payment_day)->toDateString()}}
+                            @else
+                                {{$today->copy()->addMonthNoOverflow()->day($nextPayment->product->payment_day)->toDateString()}}
+                            @endif
+                        @else
+                            카드 등록 후 상품에 등록해주세요.
+                        @endif
+                    </div>
+                </div>
                 <div class="blue_box_con">
                     <div class="l-title">
                         잔여 E-cash
@@ -72,9 +100,37 @@
                 <div class="box">
                     <p class="blue_box_title"><span>E-Cash 관리자</span> {{request()->user()->mb_nick}}</p>
                     <div class="blue_box use">
-                        E-Cash 월간 정기 결제 이용중
+                        @if(request()->user()->subscribes()->count() > 0)
+                            E-Cash 월간 정기 결제 이용중
+                        @else
+                            E-Cash 월간 정기 결제 대기중
+                        @endif
                     </div>
                     <div class="blue_box">
+                        <div class="blue_box_con">
+                            <div class="l-title">
+                                다음 청구일
+                            </div>
+                            <div class="r-con">
+                                @php
+                                    $nextPayment = request()->user()->subscribes()->first();
+                                    $today = \Illuminate\Support\Carbon::now();
+                                @endphp
+                                @if (! $nextPayment)
+                                    카드 등록 후 상품에 설정해주세요.
+                                @elseif (! $nextPayment->is_started)
+                                    {{$today->copy()->addMonthNoOverflow()->day($nextPayment->product->payment_day)->toDateString()}}
+                                @elseif ($nextPayment->is_started)
+                                    @if ($today->day < $nextPayment->product->payment_day)
+                                        {{$today->copy()->day($nextPayment->product->payment_day)->toDateString()}}
+                                    @else
+                                        {{$today->copy()->addMonthNoOverflow()->day($nextPayment->product->payment_day)->toDateString()}}
+                                    @endif
+                                @else
+                                    카드 등록 후 상품에 등록해주세요.
+                                @endif
+                            </div>
+                        </div>
                         <div class="blue_box_con">
                             <div class="l-title">
                                 잔여 E-cash

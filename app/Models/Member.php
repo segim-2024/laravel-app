@@ -23,7 +23,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property MemberCash $cash via cash() relationship getter magic method
- * @property MemberCard|Collection[] $cards via cards() relationship getter magic method
+ * @property MemberCard[]|Collection[] $cards via cards() relationship getter magic method
+ * @property MemberSubscribeProduct[]|Collection $subscribes via subscribes() relationship getter magic method
  */
 class Member extends Authenticatable
 {
@@ -60,5 +61,10 @@ class Member extends Authenticatable
     public function cards():HasMany
     {
         return $this->hasMany(MemberCard::class, 'member_id');
+    }
+
+    public function subscribes():HasMany
+    {
+        return $this->hasMany(MemberSubscribeProduct::class, 'member_id', 'mb_id');
     }
 }
