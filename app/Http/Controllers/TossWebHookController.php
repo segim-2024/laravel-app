@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MemberPaymentStatusEnum;
 use App\Http\Requests\TossWebHookRequest;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -24,8 +25,15 @@ class TossWebHookController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $DTO = $request->toDTO();
+        if ($payment->state === MemberPaymentStatusEnum::Done && $DTO->status === 'DONE') {
+            return response()->json([
+                'message' => '이미 처리된 결제입니다.',
+            ], Response::HTTP_CONFLICT);
+        }
+
         try {
-            $this->memberPaymentController->process($payment, $request->toDTO());
+            $this->memberPaymentController->process($payment, $DTO);
         } catch (\Exception $exception) {
             Log::error($exception);
             return response()->json([

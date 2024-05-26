@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use App\Http\Requests\TossWebHookRequest;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -84,38 +85,43 @@ class TossPaymentResponseDTO
 
     public static function createFromWebHook(TossWebHookRequest $request): self
     {
-        $data = $request->validated('data');
+        try {
+            $data = $request->validated('data');
 
-        if (isset($data['cancels'])) {
-            $cancels = collect($data['cancels'])->map(fn ($cancel) => TossPaymentCancelDTO::createFromPaymentWebHook($cancel));
-        } else {
-            $cancels = collect([]);
+            if (isset($data['cancels'])) {
+                $cancels = collect($data['cancels'])->map(fn ($cancel) => TossPaymentCancelDTO::createFromPaymentWebHook($cancel));
+            } else {
+                $cancels = collect([]);
+            }
+
+            return new self(
+                mId: $data['mId'],
+                version: $data['version'],
+                paymentKey: $data['paymentKey'],
+                status: $data['status'],
+                lastTransactionKey: $data['lastTransactionKey'],
+                orderId: $data['orderId'],
+                orderName: $data['orderName'],
+                requestedAt: $data['requestedAt'],
+                approvedAt: $data['approvedAt'],
+                type: $data['type'],
+                receiptUrl: $data['receipt']['url'] ?? null,
+                checkoutUrl: $data['checkout']['url'] ?? null,
+                currency: $data['currency'],
+                totalAmount: $data['totalAmount'],
+                balanceAmount: $data['balanceAmount'],
+                suppliedAmount: $data['suppliedAmount'],
+                vat: $data['vat'],
+                taxFreeAmount: $data['taxFreeAmount'],
+                taxExemptionAmount: $data['taxExemptionAmount'],
+                method: $data['method'],
+                responseBody: $request->collect()->toJson(),
+                responseStatus: 200,
+                cancels: $cancels,
+            );
+        } catch (Exception $exception) {
+            Log::debug($exception);
+            throw new \RuntimeException("TossPaymentResponseDTO::createFromWebHook", 0, $exception);
         }
-
-        return new self(
-            mId: $data['mId'],
-            version: $data['version'],
-            paymentKey: $data['paymentKey'],
-            status: $data['status'],
-            lastTransactionKey: $data['lastTransactionKey'],
-            orderId: $data['orderId'],
-            orderName: $data['orderName'],
-            requestedAt: $data['requestedAt'],
-            approvedAt: $data['approvedAt'],
-            type: $data['type'],
-            receiptUrl: $data['receipt']['url'] ?? null,
-            checkoutUrl: $data['checkout']['url'] ?? null,
-            currency: $data['currency'],
-            totalAmount: $data['totalAmount'],
-            balanceAmount: $data['balanceAmount'],
-            suppliedAmount: $data['suppliedAmount'],
-            vat: $data['vat'],
-            taxFreeAmount: $data['taxFreeAmount'],
-            taxExemptionAmount: $data['taxExemptionAmount'],
-            method: $data['method'],
-            responseBody: $request->collect()->toJson(),
-            responseStatus: 200,
-            cancels: $cancels,
-        );
     }
 }

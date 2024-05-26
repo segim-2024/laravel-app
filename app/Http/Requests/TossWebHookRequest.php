@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\DTOs\TossPaymentResponseDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 
 class TossWebHookRequest extends FormRequest
 {
@@ -13,7 +12,6 @@ class TossWebHookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Log::info($this->collect()->toJson());
         return true;
     }
 
