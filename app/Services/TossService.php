@@ -70,7 +70,7 @@ class TossService implements TossServiceInterface {
             );
 
         if ($response->failed()) {
-            throw new RuntimeException($response->body());
+            throw new RuntimeException($response->body(), $response->status());
         }
 
         return TossPaymentResponseDTO::createFromResponse($response);

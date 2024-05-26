@@ -138,7 +138,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->cancelled_amount = $DTO->cancels->sum('cancelAmount');
         $payment->reason = $DTO->cancels->pluck('cancelReason')->implode("\n");
         $payment->receipt_url = $DTO->receiptUrl ?? null;
-        $payment->cancelled_at = $DTO->cancels[0]->canceledAt;
+        $payment->cancelled_at = Carbon::parse($DTO->cancels[0]->canceledAt);
         $payment->api = $DTO->responseBody;
         $payment->save();
         return $payment;
