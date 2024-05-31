@@ -39,9 +39,9 @@ $(document).ready(function() {
             { data: 'od_cart_price', render: function(data, type, row) {
                 return `${data.toLocaleString('ko-KR')}원`;
             }},
-            { data: 'od_receipt_ecash', render: function(data, type, row) {
-                return data.toLocaleString('ko-KR');
-            }},
+            // { data: 'od_receipt_ecash', render: function(data, type, row) {
+            //     return data.toLocaleString('ko-KR');
+            // }},
         ],
         language : {
             "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Korean.json"

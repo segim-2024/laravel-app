@@ -4,18 +4,18 @@
         <div class="box">
             <div class="logo-wrap">
                 <div class="logo">
-                    E-Cash
+
                 </div>
             </div>
             <div class="campus-name">
-                <span>E-Cash 관리자</span><br />
+                <span>정기 결제 등급 관리자</span><br />
                 {{request()->user()->mb_nick}}
             </div>
             <div class="blue_box use">
                 @if(request()->user()->subscribes()->count() > 0)
-                    E-Cash 월간 정기 결제 이용중
+                    월간 정기 결제 이용중
                 @else
-                    E-Cash 월간 정기 결제 대기중
+                    월간 정기 결제 대기중
                 @endif
             </div>
             <div class="blue_box">
@@ -43,21 +43,21 @@
                         @endif
                     </div>
                 </div>
-                <div class="blue_box_con">
-                    <div class="l-title">
-                        잔여 E-cash
-                    </div>
-                    <div class="r-con">
-                        {{number_format(request()->user()->cash->amount)}}
-                    </div>
-                </div>
+{{--                <div class="blue_box_con">--}}
+{{--                    <div class="l-title">--}}
+{{--                        잔여 E-cash--}}
+{{--                    </div>--}}
+{{--                    <div class="r-con">--}}
+{{--                        {{number_format(request()->user()->cash->amount)}}--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </div>
         </div>
     </div>
     <div class="nav">
         <div class="box">
             <div class="nav_title">
-                E-Cash 관리
+                정기 결제 관리
             </div>
             <ul class="nav-wrap">
                 <li class="{{ request()->routeIs('payments.*') ? 'active' : '' }}">
@@ -70,7 +70,7 @@
                     <a href="{{ route('products.index') }}">정기 결제 상품 관리</a>
                 </li>
                 <li class="{{ request()->routeIs('orders.*') ? 'active' : '' }}">
-                    <a href="{{ route('orders.index') }}">E-Cash 사용 관리</a>
+                    <a href="{{ route('orders.index') }}">교재 주문 내역</a>
                 </li>
             </ul>
             <div class="bottom_option">
@@ -89,7 +89,7 @@
 </div>
 
 <div class="m_top_nav">
-    <div class="title">E-Cash</div>
+    <div class="title">E-Learning</div>
     <div class="nav_wrap">
         <input type="checkbox" />
         <span class="buger_bar"></span>
@@ -98,12 +98,12 @@
         <div class="nav_wrap_box">
             <div class="state">
                 <div class="box">
-                    <p class="blue_box_title"><span>E-Cash 관리자</span> {{request()->user()->mb_nick}}</p>
+                    <p class="blue_box_title"><span>정기 결제 등급 관리자</span> {{request()->user()->mb_nick}}</p>
                     <div class="blue_box use">
                         @if(request()->user()->subscribes()->count() > 0)
-                            E-Cash 월간 정기 결제 이용중
+                            월간 정기 결제 이용중
                         @else
-                            E-Cash 월간 정기 결제 대기중
+                            월간 정기 결제 대기중
                         @endif
                     </div>
                     <div class="blue_box">
@@ -131,20 +131,20 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="blue_box_con">
-                            <div class="l-title">
-                                잔여 E-cash
-                            </div>
-                            <div class="r-con">
-                                {{number_format(request()->user()->cash->amount)}}
-                            </div>
-                        </div>
+{{--                        <div class="blue_box_con">--}}
+{{--                            <div class="l-title">--}}
+{{--                                잔여 E-cash--}}
+{{--                            </div>--}}
+{{--                            <div class="r-con">--}}
+{{--                                {{number_format(request()->user()->cash->amount)}}--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                     </div>
                 </div>
             </div>
             <div class="nav">
                 <div class="nav_title">
-                    E-Cash 관리
+                    정기 결제 관리
                 </div>
                 <ul class="nav-wrap">
                     <li class="{{ request()->routeIs('payments.*') ? 'active' : '' }}">
@@ -157,7 +157,7 @@
                         <a href="{{ route('products.index') }}">정기 결제 상품 관리</a>
                     </li>
                     <li class="{{ request()->routeIs('orders.*') ? 'active' : '' }}">
-                        <a href="{{ route('orders.index') }}">E-Cash 사용 관리</a>
+                        <a href="{{ route('orders.index') }}">교재 주문 내역</a>
                     </li>
                 </ul>
             </div>

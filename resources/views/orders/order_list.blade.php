@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="content-right card_detail">
-        <h2>E-Cash 사용 관리</h2>
+        <h2>교재 주문 내역</h2>
 {{--        <button class="btn_excel">--}}
 {{--            <img src="{{asset("/images/excel_down.png")}}" alt="엑셀 다운로드">--}}
 {{--        </button>--}}
@@ -38,7 +38,7 @@
                             <th>주문 번호</th>
                             <th>사용 항목</th>
                             <th>총 주문 금액</th>
-                            <th>E-cash 사용 금액</th>
+{{--                            <th>E-cash 사용 금액</th>--}}
                         </tr>
                     </thead>
                     <tbody>
