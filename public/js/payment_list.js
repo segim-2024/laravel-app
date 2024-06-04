@@ -8,6 +8,7 @@ $(document).ready(function() {
     }[data] || '결제 에러');
 
     let table = $('#oTable').DataTable({
+        autoWidth: false,
         processing: true,
         serverSide: true,
         searching: false,
