@@ -1,5 +1,6 @@
 $(document).ready(function() {
     let table = $('#oTable').DataTable({
+        autoWidth: false,
         processing: true,
         serverSide: true,
         searching: false,
