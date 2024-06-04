@@ -400,18 +400,14 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 .bottom_option {
-    padding-top: 1.0417vw;
+    padding: 20px 10px 0;
     text-align: center;
 }
 .bottom_option div {
     display: inline-block;
     color: #9fa0a0;
     font-weight: 400;
-    font-size: 15px;
-    cursor: pointer;
-}
-.bottom_option div:hover {
-    color: #606060;
+    font-size: 13px;
 }
 
 .bottom_option .setting:before {
@@ -659,6 +655,10 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
     .m_top_nav .nav .nav_title, .m_top_nav .state .blue_box {
         font-size: 14px;
+    }
+
+    .card_box {
+        margin: 20px auto;
     }
 }
 
