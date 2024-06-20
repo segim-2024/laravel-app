@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories\Eloquent;
 
-use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
@@ -33,7 +33,7 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
     /**
      * @inheritDoc
      */
-    public function save(CreateMemberCardDTO $DTO): MemberCard
+    public function save(MemberCardDTO $DTO): MemberCard
     {
         $card = new MemberCard();
         $card->member_id = $DTO->member->mb_id;

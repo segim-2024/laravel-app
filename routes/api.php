@@ -3,6 +3,7 @@
 use App\Http\Controllers\MemberCashController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
+use App\Http\Controllers\PortOneWebHookController;
 use App\Http\Controllers\TossWebHookController;
 use App\Http\Middleware\CheckFromPamusMiddleware;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
 });
 
 Route::post('/toss/web-hook', [TossWebHookController::class, 'index']);
+Route::post('/port-one/web-hook', [PortOneWebHookController::class, 'webHook']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

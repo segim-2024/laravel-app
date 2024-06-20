@@ -34,8 +34,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/cards', [MemberCardController::class, 'index'])->name('cards.index');
     Route::get('/cards/is-exists', [MemberCardController::class, 'isExists'])->name('cards.is-exists');
-    Route::get('/cards/created', [MemberCardController::class, 'created'])->name('cards.created');
-    Route::get('/cards/failed', [MemberCardController::class, 'failed'])->name('cards.failed');
     Route::post('/cards', [MemberCardController::class, 'store'])->name('cards.store');
 
     Route::get('/products', [MemberSubscribeProductController::class, 'index'])->name('products.index');

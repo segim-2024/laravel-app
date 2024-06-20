@@ -1,10 +1,11 @@
 $(document).ready(function() {
     const getPaymentStateMessage = (data) => ({
+        'UNPAID': '결제 준비',
         'READY': '결제 준비',
-        'ABORTED': '결제 실패',
-        'DONE': '결제 완료',
-        'CANCELED': '결제 취소',
-        'PARTIAL_CANCELED': '부분 취소',
+        'FAILED': '결제 실패',
+        'PAID': '결제 완료',
+        'CANCELLED': '결제 취소',
+        'PARTIAL_CANCELLED': '부분 취소',
     }[data] || '결제 에러');
 
     let table = $('#oTable').DataTable({
@@ -26,7 +27,7 @@ $(document).ready(function() {
         },
         columns: [
             { data: 'paid_at', render: function(data, type, row) {
-                return data ? new Date(data).toLocaleDateString() : '';
+                return data ? new Date(data).toLocaleDateString() : new Date(row.updated_at).toLocaleDateString();
             }},
             { data: 'state', render: function(data, type, row) {
                 return getPaymentStateMessage(data);

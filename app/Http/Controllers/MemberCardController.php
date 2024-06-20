@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\CreateMemberCardDTO;
+use App\Exceptions\PortOneGetBillingKeyException;
 use App\Http\Requests\CreateMemberCardRequest;
 use App\Models\MemberCard;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\TossServiceInterface;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class MemberCardController extends Controller
 {
@@ -24,10 +26,9 @@ class MemberCardController extends Controller
     {
         /** @var $cards Collection|MemberCard[] */
         $cards = $this->service->getList($request->user());
-        $tossClientKey = Config::get('toss.client_key');
         return view('cards.card_list', [
             'cards' => $cards,
-            'tossClientKey' => $tossClientKey
+            'channelKey' => Config::get('services.portone.v2.channel_key')
         ]);
     }
 
@@ -42,26 +43,18 @@ class MemberCardController extends Controller
         return response()->json(null, 204);
     }
 
-    public function created(CreateMemberCardRequest $request): RedirectResponse
+    public function store(CreateMemberCardRequest $request): JsonResponse
     {
-        $response = $this->tossService->createBillingKey($request->validated('customerKey'), $request->validated('authKey'));
-        $cardName = "[$response->cardType] $response->cardCompany";
-        $this->service->save(new CreateMemberCardDTO(
-            $request->user(),
-            $cardName,
-            $response->cardNumber,
-            $response->billingKey
-        ));
+        try {
+            $card = $this->service->save($request->toDTO());
+        } catch (PortOneGetBillingKeyException $exception) {
+            Log::error($exception);
+            return response()->json(['message' => '빌링키 정보가 잘못되었어요. 다시 신청해주세요.'], Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
-        return redirect()->route('cards.index');
-    }
-
-    public function failed(Request $request)
-    {
-        /** @var $cards Collection|MemberCard[] */
-        $cards = $this->service->getList($request->user());
-        return view('cards.card_list', [
-            'cards' =>  $cards
-        ]);
+        return response()->json($card, Response::HTTP_CREATED);
     }
 }

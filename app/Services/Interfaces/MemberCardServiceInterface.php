@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\Exceptions\PortOneGetBillingKeyException;
 use App\Models\Member;
 use App\Models\MemberCard;
 use Illuminate\Support\Collection;
@@ -29,7 +30,8 @@ interface MemberCardServiceInterface
      *
      * @param CreateMemberCardDTO $DTO
      * @return MemberCard
-     */
+     * @throws PortOneGetBillingKeyException
+ */
     public function save(CreateMemberCardDTO $DTO):MemberCard;
 
     /**

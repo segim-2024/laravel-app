@@ -3,14 +3,17 @@
 namespace App\Services;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
 use App\Services\Interfaces\MemberCardServiceInterface;
+use App\Services\Interfaces\PortOneServiceInterface;
 use Illuminate\Support\Collection;
 
 class MemberCardService implements MemberCardServiceInterface {
     public function __construct(
+        protected PortOneServiceInterface $portOneService,
         protected MemberCardRepositoryInterface $repository
     ) {}
 
@@ -37,7 +40,8 @@ class MemberCardService implements MemberCardServiceInterface {
      */
     public function save(CreateMemberCardDTO $DTO): MemberCard
     {
-        return $this->repository->save($DTO);
+        $billingKeyDTO = $this->portOneService->getBillingKey($DTO->key);
+        return $this->repository->save(MemberCardDTO::create($DTO, $billingKeyDTO));
     }
 
     /**

@@ -6,8 +6,7 @@ use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
-use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\TossPaymentResponseDTO;
+use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -70,8 +69,15 @@ interface MemberPaymentServiceInterface
 
     /**
      * @param MemberPayment $payment
-     * @param RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO $DTO
+     * @param PortOneGetPaymentResponseDTO $DTO
      * @return MemberPayment
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO $DTO): MemberPayment;
+    public function process(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
+
+    /**
+     * @param MemberPayment $payment
+     * @param string $api
+     * @return MemberPayment
+     */
+    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment;
 }

@@ -3,11 +3,9 @@
 namespace App\Jobs;
 
 use App\DTOs\CreateMemberPaymentDTO;
-use App\DTOs\MemberSubscribeProductLogDTO;
 use App\Models\MemberSubscribeProduct;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
-use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
-use App\Services\Interfaces\TossServiceInterface;
+use App\Services\Interfaces\PortOneServiceInterface;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -15,7 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
@@ -61,26 +58,16 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
     {
         $subscribeProduct = $this->subscribeProduct;
         $paymentService = app(MemberPaymentServiceInterface::class);
-        $tossService = app(TossServiceInterface::class);
-        $subscribeService = app(MemberSubscribeProductServiceInterface::class);
+        $portOneService = app(PortOneServiceInterface::class);
 
         // 결재 생성
-        $payment = $paymentService->save(
-            CreateMemberPaymentDTO::createFromMemberSubscribe($subscribeProduct)
-        );
+        $payment = $paymentService->save(CreateMemberPaymentDTO::createFromMemberSubscribe($subscribeProduct));
 
         // 결제 요청
-        $response = $tossService->requestBillingPayment($payment, $subscribeProduct);
-
-        // 결제 처리
-        DB::beginTransaction();
         try {
-            $subscribeService->updateLatestPayment($subscribeProduct);
-            $subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribeProduct));
-            $paymentService->process($payment, $response);
-            DB::commit();
+            $portOneService->requestPaymentByBillingKey($subscribeProduct->card->key, $payment);
         } catch (Exception $e) {
-            DB::rollBack();
+            $paymentService->manuallySetFailed($payment, $e->getMessage());
             Log::error($e);
         }
     }

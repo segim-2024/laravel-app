@@ -8,9 +8,9 @@ use App\DTOs\MemberCashDTO;
 use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
-use App\DTOs\RequestBillingPaymentFailedResponseDTO;
-use App\DTOs\TossPaymentResponseDTO;
+use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberCashTransactionTypeEnum;
+use App\Enums\MemberPaymentStatusEnum;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -18,13 +18,14 @@ use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
-use App\Services\Interfaces\TossServiceInterface;
+use App\Services\Interfaces\PortOneServiceInterface;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
         protected MemberCashServiceInterface $cashService,
         protected MemberSubscribeProductServiceInterface $subscribeService,
         protected MemberPaymentRepositoryInterface $repository,
+        protected PortOneServiceInterface $portOneService
     ) {}
 
     /**
@@ -84,11 +85,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
             $DTO->payment = $this->updateCard($DTO->payment, $DTO->subscribe->card);
         }
 
-        $this->subscribeService->updateLatestPayment($DTO->subscribe);
-        $this->subscribeService->logging(MemberSubscribeProductLogDTO::payment($DTO->subscribe));
-        $response = app(TossServiceInterface::class)
-            ->requestBillingPayment($DTO->payment, $DTO->subscribe);
-        return $this->process($DTO->payment, $response);
+        $this->portOneService->requestPaymentByBillingKey($DTO->subscribe->card->key, $DTO->payment);
+        return $DTO->payment;
     }
 
     /**
@@ -96,8 +94,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function cancel(PaymentCancelDTO $DTO): MemberPayment
     {
-        $response = app(TossServiceInterface::class)->requestCancel($DTO);
-        return $this->process($DTO->payment, $response);
+        $this->portOneService->cancel($DTO);
+        return $DTO->payment;
     }
 
     /**
@@ -111,17 +109,28 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function process(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO|TossPaymentResponseDTO $DTO): MemberPayment
+    public function process(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
         return match ($DTO->status) {
-            'DONE' => $this->processDone($payment, $DTO),
-            'CANCELED', 'PARTIAL_CANCELED' => $this->processCancelled($payment, $DTO),
-            default => $this->processAborted($payment, $DTO),
+            MemberPaymentStatusEnum::Ready, MemberPaymentStatusEnum::Unpaid => $payment,
+            MemberPaymentStatusEnum::Paid => $this->processPaid($payment, $DTO),
+            MemberPaymentStatusEnum::Cancelled, MemberPaymentStatusEnum::PartialCancelled => $this->processCancelled($payment, $DTO),
+            default => $this->processFailed($payment, $DTO),
         };
     }
 
-    private function processDone(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
+    private function processPaid(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
+        if ($payment->state === $DTO->status) {
+            return $payment;
+        }
+
+        $subscribeProduct = $this->subscribeService->findByMemberAndProduct($payment->member, $payment->productable);
+        if ($subscribeProduct) {
+            $this->subscribeService->updateLatestPayment($subscribeProduct);
+            $this->subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribeProduct));
+        }
+
         $this->cashService->charge(new MemberCashDTO(
             $payment->member,
             $payment->amount,
@@ -133,13 +142,25 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         return $this->repository->updateDone($payment, $DTO);
     }
 
-    private function processCancelled(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
+    private function processCancelled(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
+        if ($payment->state === MemberPaymentStatusEnum::Cancelled) {
+            return $payment;
+        }
+
         return $this->repository->updateCanceled($payment, $DTO);
     }
 
-    private function processAborted(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment
+    private function processFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
         return $this->repository->updateFailed($payment, $DTO);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment
+    {
+        return $this->repository->manuallySetFailed($payment, $api);
     }
 }

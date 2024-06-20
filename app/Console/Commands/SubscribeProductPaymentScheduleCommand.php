@@ -37,7 +37,10 @@ class SubscribeProductPaymentScheduleCommand extends Command
         // 정기 결제일이 오늘인 상품 검색
         $products = Product::where('payment_day', '=', $today)
             ->whereHas('subscribes', function (Builder $query) {
-                $query->whereHas('member');
+                $query
+                    ->where('is_activated', '=', true)
+                    ->where('is_started', '=', true)
+                    ->whereHas('member');
             })
             ->with('subscribes')
             ->get();

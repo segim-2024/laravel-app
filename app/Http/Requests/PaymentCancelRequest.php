@@ -57,7 +57,7 @@ class PaymentCancelRequest extends FormRequest
                     throw new NotFoundHttpException("결제 정보를 찾을 수 없어요.");
                 }
 
-                if ($payment->state !== MemberPaymentStatusEnum::Done && $payment->state !== MemberPaymentStatusEnum::PartialCanceled) {
+                if ($payment->state !== MemberPaymentStatusEnum::Paid && $payment->state !== MemberPaymentStatusEnum::PartialCancelled) {
                     throw new PreconditionFailedHttpException("결제, 부분 취소 상태만 취소 처리할 수 있어요.");
                 }
 

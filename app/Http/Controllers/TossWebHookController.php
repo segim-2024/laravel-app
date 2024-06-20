@@ -26,7 +26,7 @@ class TossWebHookController extends Controller
         }
 
         $DTO = $request->toDTO();
-        if ($payment->state === MemberPaymentStatusEnum::Done && $DTO->status === 'DONE') {
+        if ($payment->state === MemberPaymentStatusEnum::Paid && $DTO->status === 'DONE') {
             return response()->json([
                 'message' => '이미 처리된 결제입니다.',
             ], Response::HTTP_CONFLICT);

@@ -27,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
                 'Authorization' => 'Basic '.base64_encode(Config::get('toss.secret_key')),
             ])->baseUrl('https://api.tosspayments.com/v1');
         });
+
+        Http::macro('portone', function () {
+            return Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'PortOne '.Config::get('services.portone.v2.key'),
+            ])->baseUrl('https://api.portone.io');
+        });
     }
 }

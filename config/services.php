@@ -38,4 +38,12 @@ return [
     'pamus' => [
         'api_key' => env('PAMUS_API_KEY'),
     ],
+
+    'portone' => [
+        'v2' => [
+            'web_hook_url' => env('PORTONE_WEB_HOOK_URL'),
+            'key' => env('PORTONE_API_KEY'),
+            'channel_key' => env('PORTONE_CHANNEL_KEY'),
+        ],
+    ],
 ];

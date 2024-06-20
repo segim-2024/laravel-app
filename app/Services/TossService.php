@@ -61,9 +61,9 @@ class TossService implements TossServiceInterface {
     {
         $response = Http::toss()
             ->post(
-                "/payments/{$DTO->payment->toss_key}/cancel",
+                "/payments/{$DTO->payment->tx_id}/cancel",
                 [
-                    'paymentKey' => $DTO->payment->toss_key,
+                    'paymentKey' => $DTO->payment->tx_id,
                     'cancelAmount' => $DTO->amount,
                     'cancelReason' => $DTO->reason,
                 ]

@@ -2,22 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\DTOs\CreateMemberCardDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class CreateMemberCardRequest extends FormRequest
+class PortOneWebHookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (Auth::check()) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -28,12 +22,9 @@ class CreateMemberCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'billing_key' => ['required'],
+            'payment_id' => ['required', 'string'],
+            'tx_id' => ['required', 'string'],
+            'status' => ['required', 'string'],
         ];
-    }
-
-    public function toDTO(): CreateMemberCardDTO
-    {
-        return CreateMemberCardDTO::createFromRequest($this);
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use Illuminate\Support\Collection;
@@ -26,8 +27,8 @@ interface MemberCardRepositoryInterface extends BaseRepositoryInterface
     /**
      * 카드 생성
      *
-     * @param CreateMemberCardDTO $DTO
+     * @param MemberCardDTO $DTO
      * @return MemberCard
      */
-    public function save(CreateMemberCardDTO $DTO):MemberCard;
+    public function save(MemberCardDTO $DTO):MemberCard;
 }

@@ -3,6 +3,7 @@ namespace App\Repositories\Eloquent;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
+use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\DTOs\RequestBillingPaymentFailedResponseDTO;
 use App\DTOs\TossPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
@@ -40,10 +41,10 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
             ->when($DTO->end, fn($query) => $query->where('created_at', '<=', $DTO->end))
             ->when($DTO->keyword, fn($query) => $query->where('title', 'like', "%{$DTO->keyword}%"))
             ->whereIn('state', [
-                MemberPaymentStatusEnum::Done,
-                MemberPaymentStatusEnum::Canceled,
-                MemberPaymentStatusEnum::PartialCanceled,
-                MemberPaymentStatusEnum::Aborted,
+                MemberPaymentStatusEnum::Paid,
+                MemberPaymentStatusEnum::Cancelled,
+                MemberPaymentStatusEnum::PartialCancelled,
+                MemberPaymentStatusEnum::Failed,
             ])
             ->where('member_id', '=', $DTO->member->mb_id);
 
@@ -56,7 +57,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function findFailedPayment(string $paymentId): ?MemberPayment
     {
         return MemberPayment::where('payment_id', '=', $paymentId)
-            ->where('state', '=', MemberPaymentStatusEnum::Aborted)
+            ->where('state', '=', MemberPaymentStatusEnum::Failed)
             ->first();
     }
 
@@ -67,9 +68,9 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
             ->whereIn('state', [
-                MemberPaymentStatusEnum::Done,
-                MemberPaymentStatusEnum::Canceled,
-                MemberPaymentStatusEnum::PartialCanceled,
+                MemberPaymentStatusEnum::Paid,
+                MemberPaymentStatusEnum::Cancelled,
+                MemberPaymentStatusEnum::PartialCancelled,
             ])
             ->sum('amount');
     }
@@ -81,10 +82,10 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     {
         return MemberPayment::where('member_id', '=', $member->mb_id)
             ->whereIn('state', [
-                MemberPaymentStatusEnum::Done,
-                MemberPaymentStatusEnum::Canceled,
-                MemberPaymentStatusEnum::PartialCanceled,
-                MemberPaymentStatusEnum::Aborted,
+                MemberPaymentStatusEnum::Paid,
+                MemberPaymentStatusEnum::Cancelled,
+                MemberPaymentStatusEnum::PartialCancelled,
+                MemberPaymentStatusEnum::Failed,
             ])
             ->count();
     }
@@ -118,13 +119,13 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function updateDone(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
+    public function updateDone(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
-        $payment->toss_key = $DTO->paymentKey;
+        $payment->tx_id = $DTO->pgTxId;
         $payment->state = $DTO->status;
-        $payment->api = $DTO->responseBody;
+        $payment->api = $DTO->httpResponseBody;
         $payment->receipt_url = $DTO->receiptUrl ?? null;
-        $payment->paid_at = Carbon::parse($DTO->approvedAt);
+        $payment->paid_at = Carbon::parse($DTO->paidAt);
         $payment->save();
         return $payment;
     }
@@ -132,14 +133,15 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function updateCanceled(MemberPayment $payment, TossPaymentResponseDTO $DTO): MemberPayment
+    public function updateCanceled(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
+        $payment->tx_id = $DTO->pgTxId ?? "";
         $payment->state = $DTO->status;
-        $payment->cancelled_amount = $DTO->cancels->sum('cancelAmount');
-        $payment->reason = $DTO->cancels->pluck('cancelReason')->implode("\n");
+        $payment->cancelled_amount = $DTO->cancellations?->totalAmount ?? 0;
+        $payment->reason = $DTO->cancellations?->reason ?? 'UNKNOWN';
         $payment->receipt_url = $DTO->receiptUrl ?? null;
-        $payment->cancelled_at = Carbon::parse($DTO->cancels[0]->canceledAt);
-        $payment->api = $DTO->responseBody;
+        $payment->cancelled_at = Carbon::parse($DTO->cancelledAt);
+        $payment->api = $DTO->httpResponseBody;
         $payment->save();
         return $payment;
     }
@@ -147,11 +149,23 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     /**
      * @inheritDoc
      */
-    public function updateFailed(MemberPayment $payment, RequestBillingPaymentFailedResponseDTO $DTO): MemberPayment
+    public function updateFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
+        $payment->tx_id = $DTO->pgTxId ?? "";
         $payment->state = $DTO->status;
-        $payment->reason = $DTO->message;
-        $payment->api = $DTO->responseBody;
+        $payment->reason = $portOnePaymentDTO->failure?->pg_code ?? 'UNKNOWN' ."\n". $portOnePaymentDTO->failure?->pg_message ?? 'UNKNOWN';
+        $payment->api = $DTO->httpResponseBody;
+        $payment->save();
+        return $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment
+    {
+        $payment->state = MemberPaymentStatusEnum::Failed;
+        $payment->api = $api;
         $payment->save();
         return $payment;
     }

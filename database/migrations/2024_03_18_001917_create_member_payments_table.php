@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('payment_id')->unique()->comment('주문 UUID');
             $table->string('member_id', 20)->index()->comment('학원 유저 ID');
             $table->bigInteger('card_id')->nullable()->unsigned()->comment('유저 ID');
-            $table->string('state')->default('unpaid')->index()->comment('결제 상태');
+            $table->string('state')->default('UNPAID')->index()->comment('결제 상태');
             $table->string('method', 20)->nullable()->comment('결제 상태');
             $table->nullableMorphs('productable');
             $table->string('title')->comment('결제 제목');

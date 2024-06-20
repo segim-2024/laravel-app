@@ -39,11 +39,6 @@ class SSOController extends Controller
             $this->cashService->create($member);
         }
 
-        // Toss 고객 키가 없으면 생성
-        if (! $member->toss_customer_key) {
-            $this->memberService->updateTossCustomerKey($member);
-        }
-
         // Laravel 내부 인증 시스템 사용자 세션 생성 후 서비스 페이지 진입
         Auth::login($member);
         return redirect()->route('cards.index');

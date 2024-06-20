@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('member_payments', function (Blueprint $table) {
-            $table->string('toss_key')->index()->nullable()->comment('토스 고유 키')->after('payment_id');
+            $table->string('tx_id')->index()->nullable()->comment('토스 고유 키')->after('payment_id');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('member_payments', function (Blueprint $table) {
-            $table->dropColumn('toss_key');
+            $table->dropColumn('tx_id');
         });
     }
 };

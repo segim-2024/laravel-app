@@ -4,12 +4,10 @@ namespace App\Enums;
 
 enum MemberPaymentStatusEnum:string
 {
+    case Unpaid = 'UNPAID';
     case Ready = 'READY';
-    case Done = 'DONE';
-    case Aborted = 'ABORTED';
-    case Canceled = 'CANCELED';
-    case PartialCanceled = 'PARTIAL_CANCELED';
-    case Waiting_For_Deposit = 'WAITING_FOR_DEPOSIT';
-    case In_Progress = 'IN_PROGRESS';
-    case Expired = 'EXPIRED';
+    case Paid = 'PAID';
+    case Failed = 'FAILED';
+    case Cancelled = 'CANCELLED';
+    case PartialCancelled = 'PARTIAL_CANCELLED';
 }

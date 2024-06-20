@@ -60,7 +60,7 @@ class PaymentRetryRequest extends FormRequest
                     throw new NotFoundHttpException("결제 정보를 찾을 수 없어요.");
                 }
 
-                if ($payment->state !== MemberPaymentStatusEnum::Aborted) {
+                if ($payment->state !== MemberPaymentStatusEnum::Failed) {
                     throw new ConflictHttpException("이미 처리된 결제에요.");
                 }
 

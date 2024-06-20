@@ -15,7 +15,8 @@
 
     <!-- 1. 토스 페이먼츠 SDK 추가 -->
     {{--<script src="https://js.tosspayments.com/v1/payment-widget"></script>--}}
-    <script src="https://js.tosspayments.com/v1/payment"></script>
+{{--    <script src="https://js.tosspayments.com/v1/payment"></script>--}}
+    <script type="text/javascript" src="https://cdn.portone.io/v2/browser-sdk.js"></script>
     <script type="text/javascript" charset="UTF-8" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
