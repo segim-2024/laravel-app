@@ -48,6 +48,8 @@ class PortOneService implements PortOneServiceInterface {
             'orderName' => $payment->productable->name,
             'amount' => [
                 'total' => $payment->productable->price,
+                'taxFree' => $payment->productable->price,
+                'tax' => 0,
             ],
             'customer' => [
                 'customer_name' => [
