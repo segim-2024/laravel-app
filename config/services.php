@@ -46,4 +46,9 @@ return [
             'channel_key' => env('PORTONE_CHANNEL_KEY'),
         ],
     ],
+
+    'mts' => [
+        'auth_code' => env('MTS_AUTH_CODE'),
+        'sender_key' => env('MTS_SENDER_KEY'),
+    ],
 ];

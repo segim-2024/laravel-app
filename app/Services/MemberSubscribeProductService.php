@@ -6,6 +6,7 @@ use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
+use App\Jobs\StartSubscribeSendAlimTokJob;
 use App\Models\Member;
 use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
@@ -38,6 +39,11 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
     {
         $subscribe = $this->repository->upsertCard($DTO);
         $this->logging(MemberSubscribeProductLogDTO::subscribed($subscribe));
+
+        if ($DTO->member->mb_hp) {
+            StartSubscribeSendAlimTokJob::dispatch($DTO->member)
+                ->afterCommit();
+        }
 
         /** @var Collection|Product[] $products */
         return $this->productService->getList($DTO->member);

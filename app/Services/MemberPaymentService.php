@@ -11,6 +11,7 @@ use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberCashTransactionTypeEnum;
 use App\Enums\MemberPaymentStatusEnum;
+use App\Jobs\FailedSubscribePaymentSendAlimTokJob;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -153,6 +154,11 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
 
     private function processFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
+        if ($payment->member->mb_hp) {
+            FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)
+                ->afterCommit();
+        }
+
         return $this->repository->updateFailed($payment, $DTO);
     }
 
@@ -161,6 +167,11 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment
     {
+        if ($payment->member->mb_hp) {
+            FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)
+                ->afterCommit();
+        }
+
         return $this->repository->manuallySetFailed($payment, $api);
     }
 }

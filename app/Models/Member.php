@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string $mb_nick 닉네임
  * @property string $mb_nick_date ??
  * @property string $mb_email 이메일
+ * @property string $mb_hp 핸드폰
  * @property string $mb_homepage 홈페이지
  * @property string $mb_level 레벨
  * @property ?string $toss_customer_key 토스 Customer 키

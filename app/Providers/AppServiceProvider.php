@@ -34,5 +34,11 @@ class AppServiceProvider extends ServiceProvider
                 'Authorization' => 'PortOne '.Config::get('services.portone.v2.key'),
             ])->baseUrl('https://api.portone.io');
         });
+
+        Http::macro('mts', function () {
+            return Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->baseUrl('https://api.mtsco.co.kr/');
+        });
     }
 }
