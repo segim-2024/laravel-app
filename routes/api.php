@@ -3,6 +3,7 @@
 use App\Http\Controllers\MemberCashController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
+use App\Http\Controllers\OrderAlimTokController;
 use App\Http\Controllers\PortOneWebHookController;
 use App\Http\Controllers\TossWebHookController;
 use App\Http\Middleware\CheckFromPamusMiddleware;
@@ -28,6 +29,8 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/payments/cancel', [MemberPaymentController::class, 'cancel']);
     Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
     Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
+
+    Route::post('/alim-tok/shipment-track', [OrderAlimTokController::class, 'shipmentTrack']);
 });
 
 Route::post('/toss/web-hook', [TossWebHookController::class, 'index']);

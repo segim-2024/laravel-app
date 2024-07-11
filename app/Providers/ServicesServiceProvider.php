@@ -19,6 +19,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\OrderServiceInterface::class, \App\Services\OrderService::class);
         $this->app->bind(\App\Services\Interfaces\PortOneServiceInterface::class, \App\Services\PortOneService::class);
         $this->app->bind(\App\Services\Interfaces\AlimTokClientServiceInterface::class, \App\Services\AlimTokClientService::class);
+        $this->app->bind(\App\Services\Interfaces\OrderAlimTokServiceInterface::class, \App\Services\OrderAlimTokService::class);
     }
 
     public function boot()

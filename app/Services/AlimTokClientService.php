@@ -35,8 +35,8 @@ class AlimTokClientService implements AlimTokClientServiceInterface {
             $params['header'] = $DTO->header;
         }
 
-        if ($DTO->attachment) {
-            $params['attachment'] = $DTO->attachment;
+        if ($DTO->attachments) {
+            $params['attachment'] = $DTO->attachments;
         }
 
         $response = Http::mts()

@@ -10,7 +10,7 @@ class AlimTokDTO
         public string $message,
         public ?string $title = null,
         public ?string $header = null,
-        public ?string $attachment = null,
+        public ?array $attachments = null,
 //        public string $tran_type,
 //        public string $tran_message,
     ) {}

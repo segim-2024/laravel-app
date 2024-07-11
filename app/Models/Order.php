@@ -32,6 +32,9 @@ use Illuminate\Support\Collection;
  * @property string $od_time 주문일시
  * @property string $od_settle_case 결제수단
  * @property string $od_cart_count 카트 아이템 갯수
+ * @property string $od_delivery_company 택배사
+ * @property string $od_invoice 운송장번호
+ * @property string $od_invoice_time 운송장번호 입력 시각
  * @property Member $member via member() relationship getter magic method
  * @property Collection|Cart[] $carts via carts() relationship getter magic method
  */
