@@ -53,7 +53,7 @@ class Order extends Model
 
     public function member(): BelongsTo
     {
-        return $this->belongsTo(Member::class, 'member_id', 'mb_id');
+        return $this->belongsTo(Member::class, 'mb_id', 'mb_id');
     }
 
     public function carts():HasMany
