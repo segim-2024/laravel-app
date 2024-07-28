@@ -39,7 +39,7 @@ class SendDepositGuidanceAlimTokJob implements ShouldQueue
         $content = view('toks.deposit_guidance', [
             'memberSchoolName' => $DTO->order->od_name,
             'orderNo' => $DTO->order->od_id,
-            'orderPrice' => number_format($DTO->order->od_receipt_price),
+            'orderPrice' => number_format($DTO->order->od_misu),
         ])->render();
 
         $service->send(new AlimTokDTO(
