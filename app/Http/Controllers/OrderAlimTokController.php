@@ -19,7 +19,7 @@ class OrderAlimTokController extends Controller
     public function payment(AlimTokSendRequest $request): JsonResponse
     {
         try {
-            $this->service->shipmentTrack($request->toDTO());
+            $this->service->payment($request->toDTO());
         } catch (Exception $exception) {
             Log::error($exception);
             return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -31,7 +31,7 @@ class OrderAlimTokController extends Controller
     public function depositGuidance(AlimTokSendRequest $request): JsonResponse
     {
         try {
-            $this->service->shipmentTrack($request->toDTO());
+            $this->service->depositGuidance($request->toDTO());
         } catch (Exception $exception) {
             Log::error($exception);
             return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
