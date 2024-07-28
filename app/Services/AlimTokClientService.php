@@ -20,7 +20,7 @@ class AlimTokClientService implements AlimTokClientServiceInterface {
             'auth_code' => Config::get('services.mts.auth_code'),
             'sender_key' => Config::get('services.mts.sender_key'),
             'callback_number' => "1670-1705",
-            'phone_number' => $DTO->phoneNumber,
+            'phone_number' => str_replace('-', '', $DTO->phoneNumber),
             'template_code' => $DTO->templateCode,
             'message' => $DTO->message,
 //            'tran_type' => 'Y',

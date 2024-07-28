@@ -30,6 +30,8 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
     Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
 
+    Route::post('/alim-tok/payment', [OrderAlimTokController::class, 'payment']);
+    Route::post('/alim-tok/deposit-guidance', [OrderAlimTokController::class, 'depositGuidance']);
     Route::post('/alim-tok/shipment-track', [OrderAlimTokController::class, 'shipmentTrack']);
 });
 

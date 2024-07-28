@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\DTOs\AlimTokDTO;
 use App\DTOs\OrderDTO;
 use App\Services\Interfaces\AlimTokClientServiceInterface;
-use Carbon\Carbon;
 use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -14,7 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendShipmentTrackTokJob implements ShouldQueue
+class SendOrderPaymentAlimTokJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -37,29 +36,16 @@ class SendShipmentTrackTokJob implements ShouldQueue
             return;
         }
 
-        $content = view('toks.shipment_track', [
+        $content = view('toks.order_payment', [
             'memberSchoolName' => $DTO->order->od_name,
-            'orderDate' => Carbon::parse($DTO->order->od_time)->format('Y-m-d H:i:s'),
-            'orderNo' => $DTO->order->od_id
+            'orderNo' => $DTO->order->od_id,
+            'orderPrice' => number_format($DTO->order->od_receipt_price),
         ])->render();
-        $link = "http://trace.cjlogistics.com/web/detail.jsp?slipno={$DTO->order->od_invoice}";
-        $attachments = [
-            'button' => [
-                [
-                    'name' => "배송 조회",
-                    'type' => "WL",
-                    'url_pc' => $link,
-                    'url_mobile' => $link,
-                    'target' => "out",
-                ]
-            ]
-        ];
 
         $service->send(new AlimTokDTO(
             phoneNumber: $DTO->order->od_hp,
-            templateCode: 'deliver01_2',
-            message: $content,
-            attachments: $attachments
+            templateCode: 'deliver04',
+            message: $content
         ));
     }
 
