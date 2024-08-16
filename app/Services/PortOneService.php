@@ -134,6 +134,6 @@ class PortOneService implements PortOneServiceInterface {
             return true;
         }
 
-        return false;
+        throw new PortOneBillingPaymentException("결제 취소 실패 : {$response->body()}", $response->status());
     }
 }

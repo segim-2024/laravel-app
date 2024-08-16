@@ -55,6 +55,7 @@ interface PortOneServiceInterface
     /**
      * @param PaymentCancelDTO $DTO
      * @return bool
+     * @throws PortOneBillingPaymentException
      */
     public function cancel(PaymentCancelDTO $DTO): bool;
 }

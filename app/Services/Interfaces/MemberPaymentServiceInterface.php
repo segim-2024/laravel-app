@@ -7,6 +7,7 @@ use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
+use App\Exceptions\PortOneBillingPaymentException;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -51,12 +52,14 @@ interface MemberPaymentServiceInterface
     /**
      * @param PaymentRetryDTO $DTO
      * @return MemberPayment
+     * @throws PortOneBillingPaymentException
      */
     public function retry(PaymentRetryDTO $DTO): MemberPayment;
 
     /**
      * @param PaymentCancelDTO $DTO
      * @return MemberPayment
+     * @throws PortOneBillingPaymentException
      */
     public function cancel(PaymentCancelDTO $DTO): MemberPayment;
 

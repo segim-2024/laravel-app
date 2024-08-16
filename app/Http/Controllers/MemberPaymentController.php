@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\GetMemberPaymentListDTO;
+use App\Exceptions\PortOneBillingPaymentException;
 use App\Http\Requests\PaymentCancelRequest;
 use App\Http\Requests\PaymentRetryRequest;
 use App\Http\Resources\MemberPaymentResource;
@@ -50,6 +51,10 @@ class MemberPaymentController extends Controller
         try {
             $payment = $this->service->retry($request->toDTO());
             DB::commit();
+        } catch (PortOneBillingPaymentException $e) {
+            DB::rollBack();
+            Log::error($e);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_BAD_GATEWAY);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
@@ -66,6 +71,10 @@ class MemberPaymentController extends Controller
         try {
             $payment = $this->service->cancel($request->toDTO());
             DB::commit();
+        } catch (PortOneBillingPaymentException $e) {
+            DB::rollBack();
+            Log::error($e);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_BAD_GATEWAY);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
