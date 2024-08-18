@@ -20,6 +20,11 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\PortOneServiceInterface::class, \App\Services\PortOneService::class);
         $this->app->bind(\App\Services\Interfaces\AlimTokClientServiceInterface::class, \App\Services\AlimTokClientService::class);
         $this->app->bind(\App\Services\Interfaces\OrderAlimTokServiceInterface::class, \App\Services\OrderAlimTokService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorFileSeriesServiceInterface::class, \App\Services\DoctorFileSeriesService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorFileVolumeServiceInterface::class, \App\Services\DoctorFileVolumeService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorFileLessonServiceInterface::class, \App\Services\DoctorFileLessonService::class);
+        $this->app->bind(\App\Services\Interfaces\FileServiceInterface::class, \App\Services\FileService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorFileLessonMaterialServiceInterface::class, \App\Services\DoctorFileLessonMaterialService::class);
     }
 
     public function boot()

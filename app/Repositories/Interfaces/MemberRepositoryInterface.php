@@ -2,6 +2,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Models\Member;
+use App\Models\WhaleMember;
 
 interface MemberRepositoryInterface extends BaseRepositoryInterface
 {
@@ -10,6 +11,12 @@ interface MemberRepositoryInterface extends BaseRepositoryInterface
      * @return Member|null
      */
     public function find(string $id): ?Member;
+
+    /**
+     * @param string $id
+     * @return WhaleMember|null
+     */
+    public function findFromWhale(string $id): ?WhaleMember;
 
     /**
      * @param Member $member

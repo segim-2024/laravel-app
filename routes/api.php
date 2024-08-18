@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\DoctorFileLessonController;
+use App\Http\Controllers\DoctorFileLessonMaterialController;
+use App\Http\Controllers\DoctorFileSeriesController;
+use App\Http\Controllers\DoctorFileVolumeController;
 use App\Http\Controllers\MemberCashController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
 use App\Http\Controllers\OrderAlimTokController;
 use App\Http\Controllers\PortOneWebHookController;
+use App\Http\Controllers\SignInController;
 use App\Http\Controllers\TossWebHookController;
 use App\Http\Middleware\CheckFromPamusMiddleware;
 use Illuminate\Http\Request;
@@ -33,6 +38,26 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/alim-tok/payment', [OrderAlimTokController::class, 'payment']);
     Route::post('/alim-tok/deposit-guidance', [OrderAlimTokController::class, 'depositGuidance']);
     Route::post('/alim-tok/shipment-track', [OrderAlimTokController::class, 'shipmentTrack']);
+});
+
+/* 토큰 발급 */
+Route::post('/sign-in', [SignInController::class, 'signIn'])->middleware('checkPamusIP');
+
+Route::middleware(['auth:sanctum', 'checkPamusIP'])->group(function () {
+    /* 자료박사 - 시리즈 [삭제] */
+    Route::delete('/doctor-file/series/{uuid}', [DoctorFileSeriesController::class, 'destroy']);
+    /* 자료박사 - 볼륨 [가져오기, 표지 수정, 출력 여부 수정, 설명 수정, 삭제] */
+    Route::get('/doctor-file/volumes/{uuid}', [DoctorFileVolumeController::class, 'show']);
+    Route::post('/doctor-file/volumes/{uuid}/poster', [DoctorFileVolumeController::class, 'updatePoster']);
+    Route::patch('/doctor-file/volumes/{uuid}/description', [DoctorFileVolumeController::class, 'updateDescription']);
+    Route::patch('/doctor-file/volumes/{uuid}/is-published', [DoctorFileVolumeController::class, 'updateIsPublished']);
+    Route::delete('/doctor-file/volumes/{uuid}', [DoctorFileVolumeController::class, 'destroy']);
+    /* 자료박사 - 레쓴 [가져오기, 파일 수정, 설명 수정, 삭제] */
+    Route::get('/doctor-file/lessons/{uuid}', [DoctorFileLessonController::class, 'show']);
+    Route::delete('/doctor-file/lessons/{uuid}', [DoctorFileLessonController::class, 'destroy']);
+    /* 자료박사 - 자료 [입력, 삭제] */
+    Route::post('/doctor-file/lessons/{uuid}/materials', [DoctorFileLessonMaterialController::class, 'store']);
+    Route::delete('/doctor-file/lessons/materials/{uuid}', [DoctorFileLessonMaterialController::class, 'destroy']);
 });
 
 Route::post('/toss/web-hook', [TossWebHookController::class, 'index']);

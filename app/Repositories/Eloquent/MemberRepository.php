@@ -2,6 +2,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Member;
+use App\Models\WhaleMember;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -19,6 +20,14 @@ class MemberRepository extends BaseRepository implements MemberRepositoryInterfa
     public function find(string $id): ?Member
     {
         return Member::where('mb_id', '=', $id)->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findFromWhale(string $id): ?WhaleMember
+    {
+        return WhaleMember::where('mb_id', '=', $id)->first();
     }
 
     /**

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\MemberInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property int $mb_no PK
@@ -27,8 +29,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property MemberCard[]|Collection[] $cards via cards() relationship getter magic method
  * @property MemberSubscribeProduct[]|Collection $subscribes via subscribes() relationship getter magic method
  */
-class Member extends Authenticatable
+class Member extends Authenticatable implements MemberInterface
 {
+    use HasApiTokens;
+
     protected $table = "g5_member";
 
     protected $primaryKey = 'mb_no';

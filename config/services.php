@@ -36,6 +36,7 @@ return [
     ],
 
     'pamus' => [
+        'ip' => env('PAMUS_IP'),
         'api_key' => env('PAMUS_API_KEY'),
     ],
 
