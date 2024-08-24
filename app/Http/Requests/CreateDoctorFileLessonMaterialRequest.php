@@ -48,7 +48,7 @@ class CreateDoctorFileLessonMaterialRequest extends FormRequest
             'title'       => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:1000'],
             'color_code'  => ['required', 'string', 'max:20'],
-            'file'        => ['required', 'mimes:pdf,pptx,ppt,doc,docx', 'max:10240'],
+            'file'        => ['required', 'mimes:pdf,pptx,ppt,doc,docx', 'max:30720'],
         ];
     }
 
