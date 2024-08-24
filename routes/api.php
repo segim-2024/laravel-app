@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DoctorFileLessonController;
 use App\Http\Controllers\DoctorFileLessonMaterialController;
+use App\Http\Controllers\DoctorFileNoticeController;
 use App\Http\Controllers\DoctorFileSeriesController;
 use App\Http\Controllers\DoctorFileVolumeController;
 use App\Http\Controllers\MemberCashController;
@@ -44,6 +45,11 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
 Route::post('/sign-in', [SignInController::class, 'signIn'])->middleware('checkPamusIP');
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    /* 자료박사 - 공지 [리스트, 입력, 수정, 삭제] */
+    Route::get('/doctor-file/notices', [DoctorFileNoticeController::class, 'index']);
+    Route::post('/doctor-file/notices', [DoctorFileNoticeController::class, 'store']);
+    Route::patch('/doctor-file/notices/{noticeId}', [DoctorFileNoticeController::class, 'update']);
+    Route::delete('/doctor-file/notices/{noticeId}', [DoctorFileNoticeController::class, 'destroy']);
     /* 자료박사 - 시리즈 [리스트, 삭제] */
     Route::get('/doctor-file/series', [DoctorFileSeriesController::class, 'index']);
     Route::delete('/doctor-file/series/{uuid}', [DoctorFileSeriesController::class, 'destroy']);
