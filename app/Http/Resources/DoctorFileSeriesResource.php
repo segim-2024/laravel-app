@@ -11,30 +11,13 @@ class DoctorFileSeriesResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $data = [];
-        $index = 0;
-
-        $data[$index] = [
-            'id' => 1,
-            'pId' => 0,
-            'name' => '자료 박사',
-            'isParent' => true,
-            'isAdd' => true,
-            'isEdit' => false,
-            'isUpload' => false,
-            'open' => true,
-            'depth' => 0,
-        ];
-
         return [
-            'id'  => $this->uuid,
-            'pId' => 1,
-            'name' => $this->title,
-            'isParent' => true,
-            'isAdd' => true,
-            'isEdit' => true,
-            'isUpload' => false,
-            'depth' => 1,
+            'id'          => $this->id,
+            'series_uuid' => $this->series_uuid,
+            'title'       => $this->title,
+            'sort'        => $this->sort,
+            'is_whale'    => $this->is_whale,
+            'volumes'     => DoctorFileVolumeResource::collection($this->volumes->sortBy('sort')),
         ];
     }
 }

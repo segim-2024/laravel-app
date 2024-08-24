@@ -44,7 +44,8 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
 Route::post('/sign-in', [SignInController::class, 'signIn'])->middleware('checkPamusIP');
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    /* 자료박사 - 시리즈 [삭제] */
+    /* 자료박사 - 시리즈 [리스트, 삭제] */
+    Route::get('/doctor-file/series', [DoctorFileSeriesController::class, 'index']);
     Route::delete('/doctor-file/series/{uuid}', [DoctorFileSeriesController::class, 'destroy']);
     /* 자료박사 - 볼륨 [가져오기, 표지 수정, 출력 여부 수정, 설명 수정, 삭제] */
     Route::get('/doctor-file/volumes/{uuid}', [DoctorFileVolumeController::class, 'show']);

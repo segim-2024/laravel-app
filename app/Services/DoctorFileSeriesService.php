@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Resources\DoctorFileSeriesRootResource;
+use App\DTOs\GetListDoctorFileSeriesDTO;
 use App\Models\DoctorFileSeries;
 use App\Repositories\Interfaces\DoctorFileSeriesRepositoryInterface;
 use App\Services\Interfaces\DoctorFileSeriesServiceInterface;
@@ -14,6 +14,14 @@ class DoctorFileSeriesService implements DoctorFileSeriesServiceInterface {
         protected DoctorFileVolumeServiceInterface $volumeService,
         protected DoctorFileSeriesRepositoryInterface $repository
     ) {}
+
+    /**
+     * @inheritDoc
+     */
+    public function getList(GetListDoctorFileSeriesDTO $DTO): Collection
+    {
+        return $this->repository->getList($DTO);
+    }
 
     /**
      * @inheritDoc
