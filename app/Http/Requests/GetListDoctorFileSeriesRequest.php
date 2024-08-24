@@ -30,7 +30,8 @@ class GetListDoctorFileSeriesRequest extends FormRequest
         } elseif (str_contains($referer, 'https://englishwhale.com')) {
             $this->isWhale = true;
         } else {
-            throw new AccessDeniedHttpException('허용되지 않는 접근입니다.');
+            $this->isWhale = true;
+            // throw new AccessDeniedHttpException('허용되지 않는 접근입니다.');
         }
 
         return true;
