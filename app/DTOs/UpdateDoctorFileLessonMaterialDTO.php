@@ -13,7 +13,7 @@ class UpdateDoctorFileLessonMaterialDTO
         public string $title,
         public string $description,
         public string $colorCode,
-        public UploadedFile $file
+        public ?UploadedFile $file = null
     ) {}
 
     public static function createFromRequest(UpdateDoctorFileLessonMaterialRequest $request): self

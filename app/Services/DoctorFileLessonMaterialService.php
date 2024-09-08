@@ -39,11 +39,15 @@ class DoctorFileLessonMaterialService implements DoctorFileLessonMaterialService
      */
     public function update(UpdateDoctorFileLessonMaterialDTO $DTO): DoctorFileLessonMaterial
     {
-        if ($DTO->material->file) {
+        if ($DTO->material->file && $DTO->file) {
             DeleteFileFromS3Job::dispatch($DTO->material->file)->afterCommit();
         }
 
-        $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->material->lesson, $DTO->file));
+        $file = null;
+        if ($DTO->file) {
+            $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->material->lesson, $DTO->file));
+        }
+
         return $this->repository->updateMaterial($DTO, $file);
     }
 

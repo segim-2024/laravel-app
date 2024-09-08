@@ -51,7 +51,9 @@ class DoctorFileLessonMaterialRepository extends BaseRepository implements Docto
         $material->title = $DTO->title;
         $material->description = $DTO->description;
         $material->hex_color_code = $DTO->colorCode;
-        $material->file_uuid = $file?->uuid;
+        if ($DTO->file) {
+            $material->file_uuid = $file?->uuid;
+        }
         $material->save();
         return $material->load(['file']);
     }
