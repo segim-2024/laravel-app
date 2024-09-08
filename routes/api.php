@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/doctor-file/lessons/{uuid}', [DoctorFileLessonController::class, 'destroy']);
     /* 자료박사 - 자료 [입력, 삭제] */
     Route::post('/doctor-file/lessons/{uuid}/materials', [DoctorFileLessonMaterialController::class, 'store']);
+    Route::patch('/doctor-file/lessons/materials/{uuid}', [DoctorFileLessonMaterialController::class, 'update']);
     Route::delete('/doctor-file/lessons/materials/{uuid}', [DoctorFileLessonMaterialController::class, 'destroy']);
 });
 

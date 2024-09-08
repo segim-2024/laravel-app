@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\CreateDoctorFileLessonMaterialDTO;
 use App\DTOs\CreateFileDTO;
+use App\DTOs\UpdateDoctorFileLessonMaterialDTO;
 use App\Jobs\DeleteFileFromS3Job;
 use App\Models\DoctorFileLessonMaterial;
 use App\Repositories\Interfaces\DoctorFileLessonMaterialRepositoryInterface;
@@ -31,6 +32,19 @@ class DoctorFileLessonMaterialService implements DoctorFileLessonMaterialService
     {
         $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->lesson, $DTO->file));
         return $this->repository->save($DTO, $file);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(UpdateDoctorFileLessonMaterialDTO $DTO): DoctorFileLessonMaterial
+    {
+        if ($DTO->material->file) {
+            DeleteFileFromS3Job::dispatch($DTO->material->file)->afterCommit();
+        }
+
+        $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->material->lesson, $DTO->file));
+        return $this->repository->updateMaterial($DTO, $file);
     }
 
     /**

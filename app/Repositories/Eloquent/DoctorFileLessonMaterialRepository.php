@@ -2,6 +2,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\CreateDoctorFileLessonMaterialDTO;
+use App\DTOs\UpdateDoctorFileLessonMaterialDTO;
 use App\Models\DoctorFileLessonMaterial;
 use App\Models\File;
 use App\Repositories\Interfaces\DoctorFileLessonMaterialRepositoryInterface;
@@ -33,6 +34,20 @@ class DoctorFileLessonMaterialRepository extends BaseRepository implements Docto
         $material = new DoctorFileLessonMaterial();
         $material->lesson_uuid = $DTO->lesson->lesson_uuid;
         $material->material_uuid = Str::orderedUuid();
+        $material->title = $DTO->title;
+        $material->description = $DTO->description;
+        $material->hex_color_code = $DTO->colorCode;
+        $material->file_uuid = $file?->uuid;
+        $material->save();
+        return $material->load(['file']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateMaterial(UpdateDoctorFileLessonMaterialDTO $DTO, ?File $file = null): DoctorFileLessonMaterial
+    {
+        $material = $DTO->material;
         $material->title = $DTO->title;
         $material->description = $DTO->description;
         $material->hex_color_code = $DTO->colorCode;

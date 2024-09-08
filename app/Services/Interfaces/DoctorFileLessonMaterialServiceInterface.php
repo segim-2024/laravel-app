@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\CreateDoctorFileLessonMaterialDTO;
+use App\DTOs\UpdateDoctorFileLessonMaterialDTO;
 use App\Models\DoctorFileLessonMaterial;
 
 interface DoctorFileLessonMaterialServiceInterface
@@ -18,6 +19,12 @@ interface DoctorFileLessonMaterialServiceInterface
      * @return DoctorFileLessonMaterial
      */
     public function create(CreateDoctorFileLessonMaterialDTO $DTO): DoctorFileLessonMaterial;
+
+    /**
+     * @param UpdateDoctorFileLessonMaterialDTO $DTO
+     * @return DoctorFileLessonMaterial
+     */
+    public function update(UpdateDoctorFileLessonMaterialDTO $DTO): DoctorFileLessonMaterial;
 
     /**
      * @param DoctorFileLessonMaterial $material

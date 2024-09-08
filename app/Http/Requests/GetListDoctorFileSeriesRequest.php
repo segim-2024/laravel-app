@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use function Symfony\Component\Translation\t;
 
 class GetListDoctorFileSeriesRequest extends FormRequest
 {
@@ -21,7 +22,7 @@ class GetListDoctorFileSeriesRequest extends FormRequest
         $referer = $this->headers->get('referer');
         Log::info($referer);
         if (! $referer && Config::get('app.env') === 'local') {
-            $this->isWhale = true;
+            $this->isWhale = false;
             return true;
         }
 
@@ -30,7 +31,7 @@ class GetListDoctorFileSeriesRequest extends FormRequest
         } elseif (str_contains($referer, 'https://englishwhale.com')) {
             $this->isWhale = true;
         } else {
-            $this->isWhale = true;
+            $this->isWhale = false;
             // throw new AccessDeniedHttpException('허용되지 않는 접근입니다.');
         }
 
