@@ -40,7 +40,7 @@ class UpdateDoctorFileLessonMaterialRequest extends FormRequest
             'title'       => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:1000'],
             'color_code'  => ['required', 'string', 'max:20'],
-            'file'        => ['nullable', 'mimes:pdf,pptx,ppt,doc,docx,xlsx,csv,png,jpeg,webp,jpg,gif,mp4', 'max:30720'],
+            'file'        => ['nullable', 'mimes:pdf,pptx,ppt,doc,docx,xlsx,xls,csv,zip,png,jpeg,webp,jpg,gif,mp4', 'max:30720'],
         ];
     }
 
