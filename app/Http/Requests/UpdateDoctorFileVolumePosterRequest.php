@@ -45,7 +45,7 @@ class UpdateDoctorFileVolumePosterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'poster' => ['required', 'mimes:jpg,jpeg,png,webp', 'max:4048'],
+            'poster' => ['required', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ];
     }
 
