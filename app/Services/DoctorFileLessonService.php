@@ -72,7 +72,7 @@ class DoctorFileLessonService implements DoctorFileLessonServiceInterface {
 
         // 압축된 파일을 S3에 업로드
         $s3ZipPath = "doctor-file/lessons/{$lesson->lesson_uuid}/{$lesson->lesson_uuid}.zip";
-        Storage::disk('s3')->put($s3ZipPath, file_get_contents($localZipPath));
+        Storage::disk('s3')->put($s3ZipPath, file_get_contents($localZipPath), 'public');
         $pathFull = Storage::drive('s3')->url($s3ZipPath);
 
         // Zip 파일 삭제
