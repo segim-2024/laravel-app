@@ -57,7 +57,7 @@ class DoctorFileLessonService implements DoctorFileLessonServiceInterface {
         $files->each(function (File $file) use ($tempDir, $zip, $localFilePaths) {
             // 로컬 임시 경로에 파일 저장
             $localFilePath = $tempDir."/".Str::random(6).Str::uuid().'.'.$file->extension;
-            $s3File = Storage::disk('s3')->get($file->path.$file->server_name);
+            $s3File = Storage::disk('s3')->get($file->path."/".$file->server_name);
             file_put_contents($localFilePath, $s3File);
 
             // 파일을 Zip에 추가
