@@ -24,6 +24,7 @@ class DoctorFileSeriesRepository extends BaseRepository implements DoctorFileSer
                         ->with([
                             'poster',
                             'lessons' => [
+                                'zip',
                                 'materials' => [
                                     'file'
                                 ]
