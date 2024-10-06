@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\CreateDoctorFileLessonMaterialDTO;
 use App\DTOs\CreateFileDTO;
 use App\DTOs\UpdateDoctorFileLessonMaterialDTO;
+use App\Jobs\CreateDoctorFileLessonZipJob;
 use App\Jobs\DeleteFileFromS3Job;
 use App\Models\DoctorFileLessonMaterial;
 use App\Repositories\Interfaces\DoctorFileLessonMaterialRepositoryInterface;
@@ -31,6 +32,7 @@ class DoctorFileLessonMaterialService implements DoctorFileLessonMaterialService
     public function create(CreateDoctorFileLessonMaterialDTO $DTO): DoctorFileLessonMaterial
     {
         $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->lesson, $DTO->file));
+        CreateDoctorFileLessonZipJob::dispatch($DTO->lesson)->afterCommit();
         return $this->repository->save($DTO, $file);
     }
 
@@ -48,6 +50,7 @@ class DoctorFileLessonMaterialService implements DoctorFileLessonMaterialService
             $file = $this->fileService->create(CreateFileDTO::createFromDoctorFileLessonMaterial($DTO->material->lesson, $DTO->file));
         }
 
+        CreateDoctorFileLessonZipJob::dispatch($DTO->material->lesson)->afterCommit();
         return $this->repository->updateMaterial($DTO, $file);
     }
 
@@ -61,5 +64,9 @@ class DoctorFileLessonMaterialService implements DoctorFileLessonMaterialService
         }
 
         $this->repository->delete($material);
+
+        if ($material->lesson->materials()->count() < 2) {
+            $this->fileService->delete($material->lesson->zip);
+        }
     }
 }

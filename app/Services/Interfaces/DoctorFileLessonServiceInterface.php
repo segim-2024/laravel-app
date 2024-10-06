@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Exceptions\CreateZipException;
 use App\Models\DoctorFileLesson;
 
 interface DoctorFileLessonServiceInterface
@@ -17,4 +18,11 @@ interface DoctorFileLessonServiceInterface
      * @return void
      */
     public function delete(DoctorFileLesson $lesson): void;
+
+    /**
+     * @param DoctorFileLesson $lesson
+     * @return void
+     * @throws CreateZipException
+     */
+    public function createZip(DoctorFileLesson $lesson): void;
 }

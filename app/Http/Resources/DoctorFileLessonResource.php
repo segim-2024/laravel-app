@@ -17,6 +17,7 @@ class DoctorFileLessonResource extends JsonResource
             'lesson_uuid' => $this->lesson_uuid,
             'title'       => $this->title,
             'sort'        => $this->sort,
+            'zip'         => FileResource::make($this->zip),
             'materials'   => DoctorFileLessonMaterialResource::collection($this->materials->sortBy('created_at')),
         ];
     }

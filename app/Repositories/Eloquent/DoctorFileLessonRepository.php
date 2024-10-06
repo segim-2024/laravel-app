@@ -20,7 +20,8 @@ class DoctorFileLessonRepository extends BaseRepository implements DoctorFileLes
             ->with([
                 'materials' => [
                     'file'
-                ]
+                ],
+                'zip'
             ])
             ->first();
     }

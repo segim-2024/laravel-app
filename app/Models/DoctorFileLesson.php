@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  * @property DoctorFileSeries $series
  * @property DoctorFileVolume $volume
  * @property DoctorFileLessonMaterial[]|Collection $materials
- * @property ?File $file
+ * @property ?File $zip
  */
 class DoctorFileLesson extends Model
 {
@@ -54,8 +54,8 @@ class DoctorFileLesson extends Model
         return $this->hasMany(DoctorFileLessonMaterial::class, 'lesson_uuid', 'lesson_uuid');
     }
 
-    public function file(): HasOne
+    public function zip(): HasOne
     {
-        return $this->hasOne(File::class, 'uuid', 'file_uuid');
+        return $this->hasOne(File::class, 'uuid', 'lesson_uuid');
     }
 }
