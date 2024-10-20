@@ -63,8 +63,9 @@ class PortOneService implements PortOneServiceInterface {
         ];
 
         // 이메일이 존재하지 않는 경우가 있어 옵셔널하게 입력
-        if ($payment->member->mb_email) {
-            $params['customer']['email'] = $payment->member->mb_email;
+        $email = str_replace(' ', '', $payment->member->mb_email);
+        if ($email) {
+            $params['customer']['email'] = $email;
         }
 
         $response = Http::portone()
