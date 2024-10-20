@@ -30,6 +30,7 @@ class PortOneGetPaymentResponseDTO
         public readonly ?string                        $cancelledAt,
         public readonly ?string                        $failedAt,
         public readonly mixed                          $cashReceipt,
+        public readonly ?PortOnePaymentFailureDTO      $failure,
 
         public readonly ?string                        $type,
         public readonly ?string                        $message,
@@ -75,6 +76,9 @@ class PortOneGetPaymentResponseDTO
                 cancelledAt: $data->cancelledAt ?? null,
                 failedAt: $data->failedAt ?? null,
                 cashReceipt: $data->cashReceipt ?? null,
+                failure: isset($data->failure)
+                    ? new PortOnePaymentFailureDTO($data->failure->reason, $data->failure->pgCode, $data->failure->pgMessage)
+                    : null,
                 type: $data->type ?? "",
                 message: $data->message ?? "",
                 httpStatus: $response->status(),

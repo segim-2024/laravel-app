@@ -153,7 +153,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     {
         $payment->tx_id = $DTO->pgTxId ?? "";
         $payment->state = $DTO->status;
-        $payment->reason = $portOnePaymentDTO->failure?->pg_code ?? 'UNKNOWN' ."\n". $portOnePaymentDTO->failure?->pg_message ?? 'UNKNOWN';
+        $payment->reason = $DTO->failure?->pgCode ?? 'UNKNOWN' ."\n". $DTO->failure?->pgMessage ?? 'UNKNOWN';
         $payment->api = $DTO->httpResponseBody;
         $payment->save();
         return $payment;
