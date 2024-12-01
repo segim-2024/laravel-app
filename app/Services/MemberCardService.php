@@ -18,6 +18,14 @@ class MemberCardService implements MemberCardServiceInterface {
     ) {}
 
     /**
+     * @inheritDoc
+     */
+    public function findById(int $id): ?MemberCard
+    {
+        return $this->repository->findById($id);
+    }
+
+    /**
      * @param Member $member
      * @param int|string $id
      * @inheritDoc

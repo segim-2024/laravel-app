@@ -29,7 +29,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property Member $member via member() relationship getter magic method
  * @property MemberCard $card via card() relationship getter magic method
- * @property-read Product|null $productable Type of the productable relationship
+ * @property-read Product|LibraryProduct|null $productable Type of the productable relationship
  */
 class MemberPayment extends Model
 {

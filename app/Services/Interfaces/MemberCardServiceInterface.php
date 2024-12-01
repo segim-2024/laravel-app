@@ -11,6 +11,12 @@ use Illuminate\Support\Collection;
 interface MemberCardServiceInterface
 {
     /**
+     * @param int $id
+     * @return MemberCard|null
+     */
+    public function findById(int $id): ?MemberCard;
+
+    /**
      * @param Member $member
      * @param string|int $id
      * @return MemberCard|null

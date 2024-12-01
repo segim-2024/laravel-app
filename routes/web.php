@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LibraryPaymentController;
+use App\Http\Controllers\LibraryProductSubscribeController;
 use App\Http\Controllers\MemberCardController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
@@ -42,6 +44,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/list', [OrderController::class, 'list'])->name('orders.list');
+
+    Route::get('/library-payments', [LibraryPaymentController::class, 'index'])->name('library-payments.index');
+    Route::get('/library-payments/list', [MemberPaymentController::class, 'list'])->name('library-payments.list');
+
+    Route::get('/library-products', [LibraryProductSubscribeController::class, 'index'])->name('library-products.index');
+    Route::post('/library-products/{productId}/subscribe', [LibraryProductSubscribeController::class, 'subscribe'])->name('library-products.subscribe');
+    Route::patch('/library-products/{productId}/unsubscribe', [LibraryProductSubscribeController::class, 'unsubscribe'])->name('library-products.unsubscribe');
+    Route::patch('/library-products/{productId}/card', [LibraryProductSubscribeController::class, 'updateCard'])->name('library-products.update-card');
+    Route::get('/library-products/check-can-subscribe', [LibraryProductSubscribeController::class, 'checkCanSubscribe'])->name('library-products.check-can-subscribe');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });

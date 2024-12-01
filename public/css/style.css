@@ -5,7 +5,7 @@ div {box-sizing: border-box;}
     border: 1px solid #e1e4ea;
 }
 .e-cash {
-    max-width: 1920px;
+    width: 100%;
     height: 100%;
     font-size: 18px;
     background-color: #f1f4f9;
@@ -25,8 +25,7 @@ div {box-sizing: border-box;}
 .loading {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: calc(50% - 20px);
     width: 40px;
     height: 40px;
     border: 5px solid #3f51b5;
@@ -94,8 +93,12 @@ table .num {
     background-color: #969696;
 }
 
+.btn_red {
+    background-color: #e60012;
+}
+
 table .btn{
-    padding: 9px 17px;
+    padding: 9px 14px
 }
 
 
@@ -196,7 +199,7 @@ table .btn{
     width: 17px;
     height: 17px;
     background: url('../images/icn_search.png') no-repeat;
-    vertical-align:  middle;
+    vertical-align:  -3px;
 }
 
 .sort_bar select {
@@ -258,6 +261,10 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 @media (max-width: 1600px) {
+    table .btn{
+        padding: 9px 12px;
+    }
+
     table th, table td, .btn {
         font-size: 14px;
     }
@@ -287,6 +294,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 .content-left .state .box {
     padding-bottom: 1.4063vw;
+    height: 100%;
 }
 
 .content-left .state .logo-wrap {
@@ -320,13 +328,18 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 .state .blue_box {
-    margin: 0 1.3021vw;
-    padding: 1.8519vh 1.4063vw;
+    margin: 0 1.3021vw 4px;
+    padding: 1vh 1.4063vw;
     font-size: 18px;
     background-color: #f1f4f9;
 }
+.state .blue_box:last-child {
+    margin-bottom: 0;
+}
 .state .blue_box.use {
-    margin-bottom: 10px;
+    display: flex;
+    padding: 1.4519vh 1.4063vw;
+    align-items: center;
     font-weight: 500;
 }
 .state .blue_box.use:before {
@@ -340,6 +353,9 @@ input[type="radio"].pick:checked:disabled + div:after {
     background: url(../images/icn_use.png) no-repeat center center;
     background-size: 53%;
     background-color: #3f51b5;
+}
+.state .blue_box.use p:last-child {
+    padding-top: 4px;
 }
 
 .state .blue_box .blue_box_con {
@@ -360,12 +376,13 @@ input[type="radio"].pick:checked:disabled + div:after {
     padding: 6px 0 0 6px;
 }
 .nav .box {
-    height: 43.6667vh;
-    padding: 1.5625vw 0 1.5625vw;
+    height: 41.6667vh;
+    padding-bottom: 1.5625vw;
     font-weight: 700;
+    overflow-y: auto;
 }
 .nav .box .nav_title {
-    padding: 0 45px 1.0417vw;
+    padding: 1.5625vw 45px 1.5625vw;
     font-size: 18px;
     font-weight: 600;
     color: #9fa0a0;
@@ -386,13 +403,15 @@ input[type="radio"].pick:checked:disabled + div:after {
     content: '';
     float: left;
     width: 10px;
-    height: 4.6296vh;
+    height: 46px;
     background-color: #3f51b5;
 }
 
 .nav .box .nav-wrap li a {
     display: block;
-    padding: 1.3889vh 45px;
+    height: 46px;
+    padding: 0 45px;
+    line-height: 46px;
     color: #595757;
 }
 .nav .box .nav-wrap li.active a {
@@ -410,6 +429,10 @@ input[type="radio"].pick:checked:disabled + div:after {
     font-size: 13px;
 }
 
+.bottom_option div:hover {
+    color: #767676;
+}
+
 .bottom_option .setting:before {
     content: '';
     display: inline-block;
@@ -421,6 +444,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 .bottom_option .bar {
+    display: inline-block;
     margin: 0 25px;
     width: 1px;
     height: 15px;
@@ -508,7 +532,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     width: 500px;
     height: calc(100vh + 16px);
     margin: -65px 0 0 -4.7296vw;
-    padding: 80px 40px 13.8889vw;
+    padding: 80px 40px 10.8889vw;
     background: #f1f4f9;
     list-style-type: none;
     -webkit-font-smoothing: antialiased;
@@ -534,16 +558,21 @@ input[type="radio"].pick:checked:disabled + div:after {
 
 .m_top_nav .state .blue_box_title {
     margin-bottom: 20px;
-    font-weight: 700;
+    font-weight: 800;
+}
+
+.m_top_nav .state .blue_box_title span {
+    font-weight: 600;
 }
 
 .m_top_nav .state .blue_box.use:before {
     margin-right: 1.8519vw;
+    width: 4.6296vw;
+    height: 4.6296vw;
 }
 
-.m_top_nav .state .blue_box .blue_box_con {
-    padding-left: 2.7778vw;
-    padding-right: 3.7037vw;
+.m_top_nav .state .box .blue_box.use {
+    text-align: left;
 }
 
 .m_top_nav .nav {
@@ -553,6 +582,10 @@ input[type="radio"].pick:checked:disabled + div:after {
 .m_top_nav .nav .nav_title {
     margin-bottom: 1.4815vw;
     color: #9fa0a0;
+}
+
+.m_top_nav .nav .nav_title ~ div {
+    padding-top: 3.7037vw;
 }
 
 .m_top_nav .nav .nav-wrap li {
@@ -855,8 +888,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 
 .layer_card_set {
     width: 900px;
-    height: 600px;
-    padding: 60px 50px;
+    padding: 50px;
     background-color: #fff;
 }
 .layer_card_set .title {
@@ -899,8 +931,24 @@ input[type="radio"].pick:checked:disabled + div:after {
 }
 
 .layer_card_set .btn_wrap {
-    padding-top: 140px;
+    padding-top: 60px;
     text-align: center;
+}
+
+.card_date {
+    padding-top: 60px;
+    font-weight: 700;
+    font-size: 19px;
+    text-align: center;
+}
+.card_date span {
+    margin-right: 10px;
+}
+.card_date select {
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    font-size: 19px;
 }
 
 .layer_order_detail {
@@ -1066,13 +1114,13 @@ input[type="radio"].pick:checked:disabled + div:after {
     .content-left .state .logo-wrap .logo {
         top: 10vh;
     }
-    .content-left .state .blue_box.use {
+    .content-left .state .blue_box.use, .content-left .nav .box .nav_title {
         font-size: 13px;
     }
     .card_box .card_name {
         font-size: 14px;
     }
-    .content-left .nav .box .nav_title, .content-left .state .blue_box .blue_box_con, .content-left .nav .box .nav-wrap li, .card_management .txt_wrap, .layer_card_set .date label,
+    .content-left .state .blue_box .blue_box_con, .content-left .nav .box .nav-wrap li, .card_management .txt_wrap, .layer_card_set .date label,
     .layer_card_set .date select {
         font-size: 15px;
     }
@@ -1124,15 +1172,15 @@ input[type="radio"].pick:checked:disabled + div:after {
         padding-bottom: 10px;
     }
     .layer_card_set {
-        width: 700px;
         height: 450px;
+        padding: 30px;
     }
     .layer_card_set .card_box {
         width: 200px;
         height: 140px;
     }
     .layer_card_set .btn_wrap {
-        padding-top: 70px;
+        padding-top: 30px;
     }
     .layer_card_set .card_box .card_name {
         padding-top: 10px;
@@ -1161,7 +1209,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 
 @media (max-width: 768px) {
     .e_card {height: auto;}
-    .card_detail, .card_list {display: none;}
+    .content-right {display: none;}
     .sort_bar div {display: flex;}
     .m_content-right {
         display: block;
@@ -1172,9 +1220,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     .content-right h2 {
         font-size: 24px;
     }
-    .m_content-right .box {
-        height: 58vh
-    }
+
     .card_box_wrap {
         display: block;
     }
@@ -1204,6 +1250,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     .card_management .txt_wrap {
         padding-left: 3vw;
     }
+    .card_date {padding-top: 20px;}
     .layer_basic {
         width: 450px;
         height: 260px;
@@ -1229,10 +1276,6 @@ input[type="radio"].pick:checked:disabled + div:after {
     .m_content-right table td.card_name img {
         padding-right: 5px;
     }
-    .layer_card_set {
-        width: 470px;
-        padding: 40px 20px;
-    }
     .layer_card_set .card_box_wrap {
         display: block;
     }
@@ -1257,7 +1300,10 @@ input[type="radio"].pick:checked:disabled + div:after {
         padding-top: 40px;
     }
     .layer_card_set .btn_wrap .btn {
-
+        width: 140px;
+        height: 44px;
+        line-height: 44px;
+        font-size: 18px;
     }
     .layer_card_set .card_radio {
         padding: 0 0 40px;
@@ -1281,6 +1327,9 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
     .m_content-right table th, table td, .m_top_nav .state .blue_box, .bottom_option div {
         font-size: 13px;
+    }
+    .m_content-right td .card_btn_wrap .btn_gray {
+        width: 94px;
     }
     .card_management .card_box.registration p {
         font-size: 13px;
@@ -1325,7 +1374,6 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
     .layer_card_set {
         width: 300px;
-        height: 540px;
         padding: 25px 30px;
     }
     .layer_card_set .title {
@@ -1398,4 +1446,61 @@ input[type="radio"].pick:checked:disabled + div:after {
 .dataTables_wrapper .dataTables_paginate .paginate_button:active {
     background: rgba(255, 255, 255, 0);
     box-shadow: none;
+}
+
+select.d_select {
+    -o-appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 65px;
+    height: 39px;
+    background: url('../images/select_arrow.png') calc(100% - 10px) center no-repeat;
+    background-size: 8px;
+    padding: 0 10px;
+    border: none;
+    outline: 0 none;
+    background-color: #dcdddd;
+    vertical-align: 1px;
+}
+
+.nonpayment {
+    padding: 6px 6px;
+    color: #fff;
+    background-color: #e60012;
+}
+
+.subscription .box {
+    padding: 1.7708vw 2.0833vw 4.1667vw;
+}
+
+.subscription .txt_wrap {
+    padding-bottom: 20px;
+}
+.subscription .txt_wrap.one{
+    padding-top: 2.0833vw;
+}
+
+.subscription .txt_wrap p:first-child {
+    padding-bottom: 10px;
+}
+
+.subscription .card_btn_wrap {
+    display: inline-block;
+    padding-top: 4px;
+    margin-left: 6px;
+}
+
+@media (max-width: 1600px) {
+    select.d_select {
+        width: 58px;
+        height: 34px;
+        background-position-x: 44px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nonpayment {
+        display: block;
+    }
 }
