@@ -15,13 +15,17 @@
                 <div>
                     <p>
                         E-Cash 월간 정기 결제
-                        @if(request()->user()->subscribes()->count() > 0)
+                        @if(request()->user()->productSubscribes()->count() > 0)
                             이용중
                         @else
                             대기중
                         @endif
                     </p>
-                    <p>라이브러리 30EA 이용중</p>
+                    <p>
+                        @if(request()->user()->librarySubscribe)
+                            {{request()->user()->librarySubscribe->product->name}} 이용중
+                        @endif
+                    </p>
                 </div>
             </div>
             <div class="blue_box">
@@ -31,7 +35,7 @@
                     </div>
                     <div class="r-con">
                         @php
-                            $nextPayment = request()->user()->subscribes()->first();
+                            $nextPayment = request()->user()->productSubscribes()->first();
                             $today = \Illuminate\Support\Carbon::now();
                         @endphp
                         @if (! $nextPayment)
@@ -56,7 +60,11 @@
                         구독 상품 다음 청구일
                     </div>
                     <div class="r-con">
-                        2024-11-20
+                        @if (request()->user()->librarySubscribe?->due_date)
+                        {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
+                        @else
+                        미청구
+                        @endif
                     </div>
                 </div>
             </div>
@@ -121,13 +129,17 @@
                         <div>
                             <p>
                                 E-Cash 월간 정기 결제
-                                @if(request()->user()->subscribes()->count() > 0)
+                                @if(request()->user()->productSubscribes()->count() > 0)
                                     이용중
                                 @else
                                     대기중
                                 @endif
                             </p>
-                            <p>라이브러리 30EA 이용중</p>
+                            <p>
+                                @if(request()->user()->librarySubscribe)
+                                    {{request()->user()->librarySubscribe->product->name}} 이용중
+                                @endif
+                            </p>
                         </div>
                     </div>
                     <div class="blue_box">
@@ -137,7 +149,7 @@
                             </div>
                             <div class="r-con">
                                 @php
-                                    $nextPayment = request()->user()->subscribes()->first();
+                                    $nextPayment = request()->user()->productSubscribes()->first();
                                     $today = \Illuminate\Support\Carbon::now();
                                 @endphp
                                 @if (! $nextPayment)
@@ -160,7 +172,11 @@
                                 구독 상품 다음 청구일
                             </div>
                             <div class="r-con">
-                                2024-11-20
+                                @if (request()->user()->librarySubscribe?->due_date)
+                                    {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
+                                @else
+                                    미청구
+                                @endif
                             </div>
                         </div>
                     </div>
