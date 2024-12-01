@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/list', [OrderController::class, 'list'])->name('orders.list');
 
     Route::get('/library-payments', [LibraryPaymentController::class, 'index'])->name('library-payments.index');
-    Route::get('/library-payments/list', [MemberPaymentController::class, 'list'])->name('library-payments.list');
+    Route::get('/library-payments/list', [LibraryPaymentController::class, 'list'])->name('library-payments.list');
 
     Route::get('/library-products', [LibraryProductSubscribeController::class, 'index'])->name('library-products.index');
     Route::post('/library-products/{productId}/subscribe', [LibraryProductSubscribeController::class, 'subscribe'])->name('library-products.subscribe');

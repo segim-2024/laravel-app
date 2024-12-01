@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,11 @@ class Product extends Model
         'payment_day' => 'string',
         'price' => 'integer',
     ];
+
+    public function payments(): MorphMany
+    {
+        return $this->morphMany(MemberPayment::class, 'productable');
+    }
 
     public function subscribe():HasOne
     {

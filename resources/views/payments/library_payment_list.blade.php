@@ -7,8 +7,8 @@
         <h2>구독 상품 결제 내역</h2>
         <div class="box">
             <div class="txt_wrap">
-                <p>결제 내역 <span>( 2 건 )</span>이 조회되었습니다.</p>
-                <p>총 누적 결제액 <strong>[ 900,000 ]</strong>원 입니다.</p>
+                <p>결제 내역 <span>( {{$totalCount}}건 )</span>이 조회되었습니다.</p>
+                <p>총 누적 결제액 <strong>[ {{number_format($totalAmount)}} ]</strong>원 입니다.</p>
             </div>
             <div class="sort_bar">
                 <div class="date">
@@ -107,5 +107,5 @@
     </div>
     <!-- 구독 상품 결제 내역 끝 -->
 
-    <script src="{{ asset('js/payment_list.js') }}"></script>
+    <script src="{{ asset('js/library_payment_list.js') }}"></script>
 @endsection

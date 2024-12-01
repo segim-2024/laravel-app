@@ -16,6 +16,7 @@ use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
+use App\Repositories\Interfaces\ProductPaymentRepositoryInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
@@ -26,7 +27,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         protected MemberCashServiceInterface $cashService,
         protected MemberSubscribeProductServiceInterface $subscribeService,
         protected MemberPaymentRepositoryInterface $repository,
-        protected PortOneServiceInterface $portOneService
+        protected PortOneServiceInterface $portOneService,
+        protected ProductPaymentRepositoryInterface $productPaymentRepository
     ) {}
 
     /**
@@ -42,7 +44,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getList(GetMemberPaymentListDTO $DTO)
     {
-        return $this->repository->getList($DTO);
+        return $this->productPaymentRepository->getList($DTO);
     }
 
     /**
@@ -58,7 +60,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getTotalAmount(Member $member): int
     {
-        return $this->repository->getTotalAmount($member);
+        return $this->productPaymentRepository->getTotalAmount($member->mb_id);
     }
 
     /**
@@ -66,7 +68,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getTotalPaymentCount(Member $member): int
     {
-        return $this->repository->getTotalPaymentCount($member);
+        return $this->productPaymentRepository->getTotalPaymentCount($member->mb_id);
     }
 
     /**

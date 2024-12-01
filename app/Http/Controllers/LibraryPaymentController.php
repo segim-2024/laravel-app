@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Interfaces\MemberPaymentServiceInterface;
+use App\DTOs\GetLibraryPaymentListDTO;
+use App\Services\Interfaces\LibraryPaymentServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class LibraryPaymentController extends Controller
 {
     public function __construct(
-        protected MemberPaymentServiceInterface $service
+        protected LibraryPaymentServiceInterface $service
     ) {}
 
     public function index(Request $request)
@@ -19,5 +22,18 @@ class LibraryPaymentController extends Controller
             'totalAmount' => $totalAmount,
             'totalCount' => $totalCount,
         ]);
+    }
+
+    public function list(Request $request): JsonResponse
+    {
+        $start = $request->input('periodStart') ? Carbon::parse($request->input('periodStart'))->startOfDay() : null;
+        $end = $request->input('periodEnd') ? Carbon::parse($request->input('periodEnd'))->endOfDay() : null;
+
+        return $this->service->getList(new GetLibraryPaymentListDTO(
+            memberId: $request->user()->mb_id,
+            start: $start,
+            end: $end,
+            keyword: $request->input('keyword'),
+        ));
     }
 }

@@ -27,6 +27,8 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Interfaces\DoctorFileNoticeRepositoryInterface::class, \App\Repositories\Eloquent\DoctorFileNoticeRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\LibraryProductRepositoryInterface::class, \App\Repositories\Eloquent\LibraryProductRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\LibraryProductSubscribeRepositoryInterface::class, \App\Repositories\Eloquent\LibraryProductSubscribeRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\LibraryPaymentRepositoryInterface::class, \App\Repositories\Eloquent\LibraryPaymentRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\ProductPaymentRepositoryInterface::class, \App\Repositories\Eloquent\ProductPaymentRepository::class);
     }
 
     public function boot()

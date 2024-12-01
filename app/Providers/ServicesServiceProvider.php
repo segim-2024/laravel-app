@@ -28,6 +28,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\DoctorFileNoticeServiceInterface::class, \App\Services\DoctorFileNoticeService::class);
         $this->app->bind(\App\Services\Interfaces\LibraryProductServiceInterface::class, \App\Services\LibraryProductService::class);
         $this->app->bind(\App\Services\Interfaces\LibraryProductSubscribeServiceInterface::class, \App\Services\LibraryProductSubscribeService::class);
+        $this->app->bind(\App\Services\Interfaces\LibraryPaymentServiceInterface::class, \App\Services\LibraryPaymentService::class);
     }
 
     public function boot()
