@@ -27,7 +27,7 @@ $(document).ready(function() {
         },
         columns: [
             { data: 'paid_at', render: function(data, type, row) {
-                return data ? new Date(data).toLocaleDateString() : new Date(row.updated_at).toLocaleDateString();
+                return data ?? "-";
             }},
             { data: 'state', render: function(data, type, row) {
                 return getPaymentStateMessage(data);
@@ -48,6 +48,44 @@ $(document).ready(function() {
                 return `<button class="btn btn_green" data-role="receipt">
                     전표 출력
                 </button>`;
+            }},
+        ],
+        language : {
+            "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Korean.json"
+        },
+    });
+
+
+    let table2 = $('#oTable2').DataTable({
+        autoWidth: false,
+        processing: true,
+        serverSide: true,
+        searching: false,
+        lengthChange: false,
+        order: [[0, 'desc']],
+        pageLength: $('#perPage').val(),
+        dom: 'lfrtp',  // 'i'를 제거하여 정보 요약 숨김
+        ajax: {
+            url: "/library-payments/list",
+            data: function(d) {
+                d.periodStart = $('#start').val();
+                d.periodEnd = $('#end').val();
+                d.keyword = $('#keyword').val();
+            }
+        },
+        columns: [
+            { data: 'paid_at', render: function(data, type, row) {
+                return data;
+            }},
+            { data: 'state', render: function(data, type, row) {
+                return getPaymentStateMessage(data);
+            }},
+            { data: 'title' },
+            { data: 'method', render: function(data, type, row) {
+                return row.card?.name ?? "삭제된 카드";
+            }},
+            { data: 'amount', render: function(data, type, row) {
+                return `${parseInt(data).toLocaleString()}원`;
             }},
         ],
         language : {

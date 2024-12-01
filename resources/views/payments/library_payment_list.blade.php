@@ -82,7 +82,7 @@
             </div>
 
             <div class="">
-                <table>
+                <table id="oTable2">
                     <colgroup>
                         <col style="width: *">
                         <col style="width: 16%;">
@@ -92,7 +92,7 @@
                     </colgroup>
                     <thead>
                     <tr>
-                        <th>결제일/주문번호</th>
+                        <th>결제일</th>
                         <th>결제 상태</th>
                         <th>사용 항목</th>
                         <th>결제 수단</th>
