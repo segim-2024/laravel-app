@@ -57,7 +57,8 @@ $(document).ready(function() {
 
     $('#oTable').on('click', '[data-role="receipt"]', function() {
         const data = $('#oTable').DataTable().row($(this).parents('tr')).data();
-        window.open(data.receipt_url, '_blank');
+        const decodedUrl = data.receipt_url.replace(/&amp;/g, '&');
+        window.open(decodedUrl, '_blank');
         return false;
     });
 

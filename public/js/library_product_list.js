@@ -68,6 +68,38 @@ $(document).ready(function() {
         return false;
     });
 
+
+    // 재결제 신청 버튼 클릭 시 이벤트 핸들러
+    $('[name=re-payment]').on('click', async function() {
+        try {
+            const productId = $(this).data('id');
+            const response = await fetch(`/library-products/${productId}/re-payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+            });
+
+            let data = null;
+            if (response.status !== 204) {
+                data = await response.json();
+            }
+
+            if (!response.ok) {
+                alert(data?.message ?? '처리 중 오류가 발생했습니다.');
+                return false;
+            }
+            alert("재결제 신청이 완료되었습니다.\n처리는 보통 1분 이내로 완료되며 신청 결과는 결제 내역을 확인해주세요.\n페이지가 5초 뒤에 새로고침됩니다.");
+            setTimeout(() => location.reload(), 5000);
+        } catch (error) {
+            alert('처리 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+
+        return false;
+    });
+
     // 구독 가능 여부를 반환하는 함수
     async function checkCanSubscribe() {
         const response = await fetch('/library-products/check-can-subscribe', {

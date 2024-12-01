@@ -26,6 +26,8 @@ use Illuminate\Support\Carbon;
  */
 class LibraryProductSubscribe extends Model
 {
+    protected $table = 'library_product_subscribes';
+
     protected $fillable = [
         'member_id',
         'product_id',

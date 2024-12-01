@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\CardForbbidenException;
 use App\Exceptions\LibraryProductSubscribeConflictException;
-use App\Exceptions\LibraryProductSubscribeForbbidenException;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
+use App\Http\Requests\RePaymentLibraryProductRequest;
 use App\Http\Requests\LibraryProductSubscribeRequest;
 use App\Http\Requests\LibraryProductUnsubscribeRequest;
 use App\Http\Requests\UpdateLibraryProductSubscribeCardRequest;
@@ -108,13 +108,33 @@ class LibraryProductSubscribeController extends Controller
     {
         try {
             $subscribe = $this->service->updateCard($request->toDTO());
-        } catch (CardForbbidenException|LibraryProductSubscribeForbbidenException $e) {
+        } catch (CardForbbidenException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_FORBIDDEN);
+        } catch (LibraryProductSubscribeNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
 
         return LibraryProductSubscribeResource::make($subscribe)
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function rePayment(RePaymentLibraryProductRequest $request): JsonResponse
+    {
+        try {
+            $this->service->rePayment($request->toDTO());
+        } catch (LibraryProductSubscribeNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        } catch (LibraryProductSubscribeConflictException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json([
+                'message' => '구독 중 오류가 발생했습니다.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

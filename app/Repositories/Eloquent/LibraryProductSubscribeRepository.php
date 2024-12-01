@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 use App\Enums\LibraryProductSubscribeStateEnum;
 use App\Models\LibraryProductSubscribe;
 use App\Repositories\Interfaces\LibraryProductSubscribeRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class LibraryProductSubscribeRepository extends BaseRepository implements LibraryProductSubscribeRepositoryInterface
 {
@@ -33,8 +34,20 @@ class LibraryProductSubscribeRepository extends BaseRepository implements Librar
     /**
      * @inheritDoc
      */
-    public function findByProductId(int $productId): ?LibraryProductSubscribe
+    public function findByMemberIdAndProductId(string $memberId, int $productId): ?LibraryProductSubscribe
     {
-        return LibraryProductSubscribe::where('product_id', $productId)->first();
+        return LibraryProductSubscribe::where('member_id', $memberId)
+            ->where('product_id', $productId)
+            ->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubscriptionsDueToday(): Collection
+    {
+        return LibraryProductSubscribe::whereDate('due_date', now()->toDateString())
+            ->where('state', LibraryProductSubscribeStateEnum::Subscribe)
+            ->get();
     }
 }

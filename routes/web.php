@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/library-products/{productId}/subscribe', [LibraryProductSubscribeController::class, 'subscribe'])->name('library-products.subscribe');
     Route::patch('/library-products/{productId}/unsubscribe', [LibraryProductSubscribeController::class, 'unsubscribe'])->name('library-products.unsubscribe');
     Route::patch('/library-products/{productId}/card', [LibraryProductSubscribeController::class, 'updateCard'])->name('library-products.update-card');
+    Route::post('/library-products/{productId}/re-payment', [LibraryProductSubscribeController::class, 'rePayment'])->name('library-products.re-payment');
     Route::get('/library-products/check-can-subscribe', [LibraryProductSubscribeController::class, 'checkCanSubscribe'])->name('library-products.check-can-subscribe');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');

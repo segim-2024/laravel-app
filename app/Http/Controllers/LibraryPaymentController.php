@@ -16,8 +16,8 @@ class LibraryPaymentController extends Controller
 
     public function index(Request $request)
     {
-        $totalAmount = $this->service->getTotalAmount($request->user());
-        $totalCount = $this->service->getTotalPaymentCount($request->user());
+        $totalAmount = $this->service->getTotalAmount($request->user()->mb_id);
+        $totalCount = $this->service->getTotalPaymentCount($request->user()->mb_id);
         return view('payments.library_payment_list', [
             'totalAmount' => $totalAmount,
             'totalCount' => $totalCount,

@@ -7,7 +7,9 @@ use App\DTOs\GetMemberPaymentListDTO;
 use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
+use App\Exceptions\LibraryProductSubscribeNotFoundException;
 use App\Exceptions\PortOneBillingPaymentException;
+use App\Exceptions\ProductableInvalidTypeException;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
@@ -74,6 +76,7 @@ interface MemberPaymentServiceInterface
      * @param MemberPayment $payment
      * @param PortOneGetPaymentResponseDTO $DTO
      * @return MemberPayment
+     * @throws LibraryProductSubscribeNotFoundException
      */
     public function process(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
 
@@ -81,6 +84,7 @@ interface MemberPaymentServiceInterface
      * @param MemberPayment $payment
      * @param string $api
      * @return MemberPayment
+     * @throws LibraryProductSubscribeNotFoundException
      */
     public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment;
 }

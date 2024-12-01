@@ -4,30 +4,29 @@ namespace App\Services;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\GetMemberPaymentListDTO;
-use App\DTOs\MemberCashDTO;
-use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
-use App\Enums\MemberCashTransactionTypeEnum;
 use App\Enums\MemberPaymentStatusEnum;
-use App\Jobs\FailedSubscribePaymentSendAlimTokJob;
+use App\Exceptions\LibraryProductSubscribeNotFoundException;
+use App\Models\LibraryProduct;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
+use App\Models\Product;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Repositories\Interfaces\ProductPaymentRepositoryInterface;
-use App\Services\Interfaces\MemberCashServiceInterface;
+use App\Services\Interfaces\LibraryPaymentServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
-use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
+use App\Services\Interfaces\ProductPaymentServiceInterface;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
-        protected MemberCashServiceInterface $cashService,
-        protected MemberSubscribeProductServiceInterface $subscribeService,
-        protected MemberPaymentRepositoryInterface $repository,
-        protected PortOneServiceInterface $portOneService,
+        protected PortOneServiceInterface           $portOneService,
+        protected ProductPaymentServiceInterface    $productPaymentService,
+        protected LibraryPaymentServiceInterface    $libraryPaymentService,
+        protected MemberPaymentRepositoryInterface  $repository,
         protected ProductPaymentRepositoryInterface $productPaymentRepository
     ) {}
 
@@ -122,25 +121,21 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         };
     }
 
+    /**
+     * @throws LibraryProductSubscribeNotFoundException
+     */
     private function processPaid(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
         if ($payment->state === $DTO->status) {
             return $payment;
         }
 
-        $subscribeProduct = $this->subscribeService->findByMemberAndProduct($payment->member, $payment->productable);
-        if ($subscribeProduct) {
-            $this->subscribeService->updateLatestPayment($subscribeProduct);
-            $this->subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribeProduct));
-        }
-
-        $this->cashService->charge(new MemberCashDTO(
-            $payment->member,
-            $payment->amount,
-            MemberCashTransactionTypeEnum::Increased,
-            $payment->title,
-            $payment->productable
-        ));
+        // 상품에 따른 결제 완료 처리
+        match (true) {
+            $payment->productable instanceOf Product => $this->productPaymentService->processPaid($payment, $DTO),
+            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processPaid($payment, $DTO),
+            default => null,
+        };
 
         return $this->repository->updateDone($payment, $DTO);
     }
@@ -154,12 +149,17 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         return $this->repository->updateCanceled($payment, $DTO);
     }
 
+    /**
+     * @throws LibraryProductSubscribeNotFoundException
+     */
     private function processFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
     {
-        if ($payment->member->mb_hp) {
-            FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)
-                ->afterCommit();
-        }
+        // 상품에 따른 결제 완료 처리
+        match (true) {
+            $payment->productable instanceOf Product => $this->productPaymentService->processFailed($payment),
+            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            default => null,
+        };
 
         return $this->repository->updateFailed($payment, $DTO);
     }
@@ -169,10 +169,12 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment
     {
-        if ($payment->member->mb_hp) {
-            FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)
-                ->afterCommit();
-        }
+        // 상품에 따른 결제 완료 처리
+        match (true) {
+            $payment->productable instanceOf Product => $this->productPaymentService->processFailed($payment),
+            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            default => null,
+        };
 
         return $this->repository->manuallySetFailed($payment, $api);
     }

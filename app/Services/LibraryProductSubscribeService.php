@@ -4,18 +4,21 @@ namespace App\Services;
 
 use App\DTOs\LibraryProductSubscribeDTO;
 use App\DTOs\LibraryProductUnsubscribeDTO;
+use App\DTOs\RePaymentLibraryProductDTO;
 use App\DTOs\UpdateLibraryProductSubscribeCardDTO;
+use App\DTOs\UpdateLibraryProductSubscribeDatesDTO;
+use App\DTOs\UpdateLibraryProductSubscribeStateToUnpaidDTO;
+use App\Enums\LibraryProductSubscribeStateEnum;
 use App\Exceptions\CardForbbidenException;
 use App\Exceptions\LibraryProductSubscribeConflictException;
-use App\Exceptions\LibraryProductSubscribeForbbidenException;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
-use App\Jobs\StartLibraryProductSubscribeNotificationJob;
-use App\Jobs\StartSubscribeSendAlimTokJob;
+use App\Jobs\LibraryBillingPaymentJob;
 use App\Models\LibraryProductSubscribe;
 use App\Repositories\Interfaces\LibraryProductSubscribeRepositoryInterface;
 use App\Services\Interfaces\LibraryProductSubscribeServiceInterface;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class LibraryProductSubscribeService implements LibraryProductSubscribeServiceInterface {
     public function __construct(
@@ -43,7 +46,13 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
             'due_date' => $this->getClosestDueDate($DTO->paymentDay),
         ];
 
+        /** @var LibraryProductSubscribe $subscribe */
         $subscribe = $this->repository->create(array_merge($DTO->toModelAttribute(), $attributes));
+
+        // 선택한 결제일(약정일)이 오늘과 동일한 날짜라면 바로 결제 요청
+        if ($subscribe->due_date->isToday()) {
+            LibraryBillingPaymentJob::dispatch($subscribe->id)->afterCommit();
+        }
 
         // 알림톡 발송
         // StartLibraryProductSubscribeNotificationJob::dispatch($subscribe)->afterCommit();
@@ -71,9 +80,9 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
     public function updateCard(UpdateLibraryProductSubscribeCardDTO $DTO): LibraryProductSubscribe
     {
         // 구독 정보 조회 및 구독 정보 예외 처리
-        $subscribe = $this->repository->findByProductId($DTO->productId);
-        if (! $subscribe || $subscribe->member_id !== $DTO->memberId) {
-            throw new LibraryProductSubscribeForbbidenException('구독 정보가 일치하지 않습니다.');
+        $subscribe = $this->repository->findByMemberIdAndProductId($DTO->memberId, $DTO->productId);
+        if (! $subscribe) {
+            throw new LibraryProductSubscribeNotFoundException('구독 정보가 일치하지 않습니다.');
         }
 
         // 카드 정보 조회 및 멤버 ID와 비교 체크
@@ -106,6 +115,57 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
     }
 
     /**
+     * @inheritDoc
+     */
+    public function findById(int $id): ?LibraryProductSubscribe
+    {
+        return $this->repository->findById($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubscriptionsDueToday(): Collection
+    {
+        return $this->repository->getSubscriptionsDueToday();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateDatesOnSuccess(UpdateLibraryProductSubscribeDatesDTO $DTO): LibraryProductSubscribe
+    {
+        $subscribe = $this->repository->findByMemberIdAndProductId($DTO->memberId, $DTO->productId);
+        if (! $subscribe) {
+            throw new LibraryProductSubscribeNotFoundException('구독 중인 라이브러리 상품이 없습니다.');
+        }
+
+        $newDueDate = $this->getNewDueDate($subscribe);
+
+        $attributes = [
+            'state' => LibraryProductSubscribeStateEnum::Subscribe,
+            'due_date' => $newDueDate,
+            'start' => now()->startOfDay(),
+            'end' => $newDueDate,
+        ];
+
+        return $this->repository->update($subscribe, $attributes);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateStateToUnpaid(UpdateLibraryProductSubscribeStateToUnpaidDTO $DTO): LibraryProductSubscribe
+    {
+        $subscribe = $this->repository->findByMemberIdAndProductId($DTO->memberId, $DTO->productId);
+        if (! $subscribe) {
+            throw new LibraryProductSubscribeNotFoundException('구독 중인 라이브러리 상품이 없습니다.');
+        }
+
+        return $this->repository->update($subscribe, $DTO->toModelAttribute());
+    }
+
+    /**
      * 약정일에 해당하는 가장 가까운 결제일을 반환합니다.
      *
      * @param int $paymentDay
@@ -121,5 +181,41 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
         }
 
         return $today->day($paymentDay);
+    }
+
+    /**
+     * 익월 결제 예정일을 반환합니다.
+     *
+     * @param LibraryProductSubscribe $subscribe
+     * @return Carbon
+     */
+    private function getNewDueDate(LibraryProductSubscribe $subscribe): Carbon
+    {
+        return Carbon::now()->startOfDay()->addMonthNoOverflow()->setDay($subscribe->payment_day);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rePayment(RePaymentLibraryProductDTO $DTO): void
+    {
+        // 구독 정보 조회 및 구독 정보 예외 처리
+        $subscribe = $this->repository->findByMemberIdAndProductId($DTO->memberId, $DTO->productId);
+        if (! $subscribe) {
+            throw new LibraryProductSubscribeNotFoundException('구독 정보가 일치하지 않습니다.');
+        }
+
+        if (! $subscribe->state->isUnpaid()) {
+            throw new LibraryProductSubscribeConflictException('미납 중인 라이브러리 상품만 재결제가 가능합니다.');
+        }
+
+        // 약정일을 오늘로 변경
+        $paymentDay = Carbon::today()->day > 28 ? 28 : Carbon::today()->day;
+        $this->repository->update($subscribe, [
+            'payment_day' => $paymentDay
+        ]);
+
+        // 결제 요청
+        LibraryBillingPaymentJob::dispatch($subscribe->id);
     }
 }

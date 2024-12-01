@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-use App\Enums\LibraryProductSubscribeStateEnum;
 use App\Models\LibraryProductSubscribe;
+use Illuminate\Support\Collection;
 
 interface LibraryProductSubscribeRepositoryInterface extends BaseRepositoryInterface
 {
@@ -19,8 +19,14 @@ interface LibraryProductSubscribeRepositoryInterface extends BaseRepositoryInter
     public function findByMemberId(string $memberId): ?LibraryProductSubscribe;
 
     /**
+     * @param string $memberId
      * @param int $productId
      * @return LibraryProductSubscribe|null
      */
-    public function findByProductId(int $productId): ?LibraryProductSubscribe;
+    public function findByMemberIdAndProductId(string $memberId, int $productId): ?LibraryProductSubscribe;
+
+    /**
+     * @return Collection
+     */
+    public function getSubscriptionsDueToday(): Collection;
 }
