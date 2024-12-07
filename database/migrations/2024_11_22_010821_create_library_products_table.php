@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('price')->unsigned()->comment('상품 금액');
             $table->integer('ticket_provide_qty')->unsigned()->comment('이용권 제공 수량');
             $table->boolean('is_hided')->default(false)->comment('숨김 처리 여부');
-            $table->timestamp('deleted_at')->comment('삭제 일시');
+            $table->timestamp('deleted_at')->default(null)->nullable()->comment('삭제 일시');
             $table->timestamps();
         });
     }

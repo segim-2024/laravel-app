@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\CreateLibraryProductDTO;
+use App\DTOs\UpdateLibraryProductDTO;
 use App\DTOs\UpdateLibraryProductIsHidedDTO;
 use App\Exceptions\LibraryProductNotFoundException;
 use App\Models\LibraryProduct;
@@ -28,6 +30,27 @@ class LibraryProductService implements LibraryProductServiceInterface {
     public function getList(): Collection
     {
         return $this->repository->getList();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(CreateLibraryProductDTO $DTO): LibraryProduct
+    {
+        return $this->repository->create($DTO->toModelAttribute());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(UpdateLibraryProductDTO $DTO): LibraryProduct
+    {
+        $product = $this->find($DTO->id);
+        if (! $product) {
+            throw new LibraryProductNotFoundException('상품을 찾을 수 없습니다.');
+        }
+
+        return $this->repository->update($product, $DTO->toModelAttribute());
     }
 
     /**

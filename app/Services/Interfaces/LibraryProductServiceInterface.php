@@ -2,6 +2,8 @@
 
 namespace App\Services\Interfaces;
 
+use App\DTOs\CreateLibraryProductDTO;
+use App\DTOs\UpdateLibraryProductDTO;
 use App\DTOs\UpdateLibraryProductIsHidedDTO;
 use App\Exceptions\LibraryProductNotFoundException;
 use App\Models\LibraryProduct;
@@ -19,6 +21,19 @@ interface LibraryProductServiceInterface
      * @return Collection
      */
     public function getList(): Collection;
+
+    /**
+     * @param CreateLibraryProductDTO $DTO
+     * @return LibraryProduct
+     */
+    public function create(CreateLibraryProductDTO $DTO): LibraryProduct;
+
+    /**
+     * @param UpdateLibraryProductDTO $DTO
+     * @return LibraryProduct
+     * @throws LibraryProductNotFoundException
+     */
+    public function update(UpdateLibraryProductDTO $DTO): LibraryProduct;
 
     /**
      * @return Collection
