@@ -219,4 +219,12 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
         // 결제 요청
         LibraryBillingPaymentJob::dispatch($subscribe->id);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubscriptionsDueTomorrow(): Collection
+    {
+        return $this->repository->getSubscriptionsDueTomorrow();
+    }
 }

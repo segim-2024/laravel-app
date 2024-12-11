@@ -86,4 +86,9 @@ interface LibraryProductSubscribeServiceInterface
      * @throws LibraryProductSubscribeConflictException
      */
     public function rePayment(RePaymentLibraryProductDTO $DTO): void;
+
+    /**
+     * @return Collection
+     */
+    public function getSubscriptionsDueTomorrow(): Collection;
 }

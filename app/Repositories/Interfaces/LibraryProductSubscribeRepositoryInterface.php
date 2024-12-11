@@ -29,4 +29,9 @@ interface LibraryProductSubscribeRepositoryInterface extends BaseRepositoryInter
      * @return Collection
      */
     public function getSubscriptionsDueToday(): Collection;
+
+    /**
+     * @return Collection
+     */
+    public function getSubscriptionsDueTomorrow(): Collection;
 }

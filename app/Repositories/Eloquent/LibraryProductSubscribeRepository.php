@@ -50,4 +50,14 @@ class LibraryProductSubscribeRepository extends BaseRepository implements Librar
             ->where('state', LibraryProductSubscribeStateEnum::Subscribe)
             ->get();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubscriptionsDueTomorrow(): Collection
+    {
+        return LibraryProductSubscribe::whereDate('due_date', now()->addDay()->toDateString())
+            ->where('state', LibraryProductSubscribeStateEnum::Subscribe)
+            ->get();
+    }
 }
