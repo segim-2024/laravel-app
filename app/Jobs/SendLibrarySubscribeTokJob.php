@@ -55,13 +55,14 @@ class SendLibrarySubscribeTokJob implements ShouldQueue
         ];
 
         try {
-            $service->send(new AlimTokDTO(
+            $response = $service->send(new AlimTokDTO(
                 phoneNumber: $this->subscribe->member->mb_hp,
                 templateCode: 'ecash003',
                 message: $content,
                 attachments: $attachments
             ));
 
+            Log::info(json_encode($response, JSON_THROW_ON_ERROR));
         } catch (Exception $e) {
             Log::error($e);
         }
