@@ -7,6 +7,7 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\DTOs\UpdateLibraryProductSubscribeDatesDTO;
 use App\DTOs\UpdateLibraryProductSubscribeStateToUnpaidDTO;
 use App\Jobs\LibraryPaymentDoneApiJob;
+use App\Jobs\SendLibrarySubscribeCanceledTokJob;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\LibraryPaymentRepositoryInterface;
 use App\Services\Interfaces\LibraryPaymentServiceInterface;
@@ -64,7 +65,7 @@ class LibraryPaymentService implements LibraryPaymentServiceInterface {
         );
 
         if ($payment->member->mb_hp) {
-            // TODO : 미납 알림톡 발송 Job 디스패치
+            SendLibrarySubscribeCanceledTokJob::dispatch($payment)->afterCommit();
         }
     }
 }
