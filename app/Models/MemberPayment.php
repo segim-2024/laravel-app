@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\MemberPaymentStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property Member $member via member() relationship getter magic method
  * @property MemberCard $card via card() relationship getter magic method
+ * @property LibraryPaymentApiLog $libraryApiLog via libraryApiLog() relationship getter magic method
  * @property-read Product|LibraryProduct|null $productable Type of the productable relationship
  */
 class MemberPayment extends Model
@@ -60,5 +62,10 @@ class MemberPayment extends Model
     public function productable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function libraryApiLog(): HasOne
+    {
+        return $this->hasOne(LibraryPaymentApiLog::class, 'payment_id', 'payment_id');
     }
 }

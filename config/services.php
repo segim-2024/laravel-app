@@ -52,4 +52,8 @@ return [
         'auth_code' => env('MTS_AUTH_CODE'),
         'sender_key' => env('MTS_SENDER_KEY'),
     ],
+
+    'library' => [
+        'api_key' => env('LIBRARY_API_KEY'),
+    ]
 ];

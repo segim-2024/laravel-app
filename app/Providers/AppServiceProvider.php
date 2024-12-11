@@ -40,5 +40,13 @@ class AppServiceProvider extends ServiceProvider
                 'Content-Type' => 'application/json',
             ])->baseUrl('https://api.mtsco.co.kr/');
         });
+
+        Http::macro('library', function () {
+            return Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->baseUrl('https://whale.cloubot.com/api')
+                ->asForm();
+        });
     }
 }

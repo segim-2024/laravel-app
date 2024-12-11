@@ -30,6 +30,8 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\LibraryProductSubscribeServiceInterface::class, \App\Services\LibraryProductSubscribeService::class);
         $this->app->bind(\App\Services\Interfaces\LibraryPaymentServiceInterface::class, \App\Services\LibraryPaymentService::class);
         $this->app->bind(\App\Services\Interfaces\ProductPaymentServiceInterface::class, \App\Services\ProductPaymentService::class);
+        $this->app->bind(\App\Services\Interfaces\LibraryApiServiceInterface::class, \App\Services\LibraryApiService::class);
+        $this->app->bind(\App\Services\Interfaces\LibraryPaymentApiLogServiceInterface::class, \App\Services\LibraryPaymentApiLogService::class);
     }
 
     public function boot()

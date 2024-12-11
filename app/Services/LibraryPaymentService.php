@@ -6,6 +6,7 @@ use App\DTOs\GetLibraryPaymentListDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\DTOs\UpdateLibraryProductSubscribeDatesDTO;
 use App\DTOs\UpdateLibraryProductSubscribeStateToUnpaidDTO;
+use App\Jobs\LibraryPaymentDoneApiJob;
 use App\Models\MemberPayment;
 use App\Repositories\Interfaces\LibraryPaymentRepositoryInterface;
 use App\Services\Interfaces\LibraryPaymentServiceInterface;
@@ -50,8 +51,7 @@ class LibraryPaymentService implements LibraryPaymentServiceInterface {
             UpdateLibraryProductSubscribeDatesDTO::createFromPayment($payment)
         );
 
-        // TODO : 라이브러리 API 요청 Job 디스패치
-
+        LibraryPaymentDoneApiJob::dispatch($payment->payment_id)->afterCommit();
     }
 
     /**
