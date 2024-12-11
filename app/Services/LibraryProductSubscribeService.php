@@ -13,6 +13,7 @@ use App\Exceptions\CardForbbidenException;
 use App\Exceptions\LibraryProductSubscribeConflictException;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
 use App\Jobs\LibraryBillingPaymentJob;
+use App\Jobs\SendLibrarySubscribeTokJob;
 use App\Models\LibraryProductSubscribe;
 use App\Repositories\Interfaces\LibraryProductSubscribeRepositoryInterface;
 use App\Services\Interfaces\LibraryProductSubscribeServiceInterface;
@@ -55,7 +56,7 @@ class LibraryProductSubscribeService implements LibraryProductSubscribeServiceIn
         }
 
         // 알림톡 발송
-        // StartLibraryProductSubscribeNotificationJob::dispatch($subscribe)->afterCommit();
+        SendLibrarySubscribeTokJob::dispatch($subscribe)->afterCommit();
         return $subscribe;
     }
 
