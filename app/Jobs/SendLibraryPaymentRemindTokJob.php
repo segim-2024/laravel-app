@@ -43,7 +43,7 @@ class SendLibraryPaymentRemindTokJob implements ShouldQueue
         $attachments = [
             'button' => [
                 [
-                    'name' => "구독서비스 관리 페이지 바로가기",
+                    'name' => "관리페이지 바로가기",
                     'type' => "WL",
                     'url_pc' => 'http://epamus.com/bbs/login.php?url=%2Fapi%2Fe_cash_sso.php',
                     'url_mobile' => 'http://epamus.com/bbs/login.php?url=%2Fapi%2Fe_cash_sso.php',
