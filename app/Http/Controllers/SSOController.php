@@ -41,6 +41,13 @@ class SSOController extends Controller
 
         // Laravel 내부 인증 시스템 사용자 세션 생성 후 서비스 페이지 진입
         Auth::login($member);
+
+        // redirect_route 파라미터가 있는 경우 해당 경로로 리다이렉션
+        $redirectRoute = $request->query('redirect_route');
+        if ($redirectRoute === 'library-products') {
+            return redirect()->route('library-products.index');
+        }
+
         return redirect()->route('cards.index');
     }
 
