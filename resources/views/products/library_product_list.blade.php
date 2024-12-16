@@ -110,7 +110,7 @@
                             <td>{{$product->name}}</td>
                             <td>{{number_format($product->price)}}원</td>
                             <td>
-                                @if($product->subscribe)
+                                @if($product->subscribe && ! $product->subscribe->state->isUnsubscribe())
                                     {{$product->subscribe->card->name}} ({{$product->subscribe->card->number}})
                                     <div class="card_btn_wrap">
                                         <button class="btn btn_green" name="change" data-id="{{$product->id}}">
