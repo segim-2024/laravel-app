@@ -42,16 +42,17 @@ class SendLibrarySubscribeTokJob implements ShouldQueue
             'dueDate' => $this->subscribe->due_date->format('Y/m/d'),
         ])->render();
 
-        $redirect_route = 'library-products'; // 리다이렉션하고자 하는 경로
+        $redirect_route = 'library-products';
         $encoded_redirect = urlencode($redirect_route);
+        $sso_url = urlencode("/api/e_cash_sso.php?redirect_route={$encoded_redirect}");
 
         $attachments = [
             'button' => [
                 [
                     'name' => "관리페이지 바로가기",
                     'type' => "WL",
-                    'url_pc' => "http://epamus.com/bbs/login.php?url=%2Fapi%2Fe_cash_sso.php&redirect_route={$encoded_redirect}",
-                    'url_mobile' => "http://epamus.com/bbs/login.php?url=%2Fapi%2Fe_cash_sso.php&redirect_route={$encoded_redirect}",
+                    'url_pc' => "http://epamus.com/bbs/login.php?url={$sso_url}",
+                    'url_mobile' => "http://epamus.com/bbs/login.php?url={$sso_url}",
                     'target' => "out",
                 ]
             ]
