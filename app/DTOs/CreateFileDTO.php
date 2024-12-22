@@ -32,4 +32,22 @@ class CreateFileDTO
             $file
         );
     }
+
+    public static function createFromDoctorEssayVolume(string $uuid, UploadedFile $poster): self
+    {
+        return new self(
+            Str::orderedUuid(),
+            "doctor-essay/volumes/{$uuid}/poster",
+            $poster
+        );
+    }
+
+    public static function createFromDoctorEssayMaterial(string $uuid, UploadedFile $file):self
+    {
+        return new self(
+            Str::orderedUuid(),
+            "doctor-essay/lessons/{$uuid}/materials",
+            $file
+        );
+    }
 }

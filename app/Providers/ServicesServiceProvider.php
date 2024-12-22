@@ -32,6 +32,11 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\ProductPaymentServiceInterface::class, \App\Services\ProductPaymentService::class);
         $this->app->bind(\App\Services\Interfaces\LibraryApiServiceInterface::class, \App\Services\LibraryApiService::class);
         $this->app->bind(\App\Services\Interfaces\LibraryPaymentApiLogServiceInterface::class, \App\Services\LibraryPaymentApiLogService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorEssayNoticeServiceInterface::class, \App\Services\DoctorEssayNoticeService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorEssaySeriesServiceInterface::class, \App\Services\DoctorEssaySeriesService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorEssayVolumeServiceInterface::class, \App\Services\DoctorEssayVolumeService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorEssayLessonServiceInterface::class, \App\Services\DoctorEssayLessonService::class);
+        $this->app->bind(\App\Services\Interfaces\DoctorEssayMaterialServiceInterface::class, \App\Services\DoctorEssayMaterialService::class);
     }
 
     public function boot()

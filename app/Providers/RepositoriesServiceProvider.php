@@ -30,6 +30,11 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Interfaces\LibraryPaymentRepositoryInterface::class, \App\Repositories\Eloquent\LibraryPaymentRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\ProductPaymentRepositoryInterface::class, \App\Repositories\Eloquent\ProductPaymentRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\LibraryPaymentApiLogRepositoryInterface::class, \App\Repositories\Eloquent\LibraryPaymentApiLogRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\DoctorEssayNoticeRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayNoticeRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\DoctorEssaySeriesRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssaySeriesRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\DoctorEssayVolumeRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayVolumeRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\DoctorEssayLessonRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayLessonRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\DoctorEssayMaterialRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayMaterialRepository::class);
     }
 
     public function boot()

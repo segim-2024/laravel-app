@@ -10,8 +10,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
- * Class DoctorFileVolume
- *
  * @package App\Models
  * @property int $id
  * @property string $series_uuid
@@ -24,11 +22,11 @@ use Illuminate\Support\Collection;
  * @property bool $is_whale
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property DoctorFileSeries $series
- * @property DoctorFileLesson[]|Collection $lessons
+ * @property DoctorEssaySeries $series
+ * @property DoctorEssayLesson[]|Collection $lessons
  * @property ?File $poster
  */
-class DoctorFileVolume extends Model
+class DoctorEssayVolume extends Model
 {
     protected $casts = [
         'is_whale' => 'boolean',
@@ -36,7 +34,7 @@ class DoctorFileVolume extends Model
     ];
 
     protected $hidden = [
-        'id'.
+        'id',
         'created_at',
         'updated_at',
         'poster_image_uuid',
@@ -44,12 +42,12 @@ class DoctorFileVolume extends Model
 
     public function series(): BelongsTo
     {
-        return $this->belongsTo(DoctorFileSeries::class, 'series_uuid', 'series_uuid');
+        return $this->belongsTo(DoctorEssaySeries::class, 'series_uuid', 'series_uuid');
     }
 
     public function lessons(): HasMany
     {
-        return $this->hasMany(DoctorFileLesson::class, 'volume_uuid', 'volume_uuid');
+        return $this->hasMany(DoctorEssayLesson::class, 'volume_uuid', 'volume_uuid');
     }
 
     public function poster(): HasOne
