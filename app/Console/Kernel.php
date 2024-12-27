@@ -23,6 +23,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->dailyAt('02:00');
 
+        $schedule->command('app:library-subscribe-payment-schedule-command')
+            ->runInBackground()
+            ->withoutOverlapping()
+            ->dailyAt('02:00');
+
         $schedule->command('app:library-payment-remind-schedule-command')
             ->runInBackground()
             ->withoutOverlapping()
