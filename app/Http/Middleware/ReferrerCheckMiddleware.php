@@ -51,7 +51,8 @@ class ReferrerCheckMiddleware
             return false;
         }
 
-        throw new AccessDeniedHttpException('올바른 접근이 아닙니다.');
+        return true;
+        // throw new AccessDeniedHttpException('올바른 접근이 아닙니다.');
     }
 
     private function matchesDomain(?string $referer, array $domains): bool
