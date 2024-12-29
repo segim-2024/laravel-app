@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->foreign('series_uuid')
                 ->references('series_uuid')
-                ->on('doctor_file_series')
+                ->on('doctor_essay_series')
                 ->onDelete('cascade');
         });
     }
