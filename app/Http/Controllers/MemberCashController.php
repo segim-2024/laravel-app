@@ -6,6 +6,7 @@ use App\Exceptions\MemberCashNotEnoughToSpendException;
 use App\Http\Requests\CreateMemberCashOrderRequest;
 use App\Http\Requests\ECashManualChargeRequest;
 use App\Http\Requests\ECashManualSpendRequest;
+use App\Http\Requests\ECashOrderRequest;
 use App\Http\Requests\MemberCashManualChargeRequest;
 use App\Http\Requests\MemberCashManualSpendRequest;
 use App\Http\Resources\MemberCashResource;
@@ -105,5 +106,24 @@ class MemberCashController extends Controller
         }
 
         return MemberCashResource::make($memberCash);
+    }
+
+    public function order2(ECashOrderRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $memberCash = $this->service->spend($request->toDTO());
+            DB::commit();
+        } catch (MemberCashNotEnoughToSpendException $exception) {
+            DB::rollBack();
+            return response()->json(['message' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return (new MemberCashResource($memberCash))
+            ->response()->setStatusCode(Response::HTTP_OK);
     }
 }

@@ -5,9 +5,6 @@ namespace App\Models;
 use App\Models\Interfaces\OrderInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
-
 
 /**
  * @property string $od_id 주문번호
@@ -36,14 +33,13 @@ use Illuminate\Support\Collection;
  * @property string $od_delivery_company 택배사
  * @property string $od_invoice 운송장번호
  * @property string $od_invoice_time 운송장번호 입력 시각
- * @property Member $member via member() relationship getter magic method
- * @property Collection|Cart[] $carts via carts() relationship getter magic method
+ * @property WhaleMember $member via member() relationship getter magic method
  */
-class Order extends Model implements OrderInterface
+class WhaleOrder extends Model implements OrderInterface
 {
+    protected $connection = "mysql_whale";
     protected $table = 'g5_shop_order';
     public $timestamps = false;
-
 
     /**
      * The primary key associated with the table.
@@ -52,13 +48,9 @@ class Order extends Model implements OrderInterface
      */
     protected $primaryKey = 'od_id';
 
+
     public function member(): BelongsTo
     {
-        return $this->belongsTo(Member::class, 'mb_id', 'mb_id');
-    }
-
-    public function carts():HasMany
-    {
-        return $this->hasMany(Cart::class, 'od_id', 'od_id');
+        return $this->belongsTo(WhaleMember::class, 'mb_id', 'mb_id');
     }
 }

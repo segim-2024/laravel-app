@@ -97,4 +97,9 @@ class Member extends Authenticatable implements MemberInterface
     {
         return $this->cash;
     }
+
+    public function isWhale(): bool
+    {
+        return false;
+    }
 }

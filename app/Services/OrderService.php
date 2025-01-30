@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\OrderInterface;
 use App\Models\Member;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
@@ -19,6 +20,14 @@ class OrderService implements OrderServiceInterface {
     public function find(int|string $id): ?Order
     {
         return $this->repository->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findWithPlatform(int|string $id, $isWhale = false): ?OrderInterface
+    {
+        return $this->repository->findWithPlatform($id, $isWhale);
     }
 
     /**

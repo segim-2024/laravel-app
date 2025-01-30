@@ -2,8 +2,10 @@
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\OrderInterface;
 use App\Models\Member;
 use App\Models\Order;
+use App\Models\WhaleOrder;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -19,6 +21,18 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
      */
     public function find(string|int $id): ?Order
     {
+        return Order::where('od_id', '=', $id)->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findWithPlatform(int|string $id, bool $isWhale = false): ?OrderInterface
+    {
+        if ($isWhale) {
+            return WhaleOrder::where('od_id', '=', $id)->first();
+        }
+
         return Order::where('od_id', '=', $id)->first();
     }
 

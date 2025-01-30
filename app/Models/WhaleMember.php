@@ -104,4 +104,9 @@ class WhaleMember extends Model implements MemberInterface
     {
         return $this->cash;
     }
+
+    public function isWhale(): bool
+    {
+        return true;
+    }
 }

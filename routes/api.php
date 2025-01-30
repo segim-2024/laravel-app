@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     /* 이캐쉬 - 수동 충전, 수동 소모 */
     Route::post('/e-cash/manually-charge', [MemberCashController::class, 'charge']);
     Route::post('/e-cash/manually-spend', [MemberCashController::class, 'spend']);
+    Route::post('/e-cash/order2', [MemberCashController::class, 'order2']);
 
     /* 자료박사 - 공지 [리스트, 입력, 수정, 삭제] */
     Route::get('/doctor-file/notices', [DoctorFileNoticeController::class, 'index']);

@@ -13,4 +13,6 @@ interface MemberInterface
      * @return ?CashInterface
      */
     public function getCash(): ?CashInterface;
+
+    public function isWhale(): bool;
 }
