@@ -35,6 +35,8 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Interfaces\DoctorEssayVolumeRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayVolumeRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\DoctorEssayLessonRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayLessonRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\DoctorEssayMaterialRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayMaterialRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\WhaleMemberCashRepositoryInterface::class, \App\Repositories\Eloquent\WhaleMemberCashRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\WhaleMemberCashTransactionRepositoryInterface::class, \App\Repositories\Eloquent\WhaleMemberCashTransactionRepository::class);
     }
 
     public function boot()

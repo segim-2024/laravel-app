@@ -6,13 +6,13 @@ use App\DTOs\MemberCashDTO;
 use App\Exceptions\MemberCashNotEnoughToSpendException;
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
-use App\Repositories\Interfaces\MemberCashRepositoryInterface;
+use App\Repositories\Factories\MemberCashRepositoryFactory;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberCashTransactionServiceInterface;
 
 class MemberCashService implements MemberCashServiceInterface {
     public function __construct(
-        protected MemberCashRepositoryInterface $repository,
+        protected MemberCashRepositoryFactory $repositoryFactory,
         protected MemberCashTransactionServiceInterface $transactionService
     ) {}
 
@@ -21,18 +21,18 @@ class MemberCashService implements MemberCashServiceInterface {
      */
     public function create(MemberInterface $member): CashInterface
     {
-        return $this->repository->save($member);
+        return $this->repositoryFactory->create($member)->save($member);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function charge(MemberCashDTO $DTO): CashInterface
     {
-        if (! $DTO->member->getCash()) {
-            $this->create($DTO->member);
-        }
-
-        $cash = $this->repository->lock($DTO->member);
+        $repository = $this->repositoryFactory->create($DTO->member);
+        $cash = $repository->lock($DTO->member) ?? $repository->save($DTO->member);
         $this->transactionService->create($DTO);
-        return $this->repository->charge($cash, $DTO->amount);
+        return $repository->charge($cash, $DTO->amount);
     }
 
     /**
@@ -40,21 +40,18 @@ class MemberCashService implements MemberCashServiceInterface {
      */
     public function spend(MemberCashDTO $DTO): CashInterface
     {
-        if (! $DTO->member->getCash()) {
-            $this->create($DTO->member);
-        }
-
-        if (! $this->check($DTO->member, $DTO->amount)) {
+        $repository = $this->repositoryFactory->create($DTO->member);
+        $cash = $repository->lock($DTO->member) ?? $repository->save($DTO->member);
+        if ($cash->getAmount() < $DTO->amount) {
             throw new MemberCashNotEnoughToSpendException('포인트가 부족합니다.');
         }
 
-        $cash = $this->repository->lock($DTO->member);
         $this->transactionService->create($DTO);
-        return $this->repository->spend($cash, $DTO->amount);
+        return $repository->spend($cash, $DTO->amount);
     }
 
-    public function check(MemberInterface $member, int $amount): bool
+    public function check(CashInterface $cash, int $amount): bool
     {
-        return $this->repository->canSpendCheck($member, $amount);
+        return $cash->getAmount() > $amount;
     }
 }

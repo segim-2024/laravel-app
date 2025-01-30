@@ -31,11 +31,4 @@ interface MemberCashRepositoryInterface extends BaseRepositoryInterface
      * @return CashInterface
      */
     public function spend(CashInterface $cash, int $amount): CashInterface;
-
-    /**
-     * @param MemberInterface $member
-     * @param int $amount
-     * @return bool
-     */
-    public function canSpendCheck(MemberInterface $member, int $amount): bool;
 }

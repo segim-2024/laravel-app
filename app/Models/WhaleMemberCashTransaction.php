@@ -19,11 +19,13 @@ use Illuminate\Support\Carbon;
  * @property int $amount 캐쉬 금액
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Member $member via member() relationship getter magic method
+ * @property WhaleMember $member via member() relationship getter magic method
  * @property-read $transactionable Type of the transactionable relationship
  */
-class MemberCashTransaction extends Model implements MemberCashTransactionInterface
+class WhaleMemberCashTransaction extends Model implements MemberCashTransactionInterface
 {
+    protected $connection = "mysql_whale";
+    protected $table = "member_cash_transactions";
 
     /**
      * The attributes that should be cast.
@@ -36,7 +38,7 @@ class MemberCashTransaction extends Model implements MemberCashTransactionInterf
 
     public function member():BelongsTo
     {
-        return $this->belongsTo(Member::class, 'member_id', 'mb_id');
+        return $this->belongsTo(WhaleMember::class, 'member_id', 'mb_id');
     }
 
     public function transactionable():MorphTo

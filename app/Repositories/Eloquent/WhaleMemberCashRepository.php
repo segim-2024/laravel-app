@@ -3,12 +3,12 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
-use App\Models\MemberCash;
+use App\Models\WhaleMemberCash;
 use App\Repositories\Interfaces\MemberCashRepositoryInterface;
 
-class MemberCashRepository extends BaseRepository implements MemberCashRepositoryInterface
+class WhaleMemberCashRepository extends BaseRepository implements MemberCashRepositoryInterface
 {
-    public function __construct(MemberCash $model)
+    public function __construct(WhaleMemberCash $model)
     {
         parent::__construct($model);
     }
@@ -18,7 +18,7 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
      */
     public function save(MemberInterface $member): CashInterface
     {
-        $cash = new MemberCash();
+        $cash = new WhaleMemberCash();
         $cash->member_id = $member->getMemberId();
         $cash->save();
         return $cash;
@@ -29,7 +29,7 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
      */
     public function lock(MemberInterface $member): CashInterface
     {
-        return MemberCash::where('member_id', '=', $member->getMemberId())
+        return WhaleMemberCash::where('member_id', '=', $member->getMemberId())
             ->lockForUpdate()
             ->first();
     }

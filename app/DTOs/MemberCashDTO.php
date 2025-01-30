@@ -59,7 +59,7 @@ class MemberCashDTO
     public static function createFromECashManualChargeRequest(ECashManualChargeRequest $request): self
     {
         return new self(
-            $request->user(),
+            $request->member,
             $request->validated('amount'),
             MemberCashTransactionTypeEnum::Increased,
             $request->validated('title'),
@@ -70,7 +70,7 @@ class MemberCashDTO
     public static function createFromECashManualSpendRequest(ECashManualSpendRequest $request): self
     {
         return new self(
-            $request->user(),
+            $request->member,
             $request->validated('amount'),
             MemberCashTransactionTypeEnum::Decreased,
             $request->validated('title'),

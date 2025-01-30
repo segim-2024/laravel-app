@@ -3,20 +3,20 @@
 namespace App\Services;
 
 use App\DTOs\MemberCashDTO;
-use App\Models\MemberCashTransaction;
-use App\Repositories\Interfaces\MemberCashTransactionRepositoryInterface;
+use App\Models\Interfaces\MemberCashTransactionInterface;
+use App\Repositories\Factories\MemberCashTransactionRepositoryFactory;
 use App\Services\Interfaces\MemberCashTransactionServiceInterface;
 
 class MemberCashTransactionService implements MemberCashTransactionServiceInterface {
     public function __construct(
-        protected MemberCashTransactionRepositoryInterface $repository
+        protected MemberCashTransactionRepositoryFactory $repositoryFactory,
     ) {}
 
     /**
      * @inheritDoc
      */
-    public function create(MemberCashDTO $DTO): MemberCashTransaction
+    public function create(MemberCashDTO $DTO): MemberCashTransactionInterface
     {
-        return $this->repository->save($DTO);
+        return $this->repositoryFactory->create($DTO->member)->save($DTO);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\MemberCashNotEnoughToSpendException;
+use App\Exceptions\MemberCashRepositoryFactoryException;
+use App\Exceptions\MemberCashTransactionRepositoryFactoryException;
 use App\Http\Requests\CreateMemberCashOrderRequest;
 use App\Http\Requests\ECashManualChargeRequest;
 use App\Http\Requests\ECashManualSpendRequest;
@@ -85,11 +87,17 @@ class MemberCashController extends Controller
 
     /**
      * @param ECashManualChargeRequest $request
-     * @return MemberCashResource
+     * @return MemberCashResource|JsonResponse
      */
-    public function charge(ECashManualChargeRequest $request): MemberCashResource
+    public function charge(ECashManualChargeRequest $request)
     {
-        $memberCash = $this->service->charge($request->toDTO());
+        try {
+            $memberCash = $this->service->charge($request->toDTO());
+        } catch (MemberCashTransactionRepositoryFactoryException|MemberCashRepositoryFactoryException $e) {
+            Log::error($e);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return MemberCashResource::make($memberCash);
     }
 
@@ -103,6 +111,9 @@ class MemberCashController extends Controller
             $memberCash = $this->service->spend($request->toDTO());
         } catch (MemberCashNotEnoughToSpendException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (MemberCashTransactionRepositoryFactoryException|MemberCashRepositoryFactoryException $e) {
+            Log::error($e);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return MemberCashResource::make($memberCash);
