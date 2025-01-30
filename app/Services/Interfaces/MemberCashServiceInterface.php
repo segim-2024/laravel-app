@@ -4,34 +4,34 @@ namespace App\Services\Interfaces;
 
 use App\DTOs\MemberCashDTO;
 use App\Exceptions\MemberCashNotEnoughToSpendException;
-use App\Models\Member;
-use App\Models\MemberCash;
+use App\Models\Interfaces\CashInterface;
+use App\Models\Interfaces\MemberInterface;
 
 interface MemberCashServiceInterface
 {
     /**
-     * @param Member $member
-     * @return MemberCash
+     * @param MemberInterface $member
+     * @return CashInterface
      */
-    public function create(Member $member):MemberCash;
+    public function create(MemberInterface $member): CashInterface;
 
     /**
      * @param MemberCashDTO $DTO
-     * @return MemberCash
+     * @return CashInterface
      */
-    public function charge(MemberCashDTO $DTO):MemberCash;
+    public function charge(MemberCashDTO $DTO): CashInterface;
 
     /**
      * @param MemberCashDTO $DTO
-     * @return MemberCash
+     * @return CashInterface
      * @throws MemberCashNotEnoughToSpendException
      */
-    public function spend(MemberCashDTO $DTO):MemberCash;
+    public function spend(MemberCashDTO $DTO): CashInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @param int $amount
      * @return bool
      */
-    public function check(Member $member, int $amount): bool;
+    public function check(MemberInterface $member, int $amount): bool;
 }

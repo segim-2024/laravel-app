@@ -1,41 +1,41 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-use App\Models\Member;
-use App\Models\MemberCash;
+use App\Models\Interfaces\CashInterface;
+use App\Models\Interfaces\MemberInterface;
 
 interface MemberCashRepositoryInterface extends BaseRepositoryInterface
 {
     /**
-     * @param Member $member
-     * @return MemberCash
+     * @param MemberInterface $member
+     * @return CashInterface
      */
-    public function save(Member $member):MemberCash;
+    public function save(MemberInterface $member): CashInterface;
 
     /**
-     * @param Member $member
-     * @return MemberCash
+     * @param MemberInterface $member
+     * @return CashInterface
      */
-    public function lock(Member $member):MemberCash;
+    public function lock(MemberInterface $member): CashInterface;
 
     /**
-     * @param MemberCash $cash
+     * @param CashInterface $cash
      * @param int $amount
-     * @return MemberCash
+     * @return CashInterface
      */
-    public function charge(MemberCash $cash, int $amount):MemberCash;
+    public function charge(CashInterface $cash, int $amount): CashInterface;
 
     /**
-     * @param MemberCash $cash
+     * @param CashInterface $cash
      * @param int $amount
-     * @return mixed
+     * @return CashInterface
      */
-    public function spend(MemberCash $cash, int $amount):MemberCash;
+    public function spend(CashInterface $cash, int $amount): CashInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @param int $amount
      * @return bool
      */
-    public function canSpendCheck(Member $member, int $amount): bool;
+    public function canSpendCheck(MemberInterface $member, int $amount): bool;
 }

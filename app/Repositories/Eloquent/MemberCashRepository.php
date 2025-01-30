@@ -1,9 +1,14 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\Models\Interfaces\CashInterface;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Member;
 use App\Models\MemberCash;
+use App\Models\WhaleMember;
+use App\Models\WhaleMemberCash;
 use App\Repositories\Interfaces\MemberCashRepositoryInterface;
+use RuntimeException;
 
 class MemberCashRepository extends BaseRepository implements MemberCashRepositoryInterface
 {
@@ -12,13 +17,26 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
         parent::__construct($model);
     }
 
+    private function resolveCashModel(MemberInterface $member): CashInterface
+    {
+        if ($member instanceof Member) {
+            return new MemberCash();
+        }
+
+        if ($member instanceof WhaleMember) {
+            return new WhaleMemberCash();
+        }
+
+        throw new RuntimeException('Invalid member type');
+    }
+
     /**
      * @inheritDoc
      */
-    public function save(Member $member): MemberCash
+    public function save(MemberInterface $member): CashInterface
     {
-        $cash = new MemberCash();
-        $cash->member_id = $member->mb_id;
+        $cash = $this->resolveCashModel($member);
+        $cash->member_id = $member->getMemberId();
         $cash->save();
         return $cash;
     }
@@ -26,17 +44,20 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
     /**
      * @inheritDoc
      */
-    public function lock(Member $member): MemberCash
+    public function lock(MemberInterface $member): CashInterface
     {
-        return MemberCash::where('member_id', '=', $member->mb_id)->lockForUpdate()->first();
+        $model = $this->resolveCashModel($member);
+        return $model::where('member_id', '=', $member->getMemberId())
+            ->lockForUpdate()
+            ->first();
     }
 
     /**
      * @inheritDoc
      */
-    public function charge(MemberCash $cash, int $amount): MemberCash
+    public function charge(CashInterface $cash, int $amount): CashInterface
     {
-        $cash->amount += $amount;
+        $cash->setAmount($cash->getAmount() + $amount);
         $cash->save();
         return $cash;
     }
@@ -44,9 +65,9 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
     /**
      * @inheritDoc
      */
-    public function spend(MemberCash $cash, int $amount): MemberCash
+    public function spend(CashInterface $cash, int $amount): CashInterface
     {
-        $cash->amount -= $amount;
+        $cash->setAmount($cash->getAmount() - $amount);
         $cash->save();
         return $cash;
     }
@@ -54,8 +75,13 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
     /**
      * @inheritDoc
      */
-    public function canSpendCheck(Member $member, int $amount): bool
+    public function canSpendCheck(MemberInterface $member, int $amount): bool
     {
-        return $member->cash->amount >= $amount;
+        $cash = $member->getCash();
+        if (! $cash) {
+            return false;
+        }
+
+        return $cash->getAmount() >= $amount;
     }
 }

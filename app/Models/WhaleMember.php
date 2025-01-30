@@ -2,14 +2,34 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\Sanctum;
 
+
+/**
+ * @property int $mb_no PK
+ * @property string $mb_id 계정
+ * @property string $mb_password 비밀번호
+ * @property string $mb_name 이름
+ * @property string $mb_nick 닉네임
+ * @property string $mb_nick_date ??
+ * @property string $mb_email 이메일
+ * @property string $mb_hp 핸드폰
+ * @property string $mb_homepage 홈페이지
+ * @property string $mb_level 레벨
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property WhaleMemberCash $cash via cash() relationship getter magic method
+ */
 class WhaleMember extends Model implements MemberInterface
 {
     use HasApiTokens;
@@ -62,5 +82,26 @@ class WhaleMember extends Model implements MemberInterface
     {
         return $this->setConnection('mysql_sg')
             ->morphMany(Sanctum::$personalAccessTokenModel, 'tokenable');
+    }
+
+    public function cash(): HasOne
+    {
+        return $this->hasOne(MemberCash::class, 'member_id', 'mb_id');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMemberId(): string
+    {
+        return $this->mb_id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCash(): ?CashInterface
+    {
+        return $this->cash;
     }
 }

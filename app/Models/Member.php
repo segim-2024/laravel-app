@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LibraryProductSubscribeStateEnum;
+use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -79,5 +80,21 @@ class Member extends Authenticatable implements MemberInterface
     {
         return $this->hasOne(LibraryProductSubscribe::class, 'member_id', 'mb_id')
             ->where('state', "!=", LibraryProductSubscribeStateEnum::Unsubscribe);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMemberId(): string
+    {
+        return $this->mb_id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCash(): ?CashInterface
+    {
+        return $this->cash;
     }
 }

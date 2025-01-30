@@ -11,15 +11,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $amount 캐쉬 잔액
  * @property Member $member via member() relationship getter magic method
  */
-class MemberCash extends Model implements CashInterface
+class WhaleMemberCash extends Model implements CashInterface
 {
+    protected $connection = "mysql_whale";
+    protected $table = "member_cashes";
+
     /**
      * Indicates if the model's ID is auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = false;
-
 
     /**
      * The primary key associated with the table.
@@ -39,7 +41,7 @@ class MemberCash extends Model implements CashInterface
 
     public function member(): BelongsTo
     {
-        return $this->belongsTo(Member::class, 'member_id', 'mb_id');
+        return $this->belongsTo(WhaleMember::class, 'member_id', 'mb_id');
     }
 
     public function getMemberId(): string

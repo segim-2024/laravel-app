@@ -18,7 +18,7 @@ class MemberCashTransactionRepository extends BaseRepository implements MemberCa
     public function save(MemberCashDTO $DTO): MemberCashTransaction
     {
         $transaction = new MemberCashTransaction();
-        $transaction->member_id = $DTO->member->mb_id;
+        $transaction->member_id = $DTO->member->getMemberId();
         $transaction->type = $DTO->type;
         $transaction->title = $DTO->title;
         $transaction->amount = $DTO->amount;
