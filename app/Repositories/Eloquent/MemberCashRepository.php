@@ -20,6 +20,7 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
     {
         $cash = new MemberCash();
         $cash->member_id = $member->getMemberId();
+        $cash->amount = 0;
         $cash->save();
         return $cash;
     }

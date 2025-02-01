@@ -20,6 +20,7 @@ class WhaleMemberCashRepository extends BaseRepository implements MemberCashRepo
     {
         $cash = new WhaleMemberCash();
         $cash->member_id = $member->getMemberId();
+        $cash->amount = 0;
         $cash->save();
         return $cash;
     }

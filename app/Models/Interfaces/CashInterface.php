@@ -13,8 +13,6 @@ interface CashInterface {
      */
     public function getAmount(): int;
 
-
-
     /**
      * @param int $amount
      * @return void
