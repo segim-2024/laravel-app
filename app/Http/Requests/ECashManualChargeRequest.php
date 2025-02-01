@@ -42,6 +42,10 @@ class ECashManualChargeRequest extends FormRequest
     {
         return [
             function (Validator $validator) use ($memberService) {
+                if (! $this->validated('mb_id')) {
+                    $validator->errors()->add('mb_id', '회원 아이디를 입력해주세요.');
+                }
+
                 $member = $memberService->find($this->validated('mb_id'), $this->user()->isWhale());
                 if (! $member) {
                     throw new NotFoundHttpException("회원을 찾을 수 없어요.");
