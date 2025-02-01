@@ -44,6 +44,7 @@ class ECashManualChargeRequest extends FormRequest
             function (Validator $validator) use ($memberService) {
                 if (! $this->validated('mb_id')) {
                     $validator->errors()->add('mb_id', '회원 아이디를 입력해주세요.');
+                    return;
                 }
 
                 $member = $memberService->find($this->validated('mb_id'), $this->user()->isWhale());
