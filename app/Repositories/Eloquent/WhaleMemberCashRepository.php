@@ -27,7 +27,7 @@ class WhaleMemberCashRepository extends BaseRepository implements MemberCashRepo
     /**
      * @inheritDoc
      */
-    public function lock(MemberInterface $member): CashInterface
+    public function lock(MemberInterface $member): ?CashInterface
     {
         return WhaleMemberCash::where('member_id', '=', $member->getMemberId())
             ->lockForUpdate()

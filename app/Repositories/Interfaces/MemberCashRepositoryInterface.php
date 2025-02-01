@@ -14,9 +14,9 @@ interface MemberCashRepositoryInterface extends BaseRepositoryInterface
 
     /**
      * @param MemberInterface $member
-     * @return CashInterface
+     * @return ?CashInterface
      */
-    public function lock(MemberInterface $member): CashInterface;
+    public function lock(MemberInterface $member): ?CashInterface;
 
     /**
      * @param CashInterface $cash

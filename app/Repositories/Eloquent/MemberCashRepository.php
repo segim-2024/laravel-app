@@ -27,7 +27,7 @@ class MemberCashRepository extends BaseRepository implements MemberCashRepositor
     /**
      * @inheritDoc
      */
-    public function lock(MemberInterface $member): CashInterface
+    public function lock(MemberInterface $member): ?CashInterface
     {
         return MemberCash::where('member_id', '=', $member->getMemberId())
             ->lockForUpdate()
