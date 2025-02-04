@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ECashLoggingMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -21,6 +22,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        ECashLoggingMiddleware::class,
     ];
 
     /**
@@ -66,5 +68,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkPamusIP' => \App\Http\Middleware\CheckPamusIPMiddleware::class,
         'referrer.check' => \App\Http\Middleware\ReferrerCheckMiddleware::class,
+        'ecash.logging' => \App\Http\Middleware\ECashLoggingMiddleware::class,
     ];
 }
