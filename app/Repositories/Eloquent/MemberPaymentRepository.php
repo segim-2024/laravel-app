@@ -69,7 +69,9 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->state = $DTO->status;
         $payment->api = $DTO->httpResponseBody;
         $payment->receipt_url = $DTO->receiptUrl ?? null;
-        $payment->paid_at = $DTO->paidAt;
+        $payment->paid_at = Carbon::parse($DTO->paidAt)
+            ->timezone('Asia/Seoul')
+            ->format('Y-m-d H:i:s');
         $payment->save();
         return $payment;
     }
@@ -84,7 +86,9 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->cancelled_amount = $DTO->cancellations?->totalAmount ?? 0;
         $payment->reason = $DTO->cancellations?->reason ?? 'UNKNOWN';
         $payment->receipt_url = $DTO->receiptUrl ?? null;
-        $payment->cancelled_at = $DTO->paidAt;
+        $payment->cancelled_at = Carbon::parse($DTO->paidAt)
+            ->timezone('Asia/Seoul')
+            ->format('Y-m-d H:i:s');
         $payment->api = $DTO->httpResponseBody;
         $payment->save();
         return $payment;
