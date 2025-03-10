@@ -83,19 +83,15 @@ class LibraryProductSubscribeController extends Controller
      * @param LibraryProductUnsubscribeRequest $request
      * @return JsonResponse|LibraryProductSubscribeResource
      */
-    public function unsubscribe(LibraryProductUnsubscribeRequest $request): JsonResponse|LibraryProductSubscribeResource
+    public function unsubscribe(LibraryProductUnsubscribeRequest $request)
     {
         try {
             $subscribe = $this->service->unsubscribe($request->toDTO());
         } catch (LibraryProductSubscribeNotFoundException $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
 
-        return LibraryProductSubscribeResource::make($subscribe)
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
+        return LibraryProductSubscribeResource::make($subscribe);
     }
 
     /**
