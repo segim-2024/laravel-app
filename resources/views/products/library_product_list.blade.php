@@ -43,9 +43,9 @@
                                         <button class="btn btn_green" name="change" data-id="{{$product->id}}">
                                             변경
                                         </button>
-                                        <button class="btn btn_red" name="canceled" data-id="{{$product->id}}">
-                                            해지
-                                        </button>
+{{--                                        <button class="btn btn_red" name="canceled" data-id="{{$product->id}}">--}}
+{{--                                            해지--}}
+{{--                                        </button>--}}
                                         @if ($product->subscribe->state->isUnpaid())
                                             <button class="btn btn_gray" name="re-payment" data-id="{{$product->id}}" style="margin-top:4px;">재결제 신청</button>
                                         @endif
