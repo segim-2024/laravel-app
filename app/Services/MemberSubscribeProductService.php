@@ -54,7 +54,7 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
      */
     public function unsubscribe(UnsubscribeProductDTO $DTO): void
     {
-        app(MemberCardServiceInterface::class)->delete($DTO->subscribe->card);
+        $this->repository->delete($DTO->subscribe);
         $this->logging(MemberSubscribeProductLogDTO::unsubscribed($DTO->subscribe));
     }
 
