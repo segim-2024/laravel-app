@@ -24,7 +24,7 @@ class LibraryProductUnsubscribeDTO
     public static function createFromAdminRequest(LibraryProductUnsubscribeByAdminRequest $request): self
     {
         return new self(
-            memberId: (int)$request->validated('member_id'),
+            memberId: $request->validated('member_id'),
             productId: (int)$request->validated('product_id'),
         );
     }
