@@ -16,7 +16,7 @@ class LibraryProductUnsubscribeByAdminRequest extends FormRequest
     {
         return [
             'product_id' => ['required', 'exists:library_products,id'],
-            'member_id' => ['required', 'exists:users,id'],
+            'member_id' => ['required'],
         ];
     }
 
