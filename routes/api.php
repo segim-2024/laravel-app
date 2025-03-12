@@ -12,6 +12,7 @@ use App\Http\Controllers\DoctorFileSeriesController;
 use App\Http\Controllers\DoctorFileVolumeController;
 use App\Http\Controllers\LibraryProductController;
 use App\Http\Controllers\LibraryProductSubscribeApiController;
+use App\Http\Controllers\MemberCardApiController;
 use App\Http\Controllers\MemberCashController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
@@ -52,6 +53,8 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::patch('/library-products/{productId}', [LibraryProductController::class, 'update']);
 
     Route::post('/library-products/members/unsubscribe', [LibraryProductSubscribeApiController::class, 'unsubscribe']);
+
+    Route::get('/members/cards', [MemberCardApiController::class, 'index']);
 });
 
 /* 토큰 발급 */

@@ -3,12 +3,14 @@
 namespace App\Services;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\GetMemberCardApiDTO;
 use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class MemberCardService implements MemberCardServiceInterface {
@@ -58,5 +60,13 @@ class MemberCardService implements MemberCardServiceInterface {
     public function delete(MemberCard $card): void
     {
         $this->repository->delete($card);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAllMemberCards(GetMemberCardApiDTO $DTO): LengthAwarePaginator
+    {
+        return $this->repository->getAllMemberCardPaginate($DTO);
     }
 }

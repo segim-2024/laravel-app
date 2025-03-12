@@ -2,9 +2,11 @@
 namespace App\Repositories\Interfaces;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\GetMemberCardApiDTO;
 use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface MemberCardRepositoryInterface extends BaseRepositoryInterface
@@ -31,4 +33,9 @@ interface MemberCardRepositoryInterface extends BaseRepositoryInterface
      * @return MemberCard
      */
     public function save(MemberCardDTO $DTO):MemberCard;
+
+    /**
+     * @param GetMemberCardApiDTO $DTO
+     */
+    public function getAllMemberCardPaginate(GetMemberCardApiDTO $DTO): LengthAwarePaginator;
 }

@@ -1,10 +1,12 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\DTOs\GetMemberCardApiDTO;
 use App\DTOs\MemberCardDTO;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class MemberCardRepository extends BaseRepository implements MemberCardRepositoryInterface
@@ -42,5 +44,20 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
         $card->key = $DTO->key;
         $card->save();
         return $card;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAllMemberCardPaginate(GetMemberCardApiDTO $DTO): LengthAwarePaginator
+    {
+        $orderOptions = $DTO->getOrderOptions();
+
+        return MemberCard::when($DTO->search, static function ($query, $search) {
+                $query->where('member_id', 'like', "%{$search}%");
+            })
+            ->orderBy($orderOptions['column'], $orderOptions['direction'])
+            ->paginate($DTO->perPage, ['*'], 'page', $DTO->page)
+            ->withQueryString();
     }
 }

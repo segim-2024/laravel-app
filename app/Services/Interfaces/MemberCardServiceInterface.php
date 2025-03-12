@@ -3,9 +3,11 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\CreateMemberCardDTO;
+use App\DTOs\GetMemberCardApiDTO;
 use App\Exceptions\PortOneGetBillingKeyException;
 use App\Models\Member;
 use App\Models\MemberCard;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface MemberCardServiceInterface
@@ -22,6 +24,12 @@ interface MemberCardServiceInterface
      * @return MemberCard|null
      */
     public function find(Member $member, string|int $id): ?MemberCard;
+
+    /**
+     * @param GetMemberCardApiDTO $DTO
+     * @return LengthAwarePaginator
+     */
+    public function getAllMemberCards(GetMemberCardApiDTO $DTO): LengthAwarePaginator;
 
     /**
      * 카드 리스트
