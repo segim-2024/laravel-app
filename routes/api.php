@@ -55,6 +55,7 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/library-products/members/unsubscribe', [LibraryProductSubscribeApiController::class, 'unsubscribe']);
 
     Route::get('/members/cards', [MemberCardApiController::class, 'index']);
+    Route::delete('/members/cards/{id}', [MemberCardApiController::class, 'destroy']);
 });
 
 /* 토큰 발급 */
