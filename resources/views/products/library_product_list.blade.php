@@ -152,6 +152,7 @@
     <!-- payment_card_list end -->
 
     <script src="{{ asset('js/library_product_list.js') }}"></script>
+    @include('modals.library_agreement')
     @include('modals.library_card_select', ['cards' => $cards])
     @include('modals.library_card_change', ['cards' => $cards])
 @endsection

@@ -20,9 +20,10 @@ $(document).ready(function() {
             if (! response.ok) {
                 alert("카드를 먼저 등록해주세요.");
                 location.href = "/cards";
+                return false;
             }
 
-            document.getElementById('selectCard').style.display = 'block';
+            document.getElementById('agreementPopup').style.display = 'block';
             document.getElementById('selectProductId').value = productId;
         } catch (error) {
             console.error('Error:', error);
@@ -31,6 +32,15 @@ $(document).ready(function() {
 
         return false;
     });
+
+    // 약관 동의 후 '동의후 계약 진행' 버튼 클릭 시 이벤트 핸들러
+    $('#agreementConfirm').on('click', function() {
+        // 약관 동의 팝업 닫기
+        document.getElementById('agreementPopup').style.display = 'none';
+        // 카드 선택 모달 표시
+        document.getElementById('selectCard').style.display = 'block';
+    });
+
 
     // 카드 해지 버튼 클릭 시 이벤트 핸들러
     $('[name=canceled]').on('click', async function() {
