@@ -890,6 +890,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     width: 900px;
     padding: 50px;
     background-color: #fff;
+    border-radius: 8px;
 }
 .layer_card_set .title {
     padding-bottom: 2.0833vw;
@@ -1506,6 +1507,9 @@ select.d_select {
     width: 600px;
     padding: 40px 20px 30px 20px;
     background-color: #fff;
+    border-radius: 8px;
+    -webkit-box-shadow: 0px 5px 16px 2px rgba(0,0,0,0.1);
+    box-shadow: 0px 5px 16px 2px rgba(0,0,0,0.1);
 }
 
 .guide_popup .title {
