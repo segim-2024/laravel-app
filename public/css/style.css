@@ -786,7 +786,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     margin-right: 1vw;
     width: 21.7708vw;
     height: 13.5417vw;
-    padding: 0.7813vw 0 20px;
+    padding: 0.7813vw 0 0.7813vw;
     text-align: center;
     border-radius: 9px;
     background-color: #fff;
@@ -906,7 +906,7 @@ input[type="radio"].pick:checked:disabled + div:after {
 
 .layer_card_set .card_box {
     width: 260px;
-    height: 180px;
+    height: initial;
 }
 
 .layer_card_set .date {
@@ -1144,7 +1144,6 @@ input[type="radio"].pick:checked:disabled + div:after {
         padding-top: 80px;
     }
     .layer_card_set .card_box .card_name {
-        padding-top: 20px;
         font-size: 16px;
     }
 }
@@ -1177,7 +1176,6 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
     .layer_card_set .card_box {
         width: 200px;
-        height: 140px;
     }
     .layer_card_set .btn_wrap {
         padding-top: 30px;
@@ -1287,8 +1285,7 @@ input[type="radio"].pick:checked:disabled + div:after {
     .layer_card_set .card_box {
         margin: 0 auto;
         width: 240px;
-        height: 140px;
-        padding: 10px 0 20px;
+        padding: 10px 0 10px;
     }
     .layer_card_set .card_box_pick:last-child .card_box {
         margin: auto;
@@ -1387,7 +1384,6 @@ input[type="radio"].pick:checked:disabled + div:after {
     }
     .layer_card_set .card_box {
         width: 180px;
-        height: 110px;
     }
     .layer_card_set .card_box .card_name {
         padding-top: 4px;
