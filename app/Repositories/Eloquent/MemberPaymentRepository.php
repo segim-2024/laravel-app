@@ -57,6 +57,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
     public function updateCard(MemberPayment $payment, MemberCard $card):MemberPayment
     {
         $payment->card_id = $card->id;
+        $payment->save();
         return $payment;
     }
 
