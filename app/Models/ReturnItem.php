@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 class ReturnItem extends Model
 {
-    protected $table = 'g5_return_items';
+    protected $table = 'g5_shop_return_item';
     protected $primaryKey = 'rfi_id';
     public $timestamps = false;
 
