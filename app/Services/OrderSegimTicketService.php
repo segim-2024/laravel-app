@@ -8,11 +8,9 @@ use App\DTOs\OrderSegimTicketMinusDTO;
 use App\DTOs\OrderSegimTicketPlusDTO;
 use App\DTOs\SegimTicketApiDTO;
 use App\DTOs\SegimTicketApiResponseDTO;
-use App\Enums\SegimTicketMinusTypeEnum;
 use App\Jobs\OrderSegimTicketMinusJob;
 use App\Jobs\OrderSegimTicketPlusJob;
 use App\Models\Cart;
-use App\Models\Interfaces\SegimTicketMinusInterface;
 use App\Models\ReturnItem;
 use App\Repositories\Interfaces\OrderSegimTicketMinusLogRepositoryInterface;
 use App\Repositories\Interfaces\OrderSegimTicketPlusLogRepositoryInterface;
@@ -79,13 +77,11 @@ class OrderSegimTicketService implements OrderSegimTicketServiceInterface {
                 return;
             }
 
-            Log::info("logging $cart->it_id");
+            Log::info($cart->item);
 
-            if ($cart->item && ! $cart->item->segim_ticket_type) {
-                return;
+            if ($cart->item && $cart->item->segim_ticket_type) {
+                OrderSegimTicketPlusJob::dispatch($ctId);
             }
-
-            OrderSegimTicketPlusJob::dispatch($ctId);
         });
     }
 

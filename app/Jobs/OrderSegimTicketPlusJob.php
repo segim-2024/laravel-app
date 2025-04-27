@@ -50,38 +50,35 @@ class OrderSegimTicketPlusJob implements ShouldQueue
             return;
         }
 
-        if (! $cart->item->segim_ticket_type) {
-            Log::warning("Segim ticket type is null: {$this->ctId}");
-            return;
+        if ($cart->item && $cart->item->segim_ticket_type) {
+            $ticketType = SegimTicketTypeEnum::from($cart->item->segim_ticket_type);
+
+            $DTO = new SegimTicketApiDTO(
+                mbNo: $cart->member->mb_no,
+                qty: $cart->ct_qty,
+                ticketType: $ticketType,
+                description: "프로모션 티켓 발급"
+            );
+
+            $apiResponseDTO = $service->callApi($DTO);
+
+            if (! $apiResponseDTO->isSuccess) {
+                Log::error("Failed to call API: {$this->ctId}", [
+                    'error' => $apiResponseDTO->httpStatusCode,
+                    'message' => $apiResponseDTO->message,
+                    'response' => $apiResponseDTO->data
+                ]);
+
+                throw new SegimTicketApiErrorException("API call failed: {$this->ctId}");
+            }
+
+            $DTO = new CreateOrderSegimTicketPlusLogDTO(
+                ctId: $this->ctId,
+                ticketType: $ticketType,
+                api: $apiResponseDTO->data
+            );
+
+            $service->createPlusLog($DTO);
         }
-
-        $ticketType = SegimTicketTypeEnum::from($cart->item->segim_ticket_type);
-
-        $DTO = new SegimTicketApiDTO(
-            mbNo: $cart->member->mb_no,
-            qty: $cart->ct_qty,
-            ticketType: $ticketType,
-            description: "프로모션 티켓 발급"
-        );
-
-        $apiResponseDTO = $service->callApi($DTO);
-
-        if (! $apiResponseDTO->isSuccess) {
-            Log::error("Failed to call API: {$this->ctId}", [
-                'error' => $apiResponseDTO->httpStatusCode,
-                'message' => $apiResponseDTO->message,
-                'response' => $apiResponseDTO->data
-            ]);
-
-            throw new SegimTicketApiErrorException("API call failed: {$this->ctId}");
-        }
-
-        $DTO = new CreateOrderSegimTicketPlusLogDTO(
-            ctId: $this->ctId,
-            ticketType: $ticketType,
-            api: $apiResponseDTO->data
-        );
-
-        $service->createPlusLog($DTO);
     }
 }
