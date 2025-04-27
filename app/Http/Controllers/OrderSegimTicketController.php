@@ -29,6 +29,7 @@ class OrderSegimTicketController extends Controller
 
     public function minus(OrderSegimTicketMinusRequest $request): JsonResponse
     {
+        Log::info($request->all());
         $this->service->callMinusJob(new OrderSegimTicketMinusDTO(
             type: $request->validated('type'),
             ids: collect($request->validated('ids'))
