@@ -17,6 +17,7 @@ use App\Http\Controllers\MemberCashController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
 use App\Http\Controllers\OrderAlimTokController;
+use App\Http\Controllers\OrderSegimTicketController;
 use App\Http\Controllers\PortOneWebHookController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\TossWebHookController;
@@ -56,6 +57,9 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
 
     Route::get('/members/cards', [MemberCardApiController::class, 'index']);
     Route::delete('/members/cards/{id}', [MemberCardApiController::class, 'destroy']);
+
+    Route::post('/segim/orders/tickets/plus', [OrderSegimTicketController::class, 'plus']);
+    Route::post('/segim/orders/tickets/minus', [OrderSegimTicketController::class, 'minus']);
 });
 
 /* 토큰 발급 */

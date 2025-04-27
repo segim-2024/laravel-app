@@ -37,6 +37,11 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Interfaces\DoctorEssayMaterialRepositoryInterface::class, \App\Repositories\Eloquent\DoctorEssayMaterialRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\WhaleMemberCashRepositoryInterface::class, \App\Repositories\Eloquent\WhaleMemberCashRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\WhaleMemberCashTransactionRepositoryInterface::class, \App\Repositories\Eloquent\WhaleMemberCashTransactionRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\OrderSegimTicketPlusLogRepositoryInterface::class, \App\Repositories\Eloquent\OrderSegimTicketPlusLogPlusLogRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\ItemRepositoryInterface::class, \App\Repositories\Eloquent\ItemRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\CartRepositoryInterface::class, \App\Repositories\Eloquent\CartRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\ReturnItemRepositoryInterface::class, \App\Repositories\Eloquent\ReturnItemRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\OrderSegimTicketMinusLogRepositoryInterface::class, \App\Repositories\Eloquent\OrderSegimTicketMinusLogRepository::class);
     }
 
     public function boot()

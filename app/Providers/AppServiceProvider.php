@@ -48,5 +48,13 @@ class AppServiceProvider extends ServiceProvider
                 ->baseUrl('https://whale.cloubot.com/api')
                 ->asForm();
         });
+
+        Http::macro('segim', function () {
+            return Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-API-Key' => Config::get('services.segim.api_key'),
+            ])
+            ->baseUrl('https://admin.epamus.com/ss/api');
+        });
     }
 }

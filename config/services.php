@@ -55,5 +55,9 @@ return [
 
     'library' => [
         'api_key' => env('LIBRARY_API_KEY'),
-    ]
+    ],
+
+    'segim' => [
+        'api_key' => env('SEGIM_API_KEY'),
+    ],
 ];
