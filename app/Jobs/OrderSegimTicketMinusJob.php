@@ -105,7 +105,7 @@ class OrderSegimTicketMinusJob implements ShouldQueue
             itemId: $itemId,
             orderProduct: $item,
             ticketType: $ticketType,
-            qty: $qty * -1,
+            qty: $qty,
             api: $apiResponseDTO->data
         );
 
