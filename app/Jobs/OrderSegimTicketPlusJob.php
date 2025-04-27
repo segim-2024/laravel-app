@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\DTOs\CreateOrderSegimTicketPlusLogDTO;
 use App\DTOs\SegimTicketApiDTO;
+use App\Enums\SegimTicketTypeEnum;
 use App\Exceptions\SegimTicketApiErrorException;
 use App\Services\Interfaces\CartServiceInterface;
 use App\Services\Interfaces\OrderSegimTicketServiceInterface;
@@ -54,10 +55,12 @@ class OrderSegimTicketPlusJob implements ShouldQueue
             return;
         }
 
+        $ticketType = SegimTicketTypeEnum::from($cart->item->segim_ticket_type);
+
         $DTO = new SegimTicketApiDTO(
             mbNo: $cart->member->mb_no,
             qty: $cart->ct_qty,
-            ticketType: $cart->item->segim_ticket_type,
+            ticketType: $ticketType,
             description: "프로모션 티켓 발급"
         );
 
@@ -75,7 +78,7 @@ class OrderSegimTicketPlusJob implements ShouldQueue
 
         $DTO = new CreateOrderSegimTicketPlusLogDTO(
             ctId: $this->ctId,
-            ticketType: $cart->item->segim_ticket_type,
+            ticketType: $ticketType,
             api: $apiResponseDTO->data
         );
 
