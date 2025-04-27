@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\OrderSegimTicketMinusDTO;
 use App\DTOs\OrderSegimTicketPlusDTO;
+use App\Enums\SegimTicketMinusTypeEnum;
 use App\Http\Requests\OrderSegimTicketMinusRequest;
 use App\Http\Requests\OrderSegimTicketPlusRequest;
 use App\Services\Interfaces\OrderSegimTicketServiceInterface;
@@ -31,7 +32,7 @@ class OrderSegimTicketController extends Controller
     {
         Log::info($request->all());
         $this->service->callMinusJob(new OrderSegimTicketMinusDTO(
-            type: $request->validated('type'),
+            type: SegimTicketMinusTypeEnum::from($request->validated('type')),
             ids: collect($request->validated('ids'))
         ));
 
