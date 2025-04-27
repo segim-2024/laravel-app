@@ -29,7 +29,7 @@ class Cart extends Model
 
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class, 'it_id', 'it_id');
+        return $this->belongsTo(Item::class, 'it_id');
     }
 
     public function ticketPlusLog(): HasOne

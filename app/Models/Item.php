@@ -22,6 +22,6 @@ class Item extends Model
 
     public function carts(): HasMany
     {
-        return $this->hasMany(Cart::class, 'it_id', 'it_id');
+        return $this->hasMany(Cart::class, 'it_id');
     }
 }
