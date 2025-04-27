@@ -25,6 +25,8 @@ class Cart extends Model
 {
     protected $table = "g5_shop_cart";
     protected $primaryKey = "ct_id";
+    protected $keyType = 'string'; // 문자열 키임을 명시
+    public $incrementing = false; // 자동 증가하지 않음을 명시
     public $timestamps = false;
 
     public function item(): BelongsTo

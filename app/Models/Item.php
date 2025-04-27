@@ -18,6 +18,8 @@ class Item extends Model
 {
     protected $table = "g5_shop_item";
     protected $primaryKey = "it_id";
+    protected $keyType = 'string'; // 문자열 키임을 명시
+    public $incrementing = false; // 자동 증가하지 않음을 명시
     public $timestamps = false;
 
     public function carts(): HasMany
