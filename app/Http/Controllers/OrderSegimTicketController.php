@@ -8,6 +8,7 @@ use App\Http\Requests\OrderSegimTicketMinusRequest;
 use App\Http\Requests\OrderSegimTicketPlusRequest;
 use App\Services\Interfaces\OrderSegimTicketServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderSegimTicketController extends Controller
@@ -18,6 +19,7 @@ class OrderSegimTicketController extends Controller
 
     public function plus(OrderSegimTicketPlusRequest $request): JsonResponse
     {
+        Log::info($request->all());
         $this->service->callPlusJob(new OrderSegimTicketPlusDTO(
             ctIds: collect($request->validated('ct_ids'))
         ));
