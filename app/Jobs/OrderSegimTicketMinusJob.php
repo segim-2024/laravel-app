@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\DTOs\CreateOrderSegimTicketMinusLogDTO;
 use App\DTOs\SegimTicketApiDTO;
 use App\Enums\SegimTicketMinusTypeEnum;
+use App\Enums\SegimTicketTypeEnum;
 use App\Exceptions\SegimTicketApiErrorException;
 use App\Models\Cart;
 use App\Models\ReturnItem;
@@ -58,6 +59,8 @@ class OrderSegimTicketMinusJob implements ShouldQueue
             $itemId = $item?->it_id;
             $ticketType = $item?->item->segim_ticket_type;
         }
+
+        $ticketType = SegimTicketTypeEnum::from($ticketType);
 
         if (! $item) {
             Log::warning("Item not found: {$this->type->value} {$this->id}");
