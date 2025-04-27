@@ -18,6 +18,7 @@ use App\Services\Interfaces\CartServiceInterface;
 use App\Services\Interfaces\OrderSegimTicketServiceInterface;
 use App\Services\Interfaces\ReturnItemServiceInterface;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,14 +71,16 @@ class OrderSegimTicketService implements OrderSegimTicketServiceInterface {
             if ($isExists) {
                 return;
             }
-
+            DB::enableQueryLog();
             $cart = $this->cartService->find($ctId);
             if (! $cart) {
                 Log::warning("Cart not found: $ctId");
                 return;
             }
 
+            Log::warning($cart->it_id);
             Log::info($cart->item);
+            Log::warning(json_encode(DB::getQueryLog()));
 
             if ($cart->item && $cart->item->segim_ticket_type) {
                 OrderSegimTicketPlusJob::dispatch($ctId);
