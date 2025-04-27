@@ -79,7 +79,8 @@ class OrderSegimTicketService implements OrderSegimTicketServiceInterface {
                 return;
             }
 
-            if (! $cart->item->segim_ticket_type) {
+            if ($cart->item && ! $cart->item->segim_ticket_type) {
+                Log::info("flag not found $cart->it_id");
                 return;
             }
 
