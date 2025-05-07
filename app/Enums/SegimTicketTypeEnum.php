@@ -8,5 +8,5 @@ enum SegimTicketTypeEnum:string
     case Seven = 'seven';
     case Fifteen = 'fifteen';
     case Thirty = 'thirty';
-    case FortyFive = 'fortyfive';
+    case FortyFive = 'forty_five';
 }
