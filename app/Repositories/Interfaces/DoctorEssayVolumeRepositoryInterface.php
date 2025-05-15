@@ -31,4 +31,11 @@ interface DoctorEssayVolumeRepositoryInterface extends BaseRepositoryInterface
      * @return DoctorEssayVolume
      */
     public function updateIsPublished(DoctorEssayVolume $volume, bool $isPublished): DoctorEssayVolume;
+
+    /**
+     * @param DoctorEssayVolume $volume
+     * @param string $url
+     * @return DoctorEssayVolume
+     */
+    public function updateUrl(DoctorEssayVolume $volume, string $url): DoctorEssayVolume;
 }

@@ -107,6 +107,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/doctor-essay/volumes/{uuid}/poster', [DoctorEssayVolumeController::class, 'updatePoster']);
         Route::patch('/doctor-essay/volumes/{uuid}/description', [DoctorEssayVolumeController::class, 'updateDescription']);
         Route::patch('/doctor-essay/volumes/{uuid}/is-published', [DoctorEssayVolumeController::class, 'updateIsPublished']);
+        Route::patch('/doctor-essay/volumes/{uuid}/url', [DoctorEssayVolumeController::class, 'updateUrl']);
         Route::delete('/doctor-essay/volumes/{uuid}', [DoctorEssayVolumeController::class, 'destroy']);
         /* 논술 박사 - 레쓴 [가져오기, 삭제] */
         Route::get('/doctor-essay/lessons/{uuid}', [DoctorEssayLessonController::class, 'show']);

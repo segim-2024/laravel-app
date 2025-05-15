@@ -18,6 +18,7 @@ class DoctorEssayVolumeResource extends JsonResource
             'description'  => $this->description,
             'sort'         => $this->sort,
             'is_published' => $this->is_published,
+            'url'          => $this->url,
             'poster'       => $this->whenLoaded('poster', fn() => new FileResource($this->poster)),
             'lessons'      => DoctorEssayLessonResource::collection($this->lessons->sortBy('sort')),
         ];

@@ -5,6 +5,7 @@ namespace App\Services\Interfaces;
 use App\DTOs\UpdateDoctorEssayVolumeDescriptionDTO;
 use App\DTOs\UpdateDoctorEssayVolumeIsPublishedDTO;
 use App\DTOs\UpdateDoctorEssayVolumePosterDTO;
+use App\DTOs\UpdateDoctorEssayVolumeUrlDTO;
 use App\Exceptions\DoctorEssayVolumeNotFoundException;
 use App\Models\DoctorEssayVolume;
 
@@ -29,6 +30,13 @@ interface DoctorEssayVolumeServiceInterface
      * @throws DoctorEssayVolumeNotFoundException
      */
     public function updateDescription(UpdateDoctorEssayVolumeDescriptionDTO $DTO): DoctorEssayVolume;
+
+    /**
+     * @param UpdateDoctorEssayVolumeUrlDTO $DTO
+     * @return DoctorEssayVolume
+     * @throws DoctorEssayVolumeNotFoundException
+     */
+    public function updateUrl(UpdateDoctorEssayVolumeUrlDTO $DTO): DoctorEssayVolume;
 
     /**
      * @param UpdateDoctorEssayVolumeIsPublishedDTO $DTO

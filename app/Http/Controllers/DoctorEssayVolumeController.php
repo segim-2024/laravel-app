@@ -7,6 +7,7 @@ use App\Http\Requests\DeleteDoctorEssayVolumeRequest;
 use App\Http\Requests\UpdateDoctorEssayVolumeDescriptionRequest;
 use App\Http\Requests\UpdateDoctorEssayVolumeIsPublishedRequest;
 use App\Http\Requests\UpdateDoctorEssayVolumePosterRequest;
+use App\Http\Requests\UpdateDoctorEssayVolumeUrlRequest;
 use App\Http\Resources\DoctorEssayVolumeResource;
 use App\Services\Interfaces\DoctorEssayVolumeServiceInterface;
 use Exception;
@@ -90,6 +91,23 @@ class DoctorEssayVolumeController extends Controller
     {
         try {
             $volume = $this->service->updateIsPublished($request->toDTO());
+        } catch (DoctorEssayVolumeNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        return DoctorEssayVolumeResource::make($volume);
+    }
+
+    /**
+     * 논술 박사 볼륨 URL 수정
+     *
+     * @param UpdateDoctorEssayVolumeUrlRequest $request
+     * @return DoctorEssayVolumeResource|JsonResponse
+     */
+    public function updateUrl(UpdateDoctorEssayVolumeUrlRequest $request): DoctorEssayVolumeResource|JsonResponse
+    {
+        try {
+            $volume = $this->service->updateUrl($request->toDTO());
         } catch (DoctorEssayVolumeNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }

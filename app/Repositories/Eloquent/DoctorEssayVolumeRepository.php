@@ -57,4 +57,14 @@ class DoctorEssayVolumeRepository extends BaseRepository implements DoctorEssayV
         $volume->save();
         return $volume;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateUrl(DoctorEssayVolume $volume, string $url): DoctorEssayVolume
+    {
+        $volume->url = $url;
+        $volume->save();
+        return $volume;
+    }
 }

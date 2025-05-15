@@ -6,6 +6,7 @@ use App\DTOs\CreateFileDTO;
 use App\DTOs\UpdateDoctorEssayVolumeDescriptionDTO;
 use App\DTOs\UpdateDoctorEssayVolumeIsPublishedDTO;
 use App\DTOs\UpdateDoctorEssayVolumePosterDTO;
+use App\DTOs\UpdateDoctorEssayVolumeUrlDTO;
 use App\Exceptions\DoctorEssayVolumeNotFoundException;
 use App\Jobs\DeleteFileFromS3Job;
 use App\Models\DoctorEssayLesson;
@@ -59,6 +60,19 @@ class DoctorEssayVolumeService implements DoctorEssayVolumeServiceInterface {
         }
 
         return $this->repository->updateDescription($volume, $DTO->description);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateUrl(UpdateDoctorEssayVolumeUrlDTO $DTO): DoctorEssayVolume
+    {
+        $volume = $this->find($DTO->volumeUuid);
+        if (! $volume) {
+            throw new DoctorEssayVolumeNotFoundException('해당 논술 박사 볼륨을 찾을 수 없습니다.');
+        }
+
+        return $this->repository->updateUrl($volume, $DTO->url);
     }
 
     /**
