@@ -66,7 +66,7 @@ class DoctorFileVolumeController extends Controller
      * @param UpdateDoctorFileVolumeUrlRequest $request
      * @return DoctorEssayVolumeResource|JsonResponse
      */
-    public function updateUrl(UpdateDoctorFileVolumeUrlRequest $request): DoctorEssayVolumeResource|JsonResponse
+    public function updateUrl(UpdateDoctorFileVolumeUrlRequest $request): DoctorFileVolumeResource|JsonResponse
     {
         try {
             $volume = $this->service->updateUrl($request->toDTO());
