@@ -6,6 +6,8 @@ use App\DTOs\CreateFileDTO;
 use App\DTOs\UpdateDoctorFileVolumeDescriptionDTO;
 use App\DTOs\UpdateDoctorFileVolumeIsPublishedDTO;
 use App\DTOs\UpdateDoctorFileVolumePosterDTO;
+use App\DTOs\UpdateDoctorFileVolumeUrlDTO;
+use App\Exceptions\DoctorFileVolumeNotFoundException;
 use App\Jobs\DeleteFileFromS3Job;
 use App\Models\DoctorFileLesson;
 use App\Models\DoctorFileVolume;
@@ -56,6 +58,19 @@ class DoctorFileVolumeService implements DoctorFileVolumeServiceInterface {
     public function updateIsPublished(UpdateDoctorFileVolumeIsPublishedDTO $DTO): DoctorFileVolume
     {
         return $this->repository->updateIsPublished($DTO);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateUrl(UpdateDoctorFileVolumeUrlDTO $DTO): DoctorFileVolume
+    {
+        $volume = $this->find($DTO->volumeUuid);
+        if (! $volume) {
+            throw new DoctorFileVolumeNotFoundException('해당 자료 박사 볼륨을 찾을 수 없습니다.');
+        }
+
+        return $this->repository->updateUrl($volume, $DTO->url);
     }
 
     /**

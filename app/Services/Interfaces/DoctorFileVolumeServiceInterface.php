@@ -5,6 +5,8 @@ namespace App\Services\Interfaces;
 use App\DTOs\UpdateDoctorFileVolumeDescriptionDTO;
 use App\DTOs\UpdateDoctorFileVolumeIsPublishedDTO;
 use App\DTOs\UpdateDoctorFileVolumePosterDTO;
+use App\DTOs\UpdateDoctorFileVolumeUrlDTO;
+use App\Exceptions\DoctorFileVolumeNotFoundException;
 use App\Models\DoctorFileVolume;
 
 interface DoctorFileVolumeServiceInterface
@@ -32,6 +34,13 @@ interface DoctorFileVolumeServiceInterface
      * @return DoctorFileVolume
      */
     public function updateIsPublished(UpdateDoctorFileVolumeIsPublishedDTO $DTO): DoctorFileVolume;
+
+    /**
+     * @param UpdateDoctorFileVolumeUrlDTO $DTO
+     * @return DoctorFileVolume
+     * @throws DoctorFileVolumeNotFoundException
+     */
+    public function updateUrl(UpdateDoctorFileVolumeUrlDTO $DTO): DoctorFileVolume;
 
     /**
      * @param DoctorFileVolume $volume

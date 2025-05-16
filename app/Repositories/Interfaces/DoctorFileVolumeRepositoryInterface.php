@@ -32,4 +32,11 @@ interface DoctorFileVolumeRepositoryInterface extends BaseRepositoryInterface
      * @return DoctorFileVolume
      */
     public function updateIsPublished(UpdateDoctorFileVolumeIsPublishedDTO $DTO): DoctorFileVolume;
+
+    /**
+     * @param DoctorFileVolume $volume
+     * @param string $url
+     * @return DoctorFileVolume
+     */
+    public function updateUrl(DoctorFileVolume $volume, string $url): DoctorFileVolume;
 }

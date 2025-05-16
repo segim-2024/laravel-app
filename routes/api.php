@@ -84,6 +84,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/doctor-file/volumes/{uuid}/poster', [DoctorFileVolumeController::class, 'updatePoster']);
     Route::patch('/doctor-file/volumes/{uuid}/description', [DoctorFileVolumeController::class, 'updateDescription']);
     Route::patch('/doctor-file/volumes/{uuid}/is-published', [DoctorFileVolumeController::class, 'updateIsPublished']);
+    Route::patch('/doctor-file/volumes/{uuid}/url', [DoctorFileVolumeController::class, 'updateUrl']);
     Route::delete('/doctor-file/volumes/{uuid}', [DoctorFileVolumeController::class, 'destroy']);
     /* 자료박사 - 레쓴 [가져오기, 삭제] */
     Route::get('/doctor-file/lessons/{uuid}', [DoctorFileLessonController::class, 'show']);

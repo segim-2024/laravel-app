@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
  * @property string $title
  * @property string|null $poster_image_uuid
  * @property string|null $description
+ * @property string|null $url
  * @property int $sort
  * @property bool $is_published
  * @property bool $is_whale

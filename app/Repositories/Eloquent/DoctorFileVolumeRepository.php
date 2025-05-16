@@ -62,4 +62,14 @@ class DoctorFileVolumeRepository extends BaseRepository implements DoctorFileVol
         $volume->save();
         return $volume;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateUrl(DoctorFileVolume $volume, string $url): DoctorFileVolume
+    {
+        $volume->url = $url;
+        $volume->save();
+        return $volume;
+    }
 }

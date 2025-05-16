@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DoctorFileVolumeNotFoundException;
 use App\Http\Requests\DeleteDoctorFileVolumeRequest;
 use App\Http\Requests\GetShowDoctorFileVolumeRequest;
 use App\Http\Requests\UpdateDoctorFileVolumeDescriptionRequest;
 use App\Http\Requests\UpdateDoctorFileVolumeIsPublishedRequest;
 use App\Http\Requests\UpdateDoctorFileVolumePosterRequest;
+use App\Http\Requests\UpdateDoctorFileVolumeUrlRequest;
+use App\Http\Resources\DoctorEssayVolumeResource;
 use App\Http\Resources\DoctorFileVolumeResource;
 use App\Services\Interfaces\DoctorFileVolumeServiceInterface;
 use Exception;
@@ -55,6 +58,23 @@ class DoctorFileVolumeController extends Controller
         $volume = $this->service->updateIsPublished($request->toDTO());
         return DoctorFileVolumeResource::make($volume)
             ->response()->setStatusCode(Response::HTTP_OK);
+    }
+
+    /**
+     * 논술 박사 볼륨 URL 수정
+     *
+     * @param UpdateDoctorFileVolumeUrlRequest $request
+     * @return DoctorEssayVolumeResource|JsonResponse
+     */
+    public function updateUrl(UpdateDoctorFileVolumeUrlRequest $request): DoctorEssayVolumeResource|JsonResponse
+    {
+        try {
+            $volume = $this->service->updateUrl($request->toDTO());
+        } catch (DoctorFileVolumeNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        return DoctorFileVolumeResource::make($volume);
     }
 
     public function destroy(DeleteDoctorFileVolumeRequest $request): JsonResponse
