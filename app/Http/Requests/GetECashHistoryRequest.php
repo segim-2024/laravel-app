@@ -24,9 +24,11 @@ class GetECashHistoryRequest extends FormRequest
             $this->isWhale = false;
         } else if (str_contains($referer, 'https://englishwhale.com')) {
             $this->isWhale = true;
+        } else {
+            throw new AccessDeniedHttpException('허용되지 않는 접근입니다.');
         }
 
-        throw new AccessDeniedHttpException('허용되지 않는 접근입니다.');
+        return true;
     }
 
     /**
