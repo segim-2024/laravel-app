@@ -17,6 +17,7 @@ use App\Http\Resources\MemberCashResource;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ class MemberCashController extends Controller
 
     /**
      * @param GetECashHistoryRequest $request
-     * @return ECashHistoryExcelResource|JsonResponse
+     * @return AnonymousResourceCollection|JsonResponse
      */
     public function excel(GetECashHistoryRequest $request)
     {
@@ -40,7 +41,7 @@ class MemberCashController extends Controller
             return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return ECashHistoryExcelResource::make($list);
+        return ECashHistoryExcelResource::collection($list);
     }
 
     public function order(CreateMemberCashOrderRequest $request): JsonResponse
