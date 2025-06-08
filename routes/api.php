@@ -71,6 +71,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/e-cash/manually-spend', [MemberCashController::class, 'spend']);
     Route::post('/e-cash/order2', [MemberCashController::class, 'order2']);
 
+    Route::get('/e-cash/histories/excel', [MemberCashController::class, 'excel']);
+
     /* 자료박사 - 공지 [리스트, 입력, 수정, 삭제] */
     Route::get('/doctor-file/notices', [DoctorFileNoticeController::class, 'index']);
     Route::post('/doctor-file/notices', [DoctorFileNoticeController::class, 'store']);

@@ -9,8 +9,10 @@ use App\Http\Requests\CreateMemberCashOrderRequest;
 use App\Http\Requests\ECashManualChargeRequest;
 use App\Http\Requests\ECashManualSpendRequest;
 use App\Http\Requests\ECashOrderRequest;
+use App\Http\Requests\GetECashHistoryRequest;
 use App\Http\Requests\MemberCashManualChargeRequest;
 use App\Http\Requests\MemberCashManualSpendRequest;
+use App\Http\Resources\ECashHistoryExcelResource;
 use App\Http\Resources\MemberCashResource;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use Exception;
@@ -24,6 +26,22 @@ class MemberCashController extends Controller
     public function __construct(
         protected MemberCashServiceInterface $service
     ) {}
+
+    /**
+     * @param GetECashHistoryRequest $request
+     * @return ECashHistoryExcelResource|JsonResponse
+     */
+    public function excel(GetECashHistoryRequest $request)
+    {
+        try {
+            $list = $this->service->getHistoryExcel($request->toDTO());
+        } catch (Exception $exception) {
+            Log::error($exception);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return ECashHistoryExcelResource::make($list);
+    }
 
     public function order(CreateMemberCashOrderRequest $request): JsonResponse
     {

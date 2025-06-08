@@ -2,12 +2,14 @@
 
 namespace App\Services\Interfaces;
 
+use App\DTOs\GetECashHistoryDTO;
 use App\DTOs\MemberCashDTO;
 use App\Exceptions\MemberCashNotEnoughToSpendException;
 use App\Exceptions\MemberCashRepositoryFactoryException;
 use App\Exceptions\MemberCashTransactionRepositoryFactoryException;
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
+use Illuminate\Support\Collection;
 
 interface MemberCashServiceInterface
 {
@@ -41,4 +43,11 @@ interface MemberCashServiceInterface
      * @return bool
      */
     public function check(CashInterface $cash, int $amount): bool;
+
+    /**
+     * @param GetECashHistoryDTO $DTO
+     * @return Collection
+     * @throws MemberCashTransactionRepositoryFactoryException
+     */
+    public function getHistoryExcel(GetECashHistoryDTO $DTO): Collection;
 }

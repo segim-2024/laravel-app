@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\GetECashHistoryDTO;
 use App\DTOs\MemberCashDTO;
 use App\Exceptions\MemberCashNotEnoughToSpendException;
 use App\Models\Interfaces\CashInterface;
@@ -9,6 +10,7 @@ use App\Models\Interfaces\MemberInterface;
 use App\Repositories\Factories\MemberCashRepositoryFactory;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberCashTransactionServiceInterface;
+use Illuminate\Support\Collection;
 
 class MemberCashService implements MemberCashServiceInterface {
     public function __construct(
@@ -53,5 +55,13 @@ class MemberCashService implements MemberCashServiceInterface {
     public function check(CashInterface $cash, int $amount): bool
     {
         return $cash->getAmount() > $amount;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHistoryExcel(GetECashHistoryDTO $DTO): Collection
+    {
+        return $this->transactionService->excel($DTO);
     }
 }
