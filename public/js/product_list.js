@@ -15,11 +15,11 @@ $(document).ready(function() {
             { data: null, render: function(data, type, row) {
                 if (row.subscribe) {
                     return `${row.subscribe.card.name} (${row.subscribe.card.number})
-                        <button class="btn btn_green" data-role="register" data-product-id="${row.id}">
+                        <button class="btn btn_green" data-role="register" data-product-id="${row.id}" data-is-change="true">
                             변경
                         </button>`;
                 } else {
-                    return `<button class="btn btn_blue" data-role="register" data-product-id="${row.id}">
+                    return `<button class="btn btn_blue" data-role="register" data-product-id="${row.id}" data-is-change="false">
                             결제 카드 설정
                         </button>`;
                 }
@@ -38,8 +38,34 @@ $(document).ready(function() {
 
     $('#productTable').on('click', '[data-role=register]', function() {
         const productId = $(this).data('product-id');
+        const isChange = $(this).data('is-change') === true;
         
-        // 먼저 카드 존재 여부 확인
+        // 변경 버튼인 경우 중복 체크 없이 바로 모달 표시
+        if (isChange) {
+            // 카드 존재 여부만 확인
+            fetch('/cards/is-exists', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                })
+                .then(response => {
+                    if (response.status === 200) {
+                        document.getElementById('selectCard').style.display = 'block';
+                        document.getElementById('selectProductId').value = productId;
+                    } else {
+                        alert("카드를 먼저 등록해주세요.")
+                        location.href = "/cards";
+                    }
+                })
+                .catch((error) => {
+                    alert("서버에 문제가 있습니다. 잠시 후에 시도해주세요.\n현상이 지속되면 고객센터로 문의해주세요.");
+                });
+            return false;
+        }
+        
+        // 신규 등록인 경우 중복 체크 로직 실행
         fetch('/cards/is-exists', {
                 method: 'GET',
                 headers: {
