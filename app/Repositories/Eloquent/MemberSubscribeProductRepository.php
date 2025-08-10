@@ -63,4 +63,12 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
         $subscribe->save();
         return $subscribe;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isExistsSubscribe(Member $member): bool
+    {
+        return MemberSubscribeProduct::where('member_id', $member->mb_id)->exists();
+    }
 }

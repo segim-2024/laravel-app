@@ -83,4 +83,12 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
     {
         $this->logRepository->save($DTO);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isExistsSubscribed(Member $member): bool
+    {
+        return $this->repository->isExistsSubscribe($member);
+    }
 }

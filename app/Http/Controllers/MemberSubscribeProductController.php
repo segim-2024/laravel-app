@@ -95,4 +95,19 @@ class MemberSubscribeProductController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function checkExistsSubscribed(Request $request): JsonResponse
+    {
+        try {
+            $isExists = $this->service->isExistsSubscribed($request->user());
+            if ($isExists) {
+                return response()->json(['message' => '이미 다른 상품에 카드가 등록되어 있습니다.'], Response::HTTP_CONFLICT);
+            }
+        } catch (Exception $exception) {
+            Log::error($exception);
+            return response()->json(['message' => 'Server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
 }

@@ -38,7 +38,9 @@ $(document).ready(function() {
 
     $('#productTable').on('click', '[data-role=register]', function() {
         const productId = $(this).data('product-id');
-        fetch('/cards/is-exists', { // 서버 엔드포인트 URL
+        
+        // 먼저 카드 존재 여부 확인
+        fetch('/cards/is-exists', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,12 +49,32 @@ $(document).ready(function() {
             })
             .then(response => {
                 if (response.status === 200) {
-                    // 모달의 display 속성을 'block'으로 설정하여 표시
-                    document.getElementById('selectCard').style.display = 'block';
-                    document.getElementById('selectProductId').value = productId;
+                    // 카드가 존재하면 다른 상품에 등록된 카드가 있는지 확인
+                    return fetch('/products/check-card-registered', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                    });
                 } else {
                     alert("카드를 먼저 등록해주세요.")
                     location.href = "/cards";
+                    return null;
+                }
+            })
+            .then(response => {
+                if (response === null) return;
+                
+                if (response.status === 204) {
+                    // 등록된 카드가 없음 - 모달 표시
+                    document.getElementById('selectCard').style.display = 'block';
+                    document.getElementById('selectProductId').value = productId;
+                } else if (response.status === 409) {
+                    // 이미 다른 상품에 카드가 등록됨 - 알럿만 띄우고 등록 중단
+                    alert("이미 다른 상품에 카드가 등록되어 있습니다.\n기존 상품을 해지한 후 등록해주세요.");
+                } else {
+                    alert("서버에 문제가 있습니다. 잠시 후에 시도해주세요.");
                 }
             })
             .catch((error) => {

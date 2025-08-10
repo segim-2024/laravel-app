@@ -33,4 +33,10 @@ interface MemberSubscribeProductRepositoryInterface extends BaseRepositoryInterf
      * @return MemberSubscribeProduct
      */
     public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct;
+
+    /**
+     * @param Member $member
+     * @return bool
+     */
+    public function isExistsSubscribe(Member $member): bool;
 }

@@ -49,4 +49,10 @@ interface MemberSubscribeProductServiceInterface
      * @return void
      */
     public function logging(MemberSubscribeProductLogDTO $DTO):void;
+
+    /**
+     * @param Member $member
+     * @return bool
+     */
+    public function isExistsSubscribed(Member $member): bool;
 }

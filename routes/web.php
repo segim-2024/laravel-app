@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/products', [MemberSubscribeProductController::class, 'index'])->name('products.index');
     Route::get('/products/list', [MemberSubscribeProductController::class, 'list'])->name('products.list');
+    Route::get('/products/check-card-registered', [MemberSubscribeProductController::class, 'checkExistsSubscribed'])->name('products.check-card-registered');
     Route::post('/products/subscribe', [MemberSubscribeProductController::class, 'subscribe'])->name('products.subscribe');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
