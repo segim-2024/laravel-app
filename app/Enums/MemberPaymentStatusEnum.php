@@ -10,4 +10,9 @@ enum MemberPaymentStatusEnum:string
     case Failed = 'FAILED';
     case Cancelled = 'CANCELLED';
     case PartialCancelled = 'PARTIAL_CANCELLED';
+
+    public function isFailed(): bool
+    {
+        return $this === self::Failed;
+    }
 }

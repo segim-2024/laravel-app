@@ -9,6 +9,7 @@ use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
+use App\Exceptions\PaymentIsNotFailedException;
 use App\Models\LibraryProduct;
 use App\Models\Member;
 use App\Models\MemberCard;
@@ -20,6 +21,7 @@ use App\Services\Interfaces\LibraryPaymentServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
 use App\Services\Interfaces\ProductPaymentServiceInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
@@ -177,5 +179,22 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         };
 
         return $this->repository->manuallySetFailed($payment, $api);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteFailedPayment(string $paymentId): void
+    {
+        $payment = $this->repository->findByKey($paymentId);
+        if (! $payment) {
+            throw new ModelNotFoundException("대상 결제 정보를 찾을 수 없습니다.");
+        }
+
+        if ($payment->state->isFailed()) {
+            throw new PaymentIsNotFailedException("결제 실패 상태의 결제만 삭제할 수 있습니다.");
+        }
+
+        $this->repository->delete($payment);
     }
 }

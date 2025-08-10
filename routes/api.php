@@ -41,6 +41,7 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/e-cash/manual-charge', [MemberCashController::class, 'manualCharge']);
     Route::post('/e-cash/manual-spend', [MemberCashController::class, 'manualSpend']);
     Route::post('/payments/retry', [MemberPaymentController::class, 'retry']);
+    Route::delete('/payments/{paymentId}', [MemberPaymentController::class, 'destroyFailedPayment']);
     Route::post('/payments/cancel', [MemberPaymentController::class, 'cancel']);
     Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
     Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);

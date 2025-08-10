@@ -8,11 +8,13 @@ use App\DTOs\PaymentCancelDTO;
 use App\DTOs\PaymentRetryDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
+use App\Exceptions\PaymentIsNotFailedException;
 use App\Exceptions\PortOneBillingPaymentException;
 use App\Exceptions\ProductableInvalidTypeException;
 use App\Models\Member;
 use App\Models\MemberCard;
 use App\Models\MemberPayment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 interface MemberPaymentServiceInterface
 {
@@ -87,4 +89,12 @@ interface MemberPaymentServiceInterface
      * @throws LibraryProductSubscribeNotFoundException
      */
     public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment;
+
+    /**
+     * @param string $paymentId
+     * @return void
+     * @throws ModelNotFoundException
+     * @throws PaymentIsNotFailedException
+     */
+    public function deleteFailedPayment(string $paymentId): void;
 }
