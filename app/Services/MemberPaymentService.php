@@ -22,6 +22,7 @@ use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
 use App\Services\Interfaces\ProductPaymentServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
@@ -191,7 +192,11 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
             throw new ModelNotFoundException("대상 결제 정보를 찾을 수 없습니다.");
         }
 
+        Log::info("결제 삭제 요청: {$payment->id} - {$payment->state->value}");
+        Log::info($payment);
         if ($payment->state->isFailed()) {
+            Log::info("결제 실패 상태의 결제만 삭제할 수 있습니다.");
+            Log::info($payment->state->value);
             throw new PaymentIsNotFailedException("결제 실패 상태의 결제만 삭제할 수 있습니다.");
         }
 
