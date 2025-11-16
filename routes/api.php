@@ -63,8 +63,9 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::post('/segim/orders/tickets/minus', [OrderSegimTicketController::class, 'minus']);
 });
 
-/* 토큰 발급 */
+
 Route::post('/sign-in', [SignInController::class, 'signIn'])->middleware('checkPamusIP');
+Route::post('/sign-in/app', [SignInController::class, 'signInApp']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /* 이캐쉬 - 수동 충전, 수동 소모 */
