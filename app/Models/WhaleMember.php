@@ -5,9 +5,9 @@ namespace App\Models;
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
@@ -30,7 +30,7 @@ use Laravel\Sanctum\Sanctum;
  * @property Carbon|null $updated_at
  * @property WhaleMemberCash $cash via cash() relationship getter magic method
  */
-class WhaleMember extends Model implements MemberInterface
+class WhaleMember extends Authenticatable implements MemberInterface
 {
     use HasApiTokens;
 

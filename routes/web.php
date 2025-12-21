@@ -26,9 +26,15 @@ Route::get('/', function () {
 });
 
 Route::get('/sso-auth', [SSOController::class, 'handleSSO'])->name('sso.auth');
+Route::get('/whale-sso-auth', [SSOController::class, 'handleWhaleSSO'])->name('whale.sso.auth');
+
 Route::get('/home', function () {
     return redirect("https://epamus.com/");
 })->name('home');
+
+Route::get('/whale-home', function () {
+    return redirect("https://englishwhale.com/");
+})->name('whale.home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/payments', [MemberPaymentController::class, 'index'])->name('payments.index');
