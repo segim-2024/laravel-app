@@ -10,11 +10,14 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
 use App\Exceptions\PaymentIsNotFailedException;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\PaymentInterface;
 use App\Models\LibraryProduct;
-use App\Models\Member;
-use App\Models\MemberCard;
 use App\Models\MemberPayment;
 use App\Models\Product;
+use App\Models\WhaleProduct;
+use App\Repositories\Factories\MemberPaymentRepositoryFactory;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use App\Repositories\Interfaces\ProductPaymentRepositoryInterface;
 use App\Services\Interfaces\LibraryPaymentServiceInterface;
@@ -22,7 +25,6 @@ use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
 use App\Services\Interfaces\ProductPaymentServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
@@ -30,13 +32,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         protected ProductPaymentServiceInterface    $productPaymentService,
         protected LibraryPaymentServiceInterface    $libraryPaymentService,
         protected MemberPaymentRepositoryInterface  $repository,
-        protected ProductPaymentRepositoryInterface $productPaymentRepository
+        protected ProductPaymentRepositoryInterface $productPaymentRepository,
+        protected MemberPaymentRepositoryFactory    $repositoryFactory
     ) {}
 
     /**
      * @inheritDoc
      */
-    public function findByKey(string $key): ?MemberPayment
+    public function findByKey(string $key): ?PaymentInterface
     {
         return $this->repository->findByKey($key);
     }
@@ -52,7 +55,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function findFailedPayment(string $paymentId): ?MemberPayment
+    public function findFailedPayment(string $paymentId): ?PaymentInterface
     {
         return $this->repository->findFailedPayment($paymentId);
     }
@@ -60,44 +63,44 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getTotalAmount(Member $member): int
+    public function getTotalAmount(MemberInterface $member): int
     {
-        return $this->productPaymentRepository->getTotalAmount($member->mb_id);
+        return $this->productPaymentRepository->getTotalAmount($member->getMemberId());
     }
 
     /**
      * @inheritDoc
      */
-    public function getTotalPaymentCount(Member $member): int
+    public function getTotalPaymentCount(MemberInterface $member): int
     {
-        return $this->productPaymentRepository->getTotalPaymentCount($member->mb_id);
+        return $this->productPaymentRepository->getTotalPaymentCount($member->getMemberId());
     }
 
     /**
      * @inheritDoc
      */
-    public function save(CreateMemberPaymentDTO $DTO): MemberPayment
+    public function save(CreateMemberPaymentDTO $DTO): PaymentInterface
     {
-        return $this->repository->save($DTO);
+        return $this->repositoryFactory->create($DTO->member)->save($DTO);
     }
 
     /**
      * @inheritDoc
      */
-    public function retry(PaymentRetryDTO $DTO): MemberPayment
+    public function retry(PaymentRetryDTO $DTO): PaymentInterface
     {
-        if ($DTO->payment->card_id !== $DTO->subscribe->card_id) {
+        if ($DTO->payment->getCardId() !== $DTO->subscribe->card_id) {
             $DTO->payment = $this->updateCard($DTO->payment, $DTO->subscribe->card);
         }
 
-        $this->portOneService->requestPaymentByBillingKey($DTO->subscribe->card->key, $DTO->payment);
+        $this->portOneService->requestPaymentByBillingKey($DTO->subscribe->card->getKey(), $DTO->payment);
         return $DTO->payment;
     }
 
     /**
      * @inheritDoc
      */
-    public function cancel(PaymentCancelDTO $DTO): MemberPayment
+    public function cancel(PaymentCancelDTO $DTO): PaymentInterface
     {
         $this->portOneService->cancel($DTO);
         return $DTO->payment;
@@ -106,7 +109,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function updateCard(MemberPayment $payment, MemberCard $card): MemberPayment
+    public function updateCard(PaymentInterface $payment, CardInterface $card): PaymentInterface
     {
         return $this->repository->updateCard($payment, $card);
     }
@@ -114,7 +117,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function process(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
+    public function process(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface
     {
         return match ($DTO->status) {
             MemberPaymentStatusEnum::Ready, MemberPaymentStatusEnum::Unpaid => $payment,
@@ -127,25 +130,27 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @throws LibraryProductSubscribeNotFoundException
      */
-    private function processPaid(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
+    private function processPaid(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface
     {
-        if ($payment->state === $DTO->status) {
+        if ($payment->getState() === $DTO->status) {
             return $payment;
         }
 
+        $productable = $payment->productable;
         // 상품에 따른 결제 완료 처리
         match (true) {
-            $payment->productable instanceOf Product => $this->productPaymentService->processPaid($payment, $DTO),
-            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processPaid($payment, $DTO),
+            $productable instanceof Product => $this->productPaymentService->processPaid($payment, $DTO),
+            $productable instanceof LibraryProduct => $this->libraryPaymentService->processPaid($payment, $DTO),
+            $productable instanceof WhaleProduct => null, // Whale 상품은 별도 처리 없음
             default => null,
         };
 
         return $this->repository->updateDone($payment, $DTO);
     }
 
-    private function processCancelled(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
+    private function processCancelled(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface
     {
-        if ($payment->state === MemberPaymentStatusEnum::Cancelled) {
+        if ($payment->getState() === MemberPaymentStatusEnum::Cancelled) {
             return $payment;
         }
 
@@ -155,12 +160,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @throws LibraryProductSubscribeNotFoundException
      */
-    private function processFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment
+    private function processFailed(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface
     {
-        // 상품에 따른 결제 완료 처리
+        $productable = $payment->productable;
+        // 상품에 따른 결제 실패 처리
         match (true) {
-            $payment->productable instanceOf Product => $this->productPaymentService->processFailed($payment),
-            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            $productable instanceof Product => $this->productPaymentService->processFailed($payment),
+            $productable instanceof LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            $productable instanceof WhaleProduct => null, // Whale 상품은 별도 처리 없음
             default => null,
         };
 
@@ -170,12 +177,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment
+    public function manuallySetFailed(PaymentInterface $payment, string $api): PaymentInterface
     {
-        // 상품에 따른 결제 완료 처리
+        $productable = $payment->productable;
+        // 상품에 따른 결제 실패 처리
         match (true) {
-            $payment->productable instanceOf Product => $this->productPaymentService->processFailed($payment),
-            $payment->productable instanceOf LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            $productable instanceof Product => $this->productPaymentService->processFailed($payment),
+            $productable instanceof LibraryProduct => $this->libraryPaymentService->processFailed($payment),
+            $productable instanceof WhaleProduct => null, // Whale 상품은 별도 처리 없음
             default => null,
         };
 
@@ -192,7 +201,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
             throw new ModelNotFoundException("대상 결제 정보를 찾을 수 없습니다.");
         }
 
-        if (! $payment->state->isFailed()) {
+        if (! $payment->getState()->isFailed()) {
             throw new PaymentIsNotFailedException("결제 실패 상태의 결제만 삭제할 수 있습니다.");
         }
 

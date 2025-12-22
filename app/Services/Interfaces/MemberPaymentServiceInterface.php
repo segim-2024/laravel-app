@@ -10,19 +10,18 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Exceptions\LibraryProductSubscribeNotFoundException;
 use App\Exceptions\PaymentIsNotFailedException;
 use App\Exceptions\PortOneBillingPaymentException;
-use App\Exceptions\ProductableInvalidTypeException;
-use App\Models\Member;
-use App\Models\MemberCard;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\PaymentInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 interface MemberPaymentServiceInterface
 {
     /**
      * @param string $key
-     * @return MemberPayment|null
+     * @return PaymentInterface|null
      */
-    public function findByKey(string $key): ?MemberPayment;
+    public function findByKey(string $key): ?PaymentInterface;
 
     /**
      * @param GetMemberPaymentListDTO $DTO
@@ -31,64 +30,64 @@ interface MemberPaymentServiceInterface
 
     /**
      * @param string $paymentId
-     * @return MemberPayment|null
+     * @return PaymentInterface|null
      */
-    public function findFailedPayment(string $paymentId): ?MemberPayment;
+    public function findFailedPayment(string $paymentId): ?PaymentInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalAmount(Member $member): int;
+    public function getTotalAmount(MemberInterface $member): int;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalPaymentCount(Member $member): int;
+    public function getTotalPaymentCount(MemberInterface $member): int;
 
     /**
      * @param CreateMemberPaymentDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function save(CreateMemberPaymentDTO $DTO): MemberPayment;
+    public function save(CreateMemberPaymentDTO $DTO): PaymentInterface;
 
     /**
      * @param PaymentRetryDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      * @throws PortOneBillingPaymentException
      */
-    public function retry(PaymentRetryDTO $DTO): MemberPayment;
+    public function retry(PaymentRetryDTO $DTO): PaymentInterface;
 
     /**
      * @param PaymentCancelDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      * @throws PortOneBillingPaymentException
      */
-    public function cancel(PaymentCancelDTO $DTO): MemberPayment;
+    public function cancel(PaymentCancelDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
-     * @param MemberCard $card
-     * @return MemberPayment
+     * @param PaymentInterface $payment
+     * @param CardInterface $card
+     * @return PaymentInterface
      */
-    public function updateCard(MemberPayment $payment, MemberCard $card): MemberPayment;
+    public function updateCard(PaymentInterface $payment, CardInterface $card): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param PortOneGetPaymentResponseDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      * @throws LibraryProductSubscribeNotFoundException
      */
-    public function process(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
+    public function process(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param string $api
-     * @return MemberPayment
+     * @return PaymentInterface
      * @throws LibraryProductSubscribeNotFoundException
      */
-    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment;
+    public function manuallySetFailed(PaymentInterface $payment, string $api): PaymentInterface;
 
     /**
      * @param string $paymentId

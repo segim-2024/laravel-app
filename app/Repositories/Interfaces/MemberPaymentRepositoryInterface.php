@@ -3,61 +3,61 @@ namespace App\Repositories\Interfaces;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
-use App\Models\MemberCard;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\PaymentInterface;
 
 interface MemberPaymentRepositoryInterface extends BaseRepositoryInterface
 {
     /**
      * @param string $key
-     * @return MemberPayment|null
+     * @return PaymentInterface|null
      */
-    public function findByKey(string $key): ?MemberPayment;
+    public function findByKey(string $key): ?PaymentInterface;
 
     /**
      * @param string $paymentId
-     * @return MemberPayment|null
+     * @return PaymentInterface|null
      */
-    public function findFailedPayment(string $paymentId): ?MemberPayment;
+    public function findFailedPayment(string $paymentId): ?PaymentInterface;
 
     /**
      * @param CreateMemberPaymentDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function save(CreateMemberPaymentDTO $DTO): MemberPayment;
+    public function save(CreateMemberPaymentDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
-     * @param MemberCard $card
-     * @return MemberPayment
+     * @param PaymentInterface $payment
+     * @param CardInterface $card
+     * @return PaymentInterface
      */
-    public function updateCard(MemberPayment $payment, MemberCard $card):MemberPayment;
+    public function updateCard(PaymentInterface $payment, CardInterface $card): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param PortOneGetPaymentResponseDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function updateDone(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
+    public function updateDone(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param PortOneGetPaymentResponseDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function updateCanceled(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
+    public function updateCanceled(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param PortOneGetPaymentResponseDTO $DTO
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function updateFailed(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): MemberPayment;
+    public function updateFailed(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): PaymentInterface;
 
     /**
-     * @param MemberPayment $payment
+     * @param PaymentInterface $payment
      * @param string $api
-     * @return MemberPayment
+     * @return PaymentInterface
      */
-    public function manuallySetFailed(MemberPayment $payment, string $api): MemberPayment;
+    public function manuallySetFailed(PaymentInterface $payment, string $api): PaymentInterface;
 }

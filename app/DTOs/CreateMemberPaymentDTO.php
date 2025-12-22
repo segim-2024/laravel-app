@@ -2,20 +2,21 @@
 
 namespace App\DTOs;
 
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\LibraryProduct;
 use App\Models\LibraryProductSubscribe;
-use App\Models\Member;
-use App\Models\MemberCard;
 use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
+use App\Models\WhaleProduct;
 use Illuminate\Support\Str;
 
 class CreateMemberPaymentDTO
 {
     public function __construct(
-        public readonly Member $member,
-        public readonly ?MemberCard $card,
-        public readonly Product|LibraryProduct $product,
+        public readonly MemberInterface $member,
+        public readonly ?CardInterface $card,
+        public readonly Product|LibraryProduct|WhaleProduct $product,
         public readonly string $paymentId,
         public readonly string $method,
         public readonly string $title,

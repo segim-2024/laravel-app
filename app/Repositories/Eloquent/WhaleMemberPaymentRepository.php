@@ -6,13 +6,13 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberPaymentStatusEnum;
 use App\Models\Interfaces\CardInterface;
 use App\Models\Interfaces\PaymentInterface;
-use App\Models\MemberPayment;
+use App\Models\WhaleMemberPayment;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 use Illuminate\Support\Carbon;
 
-class MemberPaymentRepository extends BaseRepository implements MemberPaymentRepositoryInterface
+class WhaleMemberPaymentRepository extends BaseRepository implements MemberPaymentRepositoryInterface
 {
-    public function __construct(MemberPayment $model)
+    public function __construct(WhaleMemberPayment $model)
     {
         parent::__construct($model);
     }
@@ -22,7 +22,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
      */
     public function findByKey(string $key): ?PaymentInterface
     {
-        return MemberPayment::where('payment_id', '=', $key)->first();
+        return WhaleMemberPayment::where('payment_id', '=', $key)->first();
     }
 
     /**
@@ -30,7 +30,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
      */
     public function findFailedPayment(string $paymentId): ?PaymentInterface
     {
-        return MemberPayment::where('payment_id', '=', $paymentId)
+        return WhaleMemberPayment::where('payment_id', '=', $paymentId)
             ->where('state', '=', MemberPaymentStatusEnum::Failed)
             ->first();
     }
@@ -40,7 +40,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
      */
     public function save(CreateMemberPaymentDTO $DTO): PaymentInterface
     {
-        $payment = new MemberPayment();
+        $payment = new WhaleMemberPayment();
         $payment->payment_id = $DTO->paymentId;
         $payment->member_id = $DTO->member->getMemberId();
         $payment->card_id = $DTO->card?->getId() ?? null;
@@ -71,6 +71,7 @@ class MemberPaymentRepository extends BaseRepository implements MemberPaymentRep
         $payment->state = $DTO->status;
         $payment->api = $DTO->httpResponseBody;
         $payment->receipt_url = $DTO->receiptUrl ?? null;
+        $payment->payment_key = $DTO->paymentKey ?? null;
         $payment->paid_at = Carbon::parse($DTO->paidAt)
             ->timezone('Asia/Seoul')
             ->format('Y-m-d H:i:s');
