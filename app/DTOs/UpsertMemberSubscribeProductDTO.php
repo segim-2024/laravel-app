@@ -3,19 +3,19 @@
 namespace App\DTOs;
 
 use App\Http\Requests\UpsertMemberSubscribeProductRequest;
-use App\Models\Member;
-use App\Models\MemberCard;
-use App\Models\Product;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
 
 class UpsertMemberSubscribeProductDTO
 {
     public function __construct(
-        public readonly Member $member,
-        public readonly Product $product,
-        public readonly MemberCard $card,
+        public readonly MemberInterface $member,
+        public readonly ProductInterface $product,
+        public readonly CardInterface $card,
     ) {}
 
-    public static function createFromRequest(UpsertMemberSubscribeProductRequest $request):self
+    public static function createFromRequest(UpsertMemberSubscribeProductRequest $request): self
     {
         return new self(
             $request->user(),

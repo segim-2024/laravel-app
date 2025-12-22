@@ -18,10 +18,10 @@ class MemberSubscribeProductLogRepository extends BaseRepository implements Memb
     public function save(MemberSubscribeProductLogDTO $DTO): void
     {
         $log = new MemberSubscribeProductLog();
-        $log->subscribe_id = $DTO->subscribe->id;
-        $log->member_id = $DTO->subscribe->member_id;
-        $log->card_id = $DTO->subscribe->card_id;
-        $log->product_id = $DTO->subscribe->product_id;
+        $log->subscribe_id = $DTO->subscribe->getId();
+        $log->member_id = $DTO->subscribe->getMemberId();
+        $log->card_id = $DTO->subscribe->getCardId();
+        $log->product_id = $DTO->subscribe->getProductId();
         $log->type = $DTO->type;
         $log->content = $DTO->content;
         $log->save();

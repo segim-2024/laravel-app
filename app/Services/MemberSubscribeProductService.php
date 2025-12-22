@@ -7,12 +7,13 @@ use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Jobs\StartSubscribeSendAlimTokJob;
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
+use App\Repositories\Factories\MemberSubscribeProductLogRepositoryFactory;
+use App\Repositories\Factories\MemberSubscribeProductRepositoryFactory;
 use App\Repositories\Interfaces\MemberSubscribeProductLogRepositoryInterface;
 use App\Repositories\Interfaces\MemberSubscribeProductRepositoryInterface;
-use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Support\Collection;
@@ -21,15 +22,17 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
     public function __construct(
         protected ProductServiceInterface $productService,
         protected MemberSubscribeProductRepositoryInterface $repository,
-        protected MemberSubscribeProductLogRepositoryInterface $logRepository
+        protected MemberSubscribeProductLogRepositoryInterface $logRepository,
+        protected MemberSubscribeProductRepositoryFactory $repositoryFactory,
+        protected MemberSubscribeProductLogRepositoryFactory $logRepositoryFactory
     ) {}
 
     /**
      * @inheritDoc
      */
-    public function findByMemberAndProduct(Member $member, Product $product): ?MemberSubscribeProduct
+    public function findByMemberAndProduct(MemberInterface $member, ProductInterface $product): ?SubscribeProductInterface
     {
-        return $this->repository->findByMemberAndProduct($member, $product);
+        return $this->repositoryFactory->create($member)->findByMemberAndProduct($member, $product);
     }
 
     /**
@@ -37,15 +40,14 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
      */
     public function subscribe(UpsertMemberSubscribeProductDTO $DTO): Collection
     {
-        $subscribe = $this->repository->upsertCard($DTO);
-        $this->logging(MemberSubscribeProductLogDTO::subscribed($subscribe));
+        $subscribe = $this->repositoryFactory->create($DTO->member)->upsertCard($DTO);
+        $this->logging($DTO->member, MemberSubscribeProductLogDTO::subscribed($subscribe));
 
         if ($DTO->member->mb_hp) {
             StartSubscribeSendAlimTokJob::dispatch($DTO->member)
                 ->afterCommit();
         }
 
-        /** @var Collection|Product[] $products */
         return $this->productService->getList($DTO->member);
     }
 
@@ -54,41 +56,41 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
      */
     public function unsubscribe(UnsubscribeProductDTO $DTO): void
     {
-        $this->repository->delete($DTO->subscribe);
-        $this->logging(MemberSubscribeProductLogDTO::unsubscribed($DTO->subscribe));
+        $this->repositoryFactory->create($DTO->member)->delete($DTO->subscribe);
+        $this->logging($DTO->member, MemberSubscribeProductLogDTO::unsubscribed($DTO->subscribe));
     }
 
     /**
      * @inheritDoc
      */
-    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct
+    public function updateLatestPayment(MemberInterface $member, SubscribeProductInterface $subscribeProduct): SubscribeProductInterface
     {
-        return $this->repository->updateLatestPayment($subscribeProduct);
+        return $this->repositoryFactory->create($member)->updateLatestPayment($subscribeProduct);
     }
 
     /**
      * @inheritDoc
      */
-    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): SubscribeProductInterface
     {
         $logDTO = $DTO->isActive ? MemberSubscribeProductLogDTO::activated($DTO->subscribe) : MemberSubscribeProductLogDTO::deactivated($DTO->subscribe);
-        $this->logging($logDTO);
-        return $this->repository->updateActivate($DTO);
+        $this->logging($DTO->member, $logDTO);
+        return $this->repositoryFactory->create($DTO->member)->updateActivate($DTO);
     }
 
     /**
      * @inheritDoc
      */
-    public function logging(MemberSubscribeProductLogDTO $DTO):void
+    public function logging(MemberInterface $member, MemberSubscribeProductLogDTO $DTO): void
     {
-        $this->logRepository->save($DTO);
+        $this->logRepositoryFactory->create($member)->save($DTO);
     }
 
     /**
      * @inheritDoc
      */
-    public function isExistsSubscribed(Member $member): bool
+    public function isExistsSubscribed(MemberInterface $member): bool
     {
-        return $this->repository->isExistsSubscribe($member);
+        return $this->repositoryFactory->create($member)->isExistsSubscribe($member);
     }
 }

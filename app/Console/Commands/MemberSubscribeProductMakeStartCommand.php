@@ -35,12 +35,13 @@ class MemberSubscribeProductMakeStartCommand extends Command
         $logService = app(MemberSubscribeProductServiceInterface::class);
 
         // 지난달에 생성된 레코드를 필터링하여 'is_started' 필드를 true로 업데이트
-        $updatedCount = MemberSubscribeProduct::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
+        $updatedCount = MemberSubscribeProduct::with('member')
+            ->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])
             ->get()
             ->each(function(MemberSubscribeProduct $subscribeProduct) use ($logService) {
                 $subscribeProduct->is_started = true;
                 $subscribeProduct->save();
-                $logService->logging(MemberSubscribeProductLogDTO::started($subscribeProduct));
+                $logService->logging($subscribeProduct->member, MemberSubscribeProductLogDTO::started($subscribeProduct));
             });
 
         $this->info("Updated $updatedCount records between $startOfLastMonth and $endOfLastMonth.");

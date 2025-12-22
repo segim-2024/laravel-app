@@ -6,25 +6,25 @@ use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 use Illuminate\Support\Collection;
 
 interface MemberSubscribeProductServiceInterface
 {
     /**
-     * @param Member $member
-     * @param Product $product
-     * @return MemberSubscribeProduct|null
+     * @param MemberInterface $member
+     * @param ProductInterface $product
+     * @return SubscribeProductInterface|null
      */
-    public function findByMemberAndProduct(Member $member, Product $product): ?MemberSubscribeProduct;
+    public function findByMemberAndProduct(MemberInterface $member, ProductInterface $product): ?SubscribeProductInterface;
 
     /**
      * @param UpsertMemberSubscribeProductDTO $DTO
      * @return Collection
      */
-    public function subscribe(UpsertMemberSubscribeProductDTO $DTO):Collection;
+    public function subscribe(UpsertMemberSubscribeProductDTO $DTO): Collection;
 
     /**
      * @param UnsubscribeProductDTO $DTO
@@ -33,26 +33,28 @@ interface MemberSubscribeProductServiceInterface
     public function unsubscribe(UnsubscribeProductDTO $DTO): void;
 
     /**
-     * @param MemberSubscribeProduct $subscribeProduct
-     * @return MemberSubscribeProduct
+     * @param MemberInterface $member
+     * @param SubscribeProductInterface $subscribeProduct
+     * @return SubscribeProductInterface
      */
-    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct;
+    public function updateLatestPayment(MemberInterface $member, SubscribeProductInterface $subscribeProduct): SubscribeProductInterface;
 
     /**
      * @param UpdateActivateMemberSubscribeProductDTO $DTO
-     * @return MemberSubscribeProduct
+     * @return SubscribeProductInterface
      */
-    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct;
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): SubscribeProductInterface;
 
     /**
+     * @param MemberInterface $member
      * @param MemberSubscribeProductLogDTO $DTO
      * @return void
      */
-    public function logging(MemberSubscribeProductLogDTO $DTO):void;
+    public function logging(MemberInterface $member, MemberSubscribeProductLogDTO $DTO): void;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return bool
      */
-    public function isExistsSubscribed(Member $member): bool;
+    public function isExistsSubscribed(MemberInterface $member): bool;
 }

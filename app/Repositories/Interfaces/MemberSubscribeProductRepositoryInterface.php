@@ -3,40 +3,40 @@ namespace App\Repositories\Interfaces;
 
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
 use App\DTOs\UpsertMemberSubscribeProductDTO;
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 
 interface MemberSubscribeProductRepositoryInterface extends BaseRepositoryInterface
 {
     /**
-     * @param Member $member
-     * @param Product $product
-     * @return MemberSubscribeProduct|null
+     * @param MemberInterface $member
+     * @param ProductInterface $product
+     * @return SubscribeProductInterface|null
      */
-    public function findByMemberAndProduct(Member $member, Product $product): ?MemberSubscribeProduct;
+    public function findByMemberAndProduct(MemberInterface $member, ProductInterface $product): ?SubscribeProductInterface;
 
     /**
      * @param UpsertMemberSubscribeProductDTO $DTO
-     * @return MemberSubscribeProduct
+     * @return SubscribeProductInterface
      */
-    public function upsertCard(UpsertMemberSubscribeProductDTO $DTO):MemberSubscribeProduct;
+    public function upsertCard(UpsertMemberSubscribeProductDTO $DTO): SubscribeProductInterface;
 
     /**
-     * @param MemberSubscribeProduct $subscribeProduct
-     * @return MemberSubscribeProduct
+     * @param SubscribeProductInterface $subscribeProduct
+     * @return SubscribeProductInterface
      */
-    public function updateLatestPayment(MemberSubscribeProduct $subscribeProduct): MemberSubscribeProduct;
+    public function updateLatestPayment(SubscribeProductInterface $subscribeProduct): SubscribeProductInterface;
 
     /**
      * @param UpdateActivateMemberSubscribeProductDTO $DTO
-     * @return MemberSubscribeProduct
+     * @return SubscribeProductInterface
      */
-    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): MemberSubscribeProduct;
+    public function updateActivate(UpdateActivateMemberSubscribeProductDTO $DTO): SubscribeProductInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return bool
      */
-    public function isExistsSubscribe(Member $member): bool;
+    public function isExistsSubscribe(MemberInterface $member): bool;
 }

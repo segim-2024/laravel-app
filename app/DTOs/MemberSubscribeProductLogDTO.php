@@ -3,17 +3,17 @@
 namespace App\DTOs;
 
 use App\Enums\MemberSubscribeProductLogEnum;
-use App\Models\MemberSubscribeProduct;
+use App\Models\Interfaces\SubscribeProductInterface;
 
 class MemberSubscribeProductLogDTO
 {
     public function __construct(
-        public readonly MemberSubscribeProduct $subscribe,
+        public readonly SubscribeProductInterface $subscribe,
         public readonly MemberSubscribeProductLogEnum $type,
         public readonly ?string $content,
     ) {}
 
-    public static function subscribed(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function subscribed(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,
@@ -22,7 +22,7 @@ class MemberSubscribeProductLogDTO
         );
     }
 
-    public static function unsubscribed(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function unsubscribed(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,
@@ -31,7 +31,7 @@ class MemberSubscribeProductLogDTO
         );
     }
 
-    public static function started(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function started(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,
@@ -40,7 +40,7 @@ class MemberSubscribeProductLogDTO
         );
     }
 
-    public static function activated(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function activated(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,
@@ -49,7 +49,7 @@ class MemberSubscribeProductLogDTO
         );
     }
 
-    public static function deactivated(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function deactivated(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,
@@ -58,7 +58,7 @@ class MemberSubscribeProductLogDTO
         );
     }
 
-    public static function payment(MemberSubscribeProduct $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
+    public static function payment(SubscribeProductInterface $subscribe, ?string $content = null): MemberSubscribeProductLogDTO
     {
         return new MemberSubscribeProductLogDTO(
             $subscribe,

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
@@ -6,12 +7,12 @@ use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\ProductInterface;
 use App\Models\Interfaces\SubscribeProductInterface;
-use App\Models\MemberSubscribeProduct;
+use App\Models\WhaleMemberSubscribeProduct;
 use App\Repositories\Interfaces\MemberSubscribeProductRepositoryInterface;
 
-class MemberSubscribeProductRepository extends BaseRepository implements MemberSubscribeProductRepositoryInterface
+class WhaleMemberSubscribeProductRepository extends BaseRepository implements MemberSubscribeProductRepositoryInterface
 {
-    public function __construct(MemberSubscribeProduct $model)
+    public function __construct(WhaleMemberSubscribeProduct $model)
     {
         parent::__construct($model);
     }
@@ -21,7 +22,7 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
      */
     public function findByMemberAndProduct(MemberInterface $member, ProductInterface $product): ?SubscribeProductInterface
     {
-        return MemberSubscribeProduct::where('member_id', '=', $member->getMemberId())
+        return WhaleMemberSubscribeProduct::where('member_id', '=', $member->getMemberId())
             ->where('product_id', '=', $product->getId())
             ->first();
     }
@@ -31,7 +32,7 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
      */
     public function upsertCard(UpsertMemberSubscribeProductDTO $DTO): SubscribeProductInterface
     {
-        return MemberSubscribeProduct::updateOrCreate(
+        return WhaleMemberSubscribeProduct::updateOrCreate(
             [
                 'product_id' => $DTO->product->getId(),
                 'member_id' => $DTO->member->getMemberId(),
@@ -70,6 +71,6 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
      */
     public function isExistsSubscribe(MemberInterface $member): bool
     {
-        return MemberSubscribeProduct::where('member_id', $member->getMemberId())->exists();
+        return WhaleMemberSubscribeProduct::where('member_id', $member->getMemberId())->exists();
     }
 }

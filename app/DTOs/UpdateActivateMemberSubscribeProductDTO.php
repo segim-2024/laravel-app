@@ -3,16 +3,16 @@
 namespace App\DTOs;
 
 use App\Http\Requests\UpdateActivateMemberSubscribeProductRequest;
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 
 class UpdateActivateMemberSubscribeProductDTO
 {
     public function __construct(
-        public readonly Member $member,
-        public readonly Product $product,
-        public readonly MemberSubscribeProduct $subscribe,
+        public readonly MemberInterface $member,
+        public readonly ProductInterface $product,
+        public readonly SubscribeProductInterface $subscribe,
         public readonly bool $isActive
     ) {}
 

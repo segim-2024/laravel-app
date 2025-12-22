@@ -25,8 +25,8 @@ class ProductPaymentService implements ProductPaymentServiceInterface {
     {
         $subscribeProduct = $this->subscribeService->findByMemberAndProduct($payment->member, $payment->productable);
         if ($subscribeProduct) {
-            $this->subscribeService->updateLatestPayment($subscribeProduct);
-            $this->subscribeService->logging(MemberSubscribeProductLogDTO::payment($subscribeProduct));
+            $this->subscribeService->updateLatestPayment($payment->member, $subscribeProduct);
+            $this->subscribeService->logging($payment->member, MemberSubscribeProductLogDTO::payment($subscribeProduct));
         }
 
         $this->cashService->charge(new MemberCashDTO(

@@ -16,38 +16,41 @@ use Illuminate\Support\Facades\Auth;
  * @property string $name 상품명
  * @property string $payment_day 결제일
  * @property int $price 금액
+ * @property bool $is_used 사용 여부
+ * @property bool $is_deleted 삭제 여부
+ * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property MemberSubscribeProduct $subscribe
- * @property Collection|MemberSubscribeProduct[] $subscribes
+ * @property WhaleMemberSubscribeProduct $subscribe
+ * @property Collection|WhaleMemberSubscribeProduct[] $subscribes
  */
-class Product extends Model implements ProductInterface
+class WhaleProduct extends Model implements ProductInterface
 {
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string, string, string>
-     */
+    protected $connection = 'mysql_whale';
+    protected $table = 'products';
+
     protected $casts = [
         'name' => 'string',
         'payment_day' => 'string',
         'price' => 'integer',
+        'is_used' => 'boolean',
+        'is_deleted' => 'boolean',
     ];
 
     public function payments(): MorphMany
     {
-        return $this->morphMany(MemberPayment::class, 'productable');
+        return $this->morphMany(WhaleMemberPayment::class, 'productable');
     }
 
-    public function subscribe():HasOne
+    public function subscribe(): HasOne
     {
-        return $this->hasOne(MemberSubscribeProduct::class, 'product_id')
+        return $this->hasOne(WhaleMemberSubscribeProduct::class, 'product_id')
             ->where('member_id', '=', Auth::user()->mb_id);
     }
 
-    public function subscribes():HasMany
+    public function subscribes(): HasMany
     {
-        return $this->hasMany(MemberSubscribeProduct::class, 'product_id');
+        return $this->hasMany(WhaleMemberSubscribeProduct::class, 'product_id');
     }
 
     public function getId(): int
