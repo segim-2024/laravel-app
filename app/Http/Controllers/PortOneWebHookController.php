@@ -6,7 +6,7 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Exceptions\PaymentAmountVerifyFailedException;
 use App\Exceptions\PortOneGetPaymentException;
 use App\Http\Requests\PortOneWebHookRequest;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\PaymentInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
@@ -66,8 +66,8 @@ class PortOneWebHookController extends Controller
         return response()->json(['status' => $portOnePaymentDTO->status]);
     }
 
-    private function verifyAmount(PortOneGetPaymentResponseDTO $paymentDTO, MemberPayment $payment): bool
+    private function verifyAmount(PortOneGetPaymentResponseDTO $paymentDTO, PaymentInterface $payment): bool
     {
-        return $paymentDTO->amount->total === $payment->amount;
+        return $paymentDTO->amount->total === $payment->getAmount();
     }
 }

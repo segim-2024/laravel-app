@@ -3,14 +3,14 @@
 namespace App\DTOs;
 
 use App\Http\Requests\PaymentRetryRequest;
-use App\Models\MemberPayment;
-use App\Models\MemberSubscribeProduct;
+use App\Models\Interfaces\PaymentInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 
 class PaymentRetryDTO
 {
     public function __construct(
-        public MemberPayment $payment,
-        public readonly MemberSubscribeProduct $subscribe
+        public PaymentInterface $payment,
+        public readonly SubscribeProductInterface $subscribe
     ) {}
 
     public static function createFromRequest(PaymentRetryRequest $request): self

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\DTOs\PaymentCancelDTO;
 use App\Enums\MemberPaymentStatusEnum;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\PaymentInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 class PaymentCancelRequest extends FormRequest
 {
-    public MemberPayment $payment;
+    public PaymentInterface $payment;
 
     public function __construct(
         protected MemberPaymentServiceInterface $memberPaymentService,

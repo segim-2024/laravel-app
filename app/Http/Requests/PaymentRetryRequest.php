@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use App\DTOs\PaymentRetryDTO;
 use App\Enums\MemberPaymentStatusEnum;
-use App\Models\MemberPayment;
-use App\Models\MemberSubscribeProduct;
+use App\Models\Interfaces\PaymentInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
@@ -16,8 +16,8 @@ use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 
 class PaymentRetryRequest extends FormRequest
 {
-    public MemberPayment $payment;
-    public MemberSubscribeProduct $subscribe;
+    public PaymentInterface $payment;
+    public SubscribeProductInterface $subscribe;
 
     public function __construct(
         protected MemberPaymentServiceInterface $memberPaymentService,

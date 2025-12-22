@@ -3,9 +3,9 @@
 namespace App\Http\Requests;
 
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 use App\Services\Interfaces\MemberServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
@@ -16,9 +16,9 @@ use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 
 class UpdateActivateMemberSubscribeProductRequest extends FormRequest
 {
-    public Member $member;
-    public Product $product;
-    public MemberSubscribeProduct $subscribe;
+    public MemberInterface $member;
+    public ProductInterface $product;
+    public SubscribeProductInterface $subscribe;
 
     public function __construct(
         protected MemberServiceInterface $memberService,
