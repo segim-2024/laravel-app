@@ -3,12 +3,12 @@
 namespace App\DTOs;
 
 use App\Http\Requests\CreateMemberCardRequest;
-use App\Models\Member;
+use App\Models\Interfaces\MemberInterface;
 
 class CreateMemberCardDTO
 {
     public function __construct(
-        public readonly Member $member,
+        public readonly MemberInterface $member,
         public readonly string $key,
     ) {}
 

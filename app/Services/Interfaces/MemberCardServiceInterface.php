@@ -5,8 +5,8 @@ namespace App\Services\Interfaces;
 use App\DTOs\CreateMemberCardDTO;
 use App\DTOs\GetMemberCardApiDTO;
 use App\Exceptions\PortOneGetBillingKeyException;
-use App\Models\Member;
-use App\Models\MemberCard;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -14,16 +14,16 @@ interface MemberCardServiceInterface
 {
     /**
      * @param int $id
-     * @return MemberCard|null
+     * @return CardInterface|null
      */
-    public function findById(int $id): ?MemberCard;
+    public function findById(int $id): ?CardInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @param string|int $id
-     * @return MemberCard|null
+     * @return CardInterface|null
      */
-    public function find(Member $member, string|int $id): ?MemberCard;
+    public function find(MemberInterface $member, string|int $id): ?CardInterface;
 
     /**
      * @param GetMemberCardApiDTO $DTO
@@ -34,23 +34,23 @@ interface MemberCardServiceInterface
     /**
      * 카드 리스트
      *
-     * @param Member $member
+     * @param MemberInterface $member
      * @return Collection
      */
-    public function getList(Member $member):Collection;
+    public function getList(MemberInterface $member): Collection;
 
     /**
      * 카드 생성
      *
      * @param CreateMemberCardDTO $DTO
-     * @return MemberCard
+     * @return CardInterface
      * @throws PortOneGetBillingKeyException
- */
-    public function save(CreateMemberCardDTO $DTO):MemberCard;
+     */
+    public function save(CreateMemberCardDTO $DTO): CardInterface;
 
     /**
-     * @param MemberCard $card
+     * @param CardInterface $card
      * @return void
      */
-    public function delete(MemberCard $card): void;
+    public function delete(CardInterface $card): void;
 }

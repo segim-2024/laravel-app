@@ -2,12 +2,12 @@
 
 namespace App\DTOs;
 
-use App\Models\Member;
+use App\Models\Interfaces\MemberInterface;
 
 class MemberCardDTO
 {
     public function __construct(
-        public Member $member,
+        public MemberInterface $member,
         public string $name,
         public string $number,
         public string $key,

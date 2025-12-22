@@ -1,18 +1,18 @@
-<?php
+ <?php
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\GetMemberCardApiDTO;
 use App\DTOs\MemberCardDTO;
 use App\Models\Interfaces\CardInterface;
 use App\Models\Interfaces\MemberInterface;
-use App\Models\MemberCard;
+use App\Models\WhaleMemberCard;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
-class MemberCardRepository extends BaseRepository implements MemberCardRepositoryInterface
+class WhaleMemberCardRepository extends BaseRepository implements MemberCardRepositoryInterface
 {
-    public function __construct(MemberCard $model)
+    public function __construct(WhaleMemberCard $model)
     {
         parent::__construct($model);
     }
@@ -22,7 +22,7 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
      */
     public function find(MemberInterface $member, int|string $id): ?CardInterface
     {
-        return MemberCard::where('member_id', '=', $member->getMemberId())->find($id);
+        return WhaleMemberCard::where('member_id', '=', $member->getMemberId())->find($id);
     }
 
     /**
@@ -30,7 +30,7 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
      */
     public function getList(MemberInterface $member): Collection
     {
-        return MemberCard::where('member_id', '=', $member->getMemberId())->get();
+        return WhaleMemberCard::where('member_id', '=', $member->getMemberId())->get();
     }
 
     /**
@@ -38,7 +38,7 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
      */
     public function save(MemberCardDTO $DTO): CardInterface
     {
-        $card = new MemberCard();
+        $card = new WhaleMemberCard();
         $card->member_id = $DTO->member->getMemberId();
         $card->name = $DTO->name;
         $card->number = $DTO->number;
@@ -54,7 +54,7 @@ class MemberCardRepository extends BaseRepository implements MemberCardRepositor
     {
         $orderOptions = $DTO->getOrderOptions();
 
-        return MemberCard::when($DTO->search, static function ($query, $search) {
+        return WhaleMemberCard::when($DTO->search, static function ($query, $search) {
                 $query->where('member_id', 'like', "%{$search}%");
             })
             ->orderBy($orderOptions['column'], $orderOptions['direction'])

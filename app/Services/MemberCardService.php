@@ -5,8 +5,9 @@ namespace App\Services;
 use App\DTOs\CreateMemberCardDTO;
 use App\DTOs\GetMemberCardApiDTO;
 use App\DTOs\MemberCardDTO;
-use App\Models\Member;
-use App\Models\MemberCard;
+use App\Models\Interfaces\CardInterface;
+use App\Models\Interfaces\MemberInterface;
+use App\Repositories\Factories\MemberCardRepositoryFactory;
 use App\Repositories\Interfaces\MemberCardRepositoryInterface;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
@@ -16,50 +17,49 @@ use Illuminate\Support\Collection;
 class MemberCardService implements MemberCardServiceInterface {
     public function __construct(
         protected PortOneServiceInterface $portOneService,
-        protected MemberCardRepositoryInterface $repository
+        protected MemberCardRepositoryInterface $repository,
+        protected MemberCardRepositoryFactory $repositoryFactory
     ) {}
 
     /**
      * @inheritDoc
      */
-    public function findById(int $id): ?MemberCard
+    public function findById(int $id): ?CardInterface
     {
         return $this->repository->findById($id);
     }
 
     /**
-     * @param Member $member
-     * @param int|string $id
      * @inheritDoc
      */
-    public function find(Member $member, int|string $id): ?MemberCard
+    public function find(MemberInterface $member, int|string $id): ?CardInterface
     {
-        return $this->repository->find($member, $id);
+        return $this->repositoryFactory->create($member)->find($member, $id);
     }
 
     /**
      * @inheritDoc
      */
-    public function getList(Member $member): Collection
+    public function getList(MemberInterface $member): Collection
     {
-        return $this->repository->getList($member);
+        return $this->repositoryFactory->create($member)->getList($member);
     }
 
     /**
      * @inheritDoc
      */
-    public function save(CreateMemberCardDTO $DTO): MemberCard
+    public function save(CreateMemberCardDTO $DTO): CardInterface
     {
         $billingKeyDTO = $this->portOneService->getBillingKey($DTO->key);
-        return $this->repository->save(MemberCardDTO::create($DTO, $billingKeyDTO));
+        return $this->repositoryFactory->create($DTO->member)->save(MemberCardDTO::create($DTO, $billingKeyDTO));
     }
 
     /**
      * @inheritDoc
      */
-    public function delete(MemberCard $card): void
+    public function delete(CardInterface $card): void
     {
-        $this->repository->delete($card);
+        $card->delete();
     }
 
     /**
