@@ -53,7 +53,7 @@ class SSOController extends Controller
     public function handleWhaleSSO(Request $request): RedirectResponse
     {
         try {
-            $memberId = $this->extractMemberIdFromSSO($request->input('data'));
+            $memberId = $this->extractMemberIdFromSSO($request->input('data'), isWhale: true);
             $member = $this->memberService->find($memberId, isWhale: true);
 
             if (! $member) {
@@ -84,10 +84,10 @@ class SSOController extends Controller
     /**
      * SSO 데이터에서 mb_id 추출
      */
-    private function extractMemberIdFromSSO(?string $secureData): string
+    private function extractMemberIdFromSSO(?string $secureData, bool $isWhale = false): string
     {
         if (Config::get('app.env') === 'local') {
-            return 'test01';
+            return $isWhale ? 'test1111' : 'test01';
         }
 
         if (! $secureData) {
