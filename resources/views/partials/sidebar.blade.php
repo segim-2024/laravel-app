@@ -1,4 +1,7 @@
 <!-- 고정 상태창 시작 -->
+@php
+    $isWhale = request()->user()->isWhale();
+@endphp
 <div class="content-left">
     <div class="state">
         <div class="box">
@@ -21,11 +24,13 @@
                             대기중
                         @endif
                     </p>
-                    <p>
-                        @if(request()->user()->librarySubscribe)
-                            {{request()->user()->librarySubscribe->product->name}} 이용중
-                        @endif
-                    </p>
+                    @if(! $isWhale)
+                        <p>
+                            @if(request()->user()->librarySubscribe)
+                                {{request()->user()->librarySubscribe->product->name}} 이용중
+                            @endif
+                        </p>
+                    @endif
                 </div>
             </div>
             <div class="blue_box">
@@ -54,20 +59,22 @@
                     </div>
                 </div>
             </div>
-            <div class="blue_box">
-                <div class="blue_box_con">
-                    <div class="l-title">
-                        구독 상품 다음 청구일
-                    </div>
-                    <div class="r-con">
-                        @if (request()->user()->librarySubscribe?->due_date)
-                        {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
-                        @else
-                        미청구
-                        @endif
+            @if(! $isWhale)
+                <div class="blue_box">
+                    <div class="blue_box_con">
+                        <div class="l-title">
+                            구독 상품 다음 청구일
+                        </div>
+                        <div class="r-con">
+                            @if (request()->user()->librarySubscribe?->due_date)
+                            {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
+                            @else
+                            미청구
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -90,17 +97,19 @@
                     <a href="{{ route('orders.index') }}">E-Cash 사용 관리</a>
                 </li>
             </ul>
-            <div class="nav_title">
-                구독 상품 결제 관리
-            </div>
-            <ul class="nav-wrap">
-                <li class="{{ request()->routeIs('library-payments.*') ? 'active' : '' }}">
-                    <a href="{{ route('library-payments.index') }}">구독 상품 결제 내역</a>
-                </li>
-                <li class="{{ request()->routeIs('library-products.*') ? 'active' : '' }}">
-                    <a href="{{ route('library-products.index') }}">구독 상품 관리</a>
-                </li>
-            </ul>
+            @if(! $isWhale)
+                <div class="nav_title">
+                    구독 상품 결제 관리
+                </div>
+                <ul class="nav-wrap">
+                    <li class="{{ request()->routeIs('library-payments.*') ? 'active' : '' }}">
+                        <a href="{{ route('library-payments.index') }}">구독 상품 결제 내역</a>
+                    </li>
+                    <li class="{{ request()->routeIs('library-products.*') ? 'active' : '' }}">
+                        <a href="{{ route('library-products.index') }}">구독 상품 관리</a>
+                    </li>
+                </ul>
+            @endif
             <div class="bottom_option">
                 <div class="">
                     회사명 : 새김교육(주) | 대표 : 한선덕 | 사업자등록번호 : 809-81-00876 | 경기도 용인시 기흥구 보정로 117 리베로3
@@ -135,11 +144,13 @@
                                     대기중
                                 @endif
                             </p>
-                            <p>
-                                @if(request()->user()->librarySubscribe)
-                                    {{request()->user()->librarySubscribe->product->name}} 이용중
-                                @endif
-                            </p>
+                            @if(! $isWhale)
+                                <p>
+                                    @if(request()->user()->librarySubscribe)
+                                        {{request()->user()->librarySubscribe->product->name}} 이용중
+                                    @endif
+                                </p>
+                            @endif
                         </div>
                     </div>
                     <div class="blue_box">
@@ -167,18 +178,20 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="blue_box_con">
-                            <div class="l-title">
-                                구독 상품 다음 청구일
+                        @if(! $isWhale)
+                            <div class="blue_box_con">
+                                <div class="l-title">
+                                    구독 상품 다음 청구일
+                                </div>
+                                <div class="r-con">
+                                    @if (request()->user()->librarySubscribe?->due_date)
+                                        {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
+                                    @else
+                                        미청구
+                                    @endif
+                                </div>
                             </div>
-                            <div class="r-con">
-                                @if (request()->user()->librarySubscribe?->due_date)
-                                    {{request()->user()->librarySubscribe?->due_date->format('Y-m-d')}}
-                                @else
-                                    미청구
-                                @endif
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -201,18 +214,19 @@
                         <a href="{{ route('orders.index') }}">E-Cash 사용 관리</a>
                     </li>
                 </ul>
-                <div class="nav_title">
-                    구독 상품 결제 관리
-                </div>
-                <ul class="nav-wrap">
-                    <li class="{{ request()->routeIs('library-payments.*') ? 'active' : '' }}">
-                        <a href="{{ route('library-payments.index') }}">구독 상품 결제 내역</a>
-                    </li>
-                    {{--<li><a href="#">구독 상품 결제 카드 관리</a></li>--}}
-                    <li class="{{ request()->routeIs('library-products.*') ? 'active' : '' }}">
-                        <a href="{{ route('library-products.index') }}">구독 상품 관리</a>
-                    </li>
-                </ul>
+                @if(! $isWhale)
+                    <div class="nav_title">
+                        구독 상품 결제 관리
+                    </div>
+                    <ul class="nav-wrap">
+                        <li class="{{ request()->routeIs('library-payments.*') ? 'active' : '' }}">
+                            <a href="{{ route('library-payments.index') }}">구독 상품 결제 내역</a>
+                        </li>
+                        <li class="{{ request()->routeIs('library-products.*') ? 'active' : '' }}">
+                            <a href="{{ route('library-products.index') }}">구독 상품 관리</a>
+                        </li>
+                    </ul>
+                @endif
             </div>
 
             <div class="bottom_option">
