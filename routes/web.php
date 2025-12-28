@@ -36,7 +36,7 @@ Route::get('/whale-home', function () {
     return redirect("https://englishwhale.com/");
 })->name('whale.home');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:web,whale'])->group(function () {
     Route::get('/payments', [MemberPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/list', [MemberPaymentController::class, 'list'])->name('payments.list');
 

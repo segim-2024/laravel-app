@@ -78,7 +78,12 @@ class SSOController extends Controller
             $this->cashService->create($member);
         }
 
-        Auth::login($member);
+        // 기존 세션 정리 후 새로 로그인
+        Auth::guard('web')->logout();
+        Auth::guard('whale')->logout();
+
+        $guard = $member->isWhale() ? 'whale' : 'web';
+        Auth::guard($guard)->login($member);
     }
 
     /**

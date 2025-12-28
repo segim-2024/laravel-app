@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
-use App\Models\Member;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Services\Interfaces\OrderServiceInterface;
@@ -33,7 +33,7 @@ class OrderService implements OrderServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getTotalAmount(Member $member): int
+    public function getTotalAmount(MemberInterface $member): int
     {
         return $this->repository->getTotalAmount($member);
     }
@@ -41,7 +41,7 @@ class OrderService implements OrderServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getTotalPaymentCount(Member $member): int
+    public function getTotalPaymentCount(MemberInterface $member): int
     {
         return $this->repository->getTotalPaymentCount($member);
     }

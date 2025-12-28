@@ -1,4 +1,5 @@
- <?php
+<?php
+
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\GetMemberCardApiDTO;

@@ -2,8 +2,8 @@
 namespace App\Repositories\Eloquent;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
-use App\Models\Member;
 use App\Models\Order;
 use App\Models\WhaleOrder;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
@@ -39,9 +39,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getTotalAmount(Member $member): int
+    public function getTotalAmount(MemberInterface $member): int
     {
-        return Order::where('mb_id', '=', $member->mb_id)
+        $model = $member->isWhale() ? WhaleOrder::class : Order::class;
+
+        return $model::where('mb_id', '=', $member->getMemberId())
             ->where('od_receipt_ecash', '>', 'O')
             ->sum('od_receipt_ecash');
     }
@@ -49,9 +51,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getTotalPaymentCount(Member $member): int
+    public function getTotalPaymentCount(MemberInterface $member): int
     {
-        return Order::where('mb_id', '=', $member->mb_id)
+        $model = $member->isWhale() ? WhaleOrder::class : Order::class;
+
+        return $model::where('mb_id', '=', $member->getMemberId())
             ->where('od_receipt_ecash', '>', 'O')
             ->count();
     }

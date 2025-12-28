@@ -2,8 +2,8 @@
 namespace App\Repositories\Interfaces;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
-use App\Models\Member;
 use App\Models\Order;
 
 interface OrderRepositoryInterface extends BaseRepositoryInterface
@@ -22,16 +22,16 @@ interface OrderRepositoryInterface extends BaseRepositoryInterface
     public function findWithPlatform(int|string $id, bool $isWhale = false): ?OrderInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalAmount(Member $member): int;
+    public function getTotalAmount(MemberInterface $member): int;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalPaymentCount(Member $member): int;
+    public function getTotalPaymentCount(MemberInterface $member): int;
 
     /**
      * @param GetMemberOrderListDTO $DTO

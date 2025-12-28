@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+         'whale' => [
+            'driver' => 'session',
+            'provider' => 'whale_users',
+        ],
     ],
 
     /*
@@ -64,10 +68,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Member::class,
         ],
-//        'members' => [
-//            'driver' => 'database',
-//            'model' => App\Models\Member::class,
-//        ],
+        'whale_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\WhaleMember::class,
+        ],
     ],
 
     /*

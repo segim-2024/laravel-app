@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -86,7 +87,17 @@ class WhaleMember extends Authenticatable implements MemberInterface
 
     public function cash(): HasOne
     {
-        return $this->hasOne(MemberCash::class, 'member_id', 'mb_id');
+        return $this->hasOne(WhaleMemberCash::class, 'member_id', 'mb_id');
+    }
+
+    public function cards(): HasMany
+    {
+        return $this->hasMany(WhaleMemberCard::class, 'member_id', 'mb_id');
+    }
+
+    public function productSubscribes(): HasMany
+    {
+        return $this->hasMany(WhaleMemberSubscribeProduct::class, 'member_id', 'mb_id');
     }
 
     /**

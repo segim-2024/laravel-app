@@ -3,8 +3,8 @@
 namespace App\Services\Interfaces;
 
 use App\DTOs\GetMemberOrderListDTO;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
-use App\Models\Member;
 use App\Models\Order;
 
 interface OrderServiceInterface
@@ -23,16 +23,16 @@ interface OrderServiceInterface
     public function findWithPlatform(string|int $id, $isWhale = false): ?OrderInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalAmount(Member $member): int;
+    public function getTotalAmount(MemberInterface $member): int;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return int
      */
-    public function getTotalPaymentCount(Member $member): int;
+    public function getTotalPaymentCount(MemberInterface $member): int;
 
     /**
      * @param GetMemberOrderListDTO $DTO
