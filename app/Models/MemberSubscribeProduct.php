@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CardInterface;
 use App\Models\Interfaces\SubscribeProductInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -81,6 +82,11 @@ class MemberSubscribeProduct extends Model implements SubscribeProductInterface
     public function getCardId(): int
     {
         return $this->card_id;
+    }
+
+    public function getCard(): CardInterface
+    {
+        return $this->card;
     }
 
     public function isStarted(): bool

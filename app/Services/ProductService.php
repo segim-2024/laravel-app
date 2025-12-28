@@ -2,21 +2,23 @@
 
 namespace App\Services;
 
-use App\Models\Member;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
+use App\Repositories\Factories\ProductRepositoryFactory;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Support\Collection;
 
 class ProductService implements ProductServiceInterface {
     public function __construct(
-        protected ProductRepositoryInterface $repository
+        protected ProductRepositoryInterface $repository,
+        protected ProductRepositoryFactory $repositoryFactory
     ) {}
 
     /**
      * @inheritDoc
      */
-    public function find(int|string $id): ?Product
+    public function find(int|string $id): ?ProductInterface
     {
         return $this->repository->find($id);
     }
@@ -24,12 +26,12 @@ class ProductService implements ProductServiceInterface {
     /**
      * @inheritDoc
      */
-    public function getList(Member $member): Collection
+    public function getList(MemberInterface $member): Collection
     {
-        return $this->repository->getList($member);
+        return $this->repositoryFactory->create($member)->getList();
     }
 
-    public function getSubscribes(Product $product): Collection
+    public function getSubscribes(ProductInterface $product): Collection
     {
         return $this->repository->getSubscribes($product);
     }

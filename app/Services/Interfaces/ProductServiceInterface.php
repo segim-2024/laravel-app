@@ -2,30 +2,29 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Member;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\ProductInterface;
 use Illuminate\Support\Collection;
 
 interface ProductServiceInterface
 {
     /**
      * @param string|int $id
-     * @return Product|null
+     * @return ProductInterface|null
      */
-    public function find(string|int $id):?Product;
+    public function find(string|int $id): ?ProductInterface;
 
     /**
-     * @param Member $member
+     * @param MemberInterface $member
      * @return Collection
      */
-    public function getList(Member $member):Collection;
+    public function getList(MemberInterface $member): Collection;
 
     /**
      * 상품의 구독 리스트 구하기
      *
-     * @param Product $product
+     * @param ProductInterface $product
      * @return Collection
      */
-    public function getSubscribes(Product $product): Collection;
+    public function getSubscribes(ProductInterface $product): Collection;
 }

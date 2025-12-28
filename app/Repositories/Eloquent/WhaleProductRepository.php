@@ -2,22 +2,21 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Interfaces\ProductInterface;
-use App\Models\MemberSubscribeProduct;
-use App\Models\Product;
+use App\Models\WhaleMemberSubscribeProduct;
+use App\Models\WhaleProduct;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-class ProductRepository extends BaseRepository implements ProductRepositoryInterface
+class WhaleProductRepository extends BaseRepository implements ProductRepositoryInterface
 {
-    public function __construct(Product $model)
+    public function __construct(WhaleProduct $model)
     {
         parent::__construct($model);
     }
 
     public function find(int|string $id): ?ProductInterface
     {
-        return Product::find($id);
+        return WhaleProduct::find($id);
     }
 
     /**
@@ -25,7 +24,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
      */
     public function getList(): Collection
     {
-        return Product::with([
+        return WhaleProduct::with([
                 'subscribe' => [
                     'card'
                 ]
@@ -38,7 +37,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
      */
     public function getSubscribes(ProductInterface $product): Collection
     {
-        return MemberSubscribeProduct::where('product_id', '=', $product->getId())
+        return WhaleMemberSubscribeProduct::where('product_id', '=', $product->getId())
             ->where('is_activated','=',true)
             ->where('is_started','=',true)
             ->get();

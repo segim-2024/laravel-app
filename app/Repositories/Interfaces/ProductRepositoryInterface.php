@@ -1,23 +1,21 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-use App\Models\Member;
-use App\Models\Product;
+use App\Models\Interfaces\ProductInterface;
 use Illuminate\Support\Collection;
 
 interface ProductRepositoryInterface extends BaseRepositoryInterface
 {
-    public function find(int|string $id): ?Product;
+    public function find(int|string $id): ?ProductInterface;
 
     /**
-     * @param Member $member
      * @return Collection
      */
-    public function getList(Member $member):Collection;
+    public function getList(): Collection;
 
     /**
-     * @param Product $product
+     * @param ProductInterface $product
      * @return Collection
      */
-    public function getSubscribes(Product $product): Collection;
+    public function getSubscribes(ProductInterface $product): Collection;
 }

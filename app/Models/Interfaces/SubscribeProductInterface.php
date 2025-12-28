@@ -14,6 +14,8 @@ interface SubscribeProductInterface
 
     public function getCardId(): int;
 
+    public function getCard(): CardInterface;
+
     public function isStarted(): bool;
 
     public function isActivated(): bool;

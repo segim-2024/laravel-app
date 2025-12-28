@@ -13,6 +13,4 @@ interface CardInterface
     public function getNumber(): string;
 
     public function getKey(): string;
-
-    public function delete(): ?bool;
 }

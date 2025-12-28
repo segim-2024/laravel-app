@@ -89,11 +89,11 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function retry(PaymentRetryDTO $DTO): PaymentInterface
     {
-        if ($DTO->payment->getCardId() !== $DTO->subscribe->card_id) {
-            $DTO->payment = $this->updateCard($DTO->payment, $DTO->subscribe->card);
+        if ($DTO->payment->getCardId() !== $DTO->subscribe->getCardId()) {
+            $DTO->payment = $this->updateCard($DTO->payment, $DTO->subscribe->getCard());
         }
 
-        $this->portOneService->requestPaymentByBillingKey($DTO->subscribe->card->getKey(), $DTO->payment);
+        $this->portOneService->requestPaymentByBillingKey($DTO->subscribe->getCard()->getKey(), $DTO->payment);
         return $DTO->payment;
     }
 
