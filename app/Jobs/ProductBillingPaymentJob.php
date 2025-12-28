@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\DTOs\CreateMemberPaymentDTO;
 use App\Models\MemberSubscribeProduct;
+use App\Models\WhaleMemberSubscribeProduct;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
 use Exception;
@@ -15,40 +16,36 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
+class ProductBillingPaymentJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
     /**
      * The number of times the job may be attempted.
-     *
-     * @var int
      */
     public int $tries = 1;
 
     /**
      * The number of seconds after which the job's unique lock will be released.
-     *
-     * @var int
      */
     public int $uniqueFor = 60;
 
     /**
      * The unique ID of the job.
-     *
-     * @return integer
      */
-    public function uniqueId()
+    public function uniqueId(): string
     {
-        return $this->subscribeProduct->id;
+        // 파머스/고래 구분을 위해 prefix 추가
+        $prefix = $this->subscribeProduct instanceof WhaleMemberSubscribeProduct ? 'whale' : 'segim';
+
+        return $prefix.'-'.$this->subscribeProduct->getId();
     }
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        public MemberSubscribeProduct $subscribeProduct
+        public MemberSubscribeProduct|WhaleMemberSubscribeProduct $subscribeProduct
     ) {}
 
     /**
@@ -60,8 +57,8 @@ class ProductBillingPaymentJob implements ShouldQueue, ShouldBeUnique
         $paymentService = app(MemberPaymentServiceInterface::class);
         $portOneService = app(PortOneServiceInterface::class);
 
-        // 결재 생성
-        $payment = $paymentService->save(CreateMemberPaymentDTO::createFromMemberSubscribe($subscribeProduct));
+        // 결제 생성
+        $payment = $paymentService->save(CreateMemberPaymentDTO::createFromSubscribe($subscribeProduct));
 
         // 결제 요청
         try {

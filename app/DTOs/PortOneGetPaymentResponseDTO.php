@@ -10,40 +10,54 @@ use Illuminate\Http\Client\Response;
 class PortOneGetPaymentResponseDTO
 {
     public function __construct(
-        public readonly MemberPaymentStatusEnum        $status,
-        public readonly string                         $statusChangedAt,
-        public readonly string                         $id,
-        public readonly string                         $merchantId,
-        public readonly string                         $storeId,
-        public readonly string                         $updatedAt,
-        public readonly string                         $orderName,
-        public readonly PortOnePaymentAmountDTO        $amount,
-        public readonly string                         $currency,
-        public readonly ?PortOnePaymentMethodDTO       $method,
-        public readonly ?string                        $scheduleId,
-        public readonly ?string                        $billingKey,
-        public readonly ?string                        $pgTxId,
-        public readonly ?string                        $pgResponse,
-        public readonly ?string                        $receiptUrl,
-        public readonly ?string                        $paidAt,
+        public readonly MemberPaymentStatusEnum $status,
+        public readonly string $statusChangedAt,
+        public readonly string $id,
+        public readonly string $merchantId,
+        public readonly string $storeId,
+        public readonly string $updatedAt,
+        public readonly string $orderName,
+        public readonly PortOnePaymentAmountDTO $amount,
+        public readonly string $currency,
+        public readonly ?PortOnePaymentMethodDTO $method,
+        public readonly ?string $scheduleId,
+        public readonly ?string $billingKey,
+        public readonly ?string $pgTxId,
+        public readonly ?string $pgResponse,
+        public readonly ?string $receiptUrl,
+        public readonly ?string $paidAt,
         public readonly ?PortOnePaymentCancellationDTO $cancellations,
-        public readonly ?string                        $cancelledAt,
-        public readonly ?string                        $failedAt,
-        public readonly mixed                          $cashReceipt,
-        public readonly ?PortOnePaymentFailureDTO      $failure,
+        public readonly ?string $cancelledAt,
+        public readonly ?string $failedAt,
+        public readonly mixed $cashReceipt,
+        public readonly ?PortOnePaymentFailureDTO $failure,
+        public readonly ?string $customData,
 
-        public readonly ?string                        $type,
-        public readonly ?string                        $message,
-        public readonly int                            $httpStatus,
-        public readonly string                         $httpResponseBody,
+        public readonly ?string $type,
+        public readonly ?string $message,
+        public readonly int $httpStatus,
+        public readonly string $httpResponseBody,
+        public readonly ?string $paymentKey = null,
     ) {}
 
     /**
-     * @param Response $response
-     * @return self
+     * customData에서 isWhale 값 추출
+     */
+    public function isWhale(): bool
+    {
+        if (! $this->customData) {
+            return false;
+        }
+
+        $data = json_decode($this->customData, true);
+
+        return $data['isWhale'] ?? false;
+    }
+
+    /**
      * @throws PortOneGetPaymentException
      */
-    public static function fromResponse(Response $response):self
+    public static function fromResponse(Response $response): self
     {
         $data = $response->object();
         if (! $data || ! isset($data->status)) {
@@ -70,7 +84,7 @@ class PortOneGetPaymentResponseDTO
                 pgResponse: $data->pgResponse ?? null,
                 receiptUrl: $data->receiptUrl ?? null,
                 paidAt: $data->paidAt ?? null,
-                cancellations: !empty($data->cancellations[0])
+                cancellations: ! empty($data->cancellations[0])
                     ? PortOnePaymentCancellationDTO::fromResponseObject($data->cancellations[0])
                     : null,
                 cancelledAt: $data->cancelledAt ?? null,
@@ -79,8 +93,9 @@ class PortOneGetPaymentResponseDTO
                 failure: isset($data->failure)
                     ? new PortOnePaymentFailureDTO($data->failure->reason, $data->failure->pgCode, $data->failure->pgMessage)
                     : null,
-                type: $data->type ?? "",
-                message: $data->message ?? "",
+                customData: $data->customData ?? null,
+                type: $data->type ?? '',
+                message: $data->message ?? '',
                 httpStatus: $response->status(),
                 httpResponseBody: $response->body(),
             );

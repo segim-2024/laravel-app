@@ -13,8 +13,6 @@ use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
 class MemberPaymentRepositoryFactory
 {
     /**
-     * @param MemberInterface $member
-     * @return MemberPaymentRepositoryInterface
      * @throws MemberPaymentRepositoryFactoryException
      */
     public function create(MemberInterface $member): MemberPaymentRepositoryInterface
@@ -24,5 +22,15 @@ class MemberPaymentRepositoryFactory
             $member instanceof Member => app(MemberPaymentRepository::class),
             default => throw new MemberPaymentRepositoryFactoryException(sprintf('Unsupported member type: %s', get_class($member))),
         };
+    }
+
+    /**
+     * isWhale 플래그로 Repository 생성
+     */
+    public function createByIsWhale(bool $isWhale): MemberPaymentRepositoryInterface
+    {
+        return $isWhale
+            ? app(WhaleMemberPaymentRepository::class)
+            : app(MemberPaymentRepository::class);
     }
 }

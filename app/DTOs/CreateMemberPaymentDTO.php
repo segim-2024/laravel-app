@@ -4,9 +4,9 @@ namespace App\DTOs;
 
 use App\Models\Interfaces\CardInterface;
 use App\Models\Interfaces\MemberInterface;
+use App\Models\Interfaces\SubscribeProductInterface;
 use App\Models\LibraryProduct;
 use App\Models\LibraryProductSubscribe;
-use App\Models\MemberSubscribeProduct;
 use App\Models\Product;
 use App\Models\WhaleProduct;
 use Illuminate\Support\Str;
@@ -21,11 +21,9 @@ class CreateMemberPaymentDTO
         public readonly string $method,
         public readonly string $title,
         public readonly int $amount,
-    )
-    {
-    }
+    ) {}
 
-    public static function createFromMemberSubscribe(MemberSubscribeProduct $subscribeProduct):self
+    public static function createFromSubscribe(SubscribeProductInterface $subscribeProduct): self
     {
         return new self(
             $subscribeProduct->member,
@@ -38,7 +36,7 @@ class CreateMemberPaymentDTO
         );
     }
 
-    public static function createFromLibrarySubscribe(LibraryProductSubscribe $subscribe):self
+    public static function createFromLibrarySubscribe(LibraryProductSubscribe $subscribe): self
     {
         return new self(
             $subscribe->member,

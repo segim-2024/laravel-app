@@ -7,7 +7,7 @@
 - **Backend**: Laravel 10.10 (PHP 8.1+)
 - **Auth**: Laravel Sanctum (토큰 기반 API 인증)
 - **Frontend**: Blade 템플릿
-- **Payment**: Toss, PortOne(포트원)
+- **Payment**: PortOne(포트원) V2 - Toss는 더이상 사용하지 않음
 - **Storage**: AWS S3
 - **Test**: PHPUnit 10.1
 
@@ -103,7 +103,7 @@ php artisan migrate --database=mysql_whale --path=database/migrations/whale
 ## 주요 도메인
 
 - **인증**: SSO, 앱 로그인 (`AuthController`, `SignInController`, `SSOController`)
-- **결제/주문**: Toss/PortOne 웹훅, 주문 관리 (`OrderController`, `TossWebHookController`)
+- **결제/주문**: PortOne 웹훅, 주문 관리 (`OrderController`, `PortOneWebHookController`)
 - **구독**: 멤버 구독, 라이브러리 구독 (`MemberSubscribeProductController`)
 - **이캐시**: 캐시 충전/사용 (`MemberCashController`)
 - **교육 컨텐츠**: 자료박사, 논술박사 (시리즈 > 볼륨 > 레슨 > 자료 구조)
@@ -199,6 +199,57 @@ php artisan test
 
 ## 외부 연동
 
-- **Toss/PortOne**: 결제 웹훅 처리
+- **PortOne**: 결제 웹훅 처리 (V2 API)
 - **알림톡**: 카카오 알림톡 발송
 - **SEGIM 티켓**: 티켓 발급/차감
+
+## 정기결제 시스템
+
+### 스케줄러 (Kernel.php)
+
+| 커맨드 | 대상 | 실행 시간 |
+|--------|------|-----------|
+| `app:member-subscribe-product-make-start-command` | 파머스 구독 시작 | 매월 1일 00:10 |
+| `app:whale-member-subscribe-product-make-start-command` | 고래 구독 시작 | 매월 1일 00:15 |
+| `app:subscribe-product-payment-schedule-command` | 파머스 정기결제 | 매일 09:00 |
+| `app:whale-subscribe-product-payment-schedule-command` | 고래 정기결제 | 매일 09:05 |
+| `app:library-subscribe-payment-schedule-command` | 라이브러리 결제 | 매일 09:00 |
+| `app:library-payment-remind-schedule-command` | 라이브러리 알림 | 매일 16:00 |
+
+### 정기결제 흐름
+
+```
+스케줄러 → ProductBillingPaymentJob → MemberPaymentService::save()
+                                              ↓
+                                    RepositoryFactory.create(member)
+                                              ↓
+                            ┌─────────────────┴─────────────────┐
+                            ↓                                   ↓
+                  MemberPaymentRepository            WhaleMemberPaymentRepository
+                  (member_payments)                  (whale_member_payments)
+                            ↓                                   ↓
+                  PortOneService.requestPaymentByBillingKey()
+                            ↓
+                  customData: {"isWhale": false/true}
+```
+
+### PortOne 웹훅 처리
+
+파머스/고래 결제를 구분하기 위해 PortOne의 `customData` 필드 사용:
+
+```php
+// 결제 요청 시 customData에 isWhale 플래그 추가
+'customData' => json_encode(['isWhale' => $payment->member->isWhale()])
+
+// 웹훅 수신 시 customData로 Repository 선택
+$portOnePaymentDTO = $portOneService->getPaymentDetail($paymentId);
+$repository = $repositoryFactory->createByIsWhale($portOnePaymentDTO->isWhale());
+$payment = $repository->findByKey($paymentId);
+```
+
+### 제한사항
+
+- **결제 재시도/취소 API**: 현재 파머스영어 결제만 지원
+  - `POST /api/payments/retry`, `POST /api/payments/cancel`
+  - `MemberPaymentService::findByKey()`, `findFailedPayment()`가 파머스 테이블만 조회
+  - 고래영어 결제 재시도/취소가 필요하면 Factory 패턴 적용 필요

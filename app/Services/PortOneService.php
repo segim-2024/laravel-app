@@ -9,16 +9,16 @@ use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Exceptions\PortOneBillingPaymentException;
 use App\Exceptions\PortOneGetBillingKeyException;
 use App\Exceptions\PortOneGetPaymentException;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\PaymentInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class PortOneService implements PortOneServiceInterface {
-
+class PortOneService implements PortOneServiceInterface
+{
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getBillingKey(string $billingKey): PortOneGetBillingKeyResponseDTO
     {
@@ -38,9 +38,9 @@ class PortOneService implements PortOneServiceInterface {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function requestPaymentByBillingKey(string $billingKey, MemberPayment $payment): PortOneBillingPaymentResponseDTO
+    public function requestPaymentByBillingKey(string $billingKey, PaymentInterface $payment): PortOneBillingPaymentResponseDTO
     {
         // 결제 요청 파라미터
         $params = [
@@ -53,13 +53,15 @@ class PortOneService implements PortOneServiceInterface {
             ],
             'customer' => [
                 'customer_name' => [
-                    'full_name' => $payment->member->mb_nick."-".$payment->member->mb_name
-                ]
+                    'full_name' => $payment->member->mb_nick.'-'.$payment->member->mb_name,
+                ],
             ],
             'currency' => 'KRW',
             'noticeUrls' => [
-                Config::get('services.portone.v2.web_hook_url')
-            ]
+                Config::get('services.portone.v2.web_hook_url'),
+            ],
+            // 고래영어/파머스영어 구분을 위한 커스텀 데이터
+            'customData' => json_encode(['isWhale' => $payment->member->isWhale()]),
         ];
 
         // 이메일이 존재하지 않는 경우가 있어 옵셔널하게 입력
@@ -69,7 +71,7 @@ class PortOneService implements PortOneServiceInterface {
         }
 
         $response = Http::portone()
-            ->post('/payments/'.$payment->payment_id.'/billing-key', $params);
+            ->post('/payments/'.$payment->getPaymentId().'/billing-key', $params);
 
         Log::info('Request to billing key payment');
         if ($response->successful()) {
@@ -84,7 +86,7 @@ class PortOneService implements PortOneServiceInterface {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function deleteBillingKey(string $billingKey): bool
     {
@@ -99,12 +101,12 @@ class PortOneService implements PortOneServiceInterface {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function getPaymentDetail(MemberPayment $payment): PortOneGetPaymentResponseDTO
+    public function getPaymentDetail(string $paymentId): PortOneGetPaymentResponseDTO
     {
         $response = Http::portone()
-            ->get('/payments/'.$payment->payment_id);
+            ->get('/payments/'.$paymentId);
 
         Log::info('Get Payment');
         Log::info($response->body());
@@ -121,14 +123,14 @@ class PortOneService implements PortOneServiceInterface {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function cancel(PaymentCancelDTO $DTO): bool
     {
         $response = Http::portone()
             ->post('/payments/'.$DTO->payment->payment_id.'/cancel', [
                 'amount' => $DTO->amount,
-                'reason' => $DTO->reason
+                'reason' => $DTO->reason,
             ]);
 
         if ($response->successful()) {
