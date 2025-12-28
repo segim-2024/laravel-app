@@ -65,18 +65,28 @@
 | `g5_member` | O | O | 레거시 그누보드 회원 |
 | `member_cashes` | O | O | 고래영어는 수동 지급만 |
 | `member_cash_transactions` | O | O | |
-| `member_cards` | O | X | 빌링용 카드 |
-| `member_payments` | O | X | 결제 내역 |
-| `member_subscribe_products` | O | X | 정기 구독 |
+| `member_cards` | O | O | 빌링용 카드 |
+| `member_payments` | O | O | 결제 내역 |
+| `products` | O | O | 상품 |
+| `member_subscribe_products` | O | O | 정기 구독 |
+| `member_subscribe_product_logs` | O | O | 구독 로그 |
 | `library_products` | O | X | 라이브러리 상품 |
 | `member_subscribe_library_products` | O | X | 라이브러리 구독 |
 
-> 고래영어에 빌링 시스템 추가 시 해당 테이블들을 `mysql_whale`에 마이그레이션 필요
+### 고래영어 마이그레이션
+
+고래영어 전용 마이그레이션은 별도 폴더에서 관리:
+
+```bash
+# 고래영어 마이그레이션 실행
+php artisan migrate --database=mysql_whale --path=database/migrations/whale
+```
+
+마이그레이션 파일 위치: `database/migrations/whale/`
 
 ### 고래영어 사용자 제한 사항
 
 - 라이브러리 구독 메뉴 접근 불가 (`/library-products`, `/library-payments`)
-- 정기 결제 카드/상품 관리 불가 (빌링 시스템 미구현)
 - 이캐시 조회만 가능 (수동 지급분)
 
 ## 주요 웹 페이지 (Blade)
@@ -99,6 +109,43 @@
 - **교육 컨텐츠**: 자료박사, 논술박사 (시리즈 > 볼륨 > 레슨 > 자료 구조)
 - **알림톡**: 결제, 입금안내, 배송추적 (`OrderAlimTokController`)
 
+## 멀티테넌트 아키텍처 (Factory 패턴)
+
+파머스영어/고래영어를 동일한 서비스 레이어에서 처리하기 위해 Factory 패턴 사용:
+
+```
+Service → RepositoryFactory.create(member) → Repository (SEGIM/Whale)
+```
+
+### Repository Factory
+
+| Factory | 생성하는 Repository |
+|---------|---------------------|
+| `MemberCashRepositoryFactory` | `MemberCashRepository` / `WhaleMemberCashRepository` |
+| `MemberCardRepositoryFactory` | `MemberCardRepository` / `WhaleMemberCardRepository` |
+| `MemberPaymentRepositoryFactory` | `MemberPaymentRepository` / `WhaleMemberPaymentRepository` |
+| `MemberSubscribeProductRepositoryFactory` | `MemberSubscribeProductRepository` / `WhaleMemberSubscribeProductRepository` |
+
+### 인터페이스
+
+| Interface | 구현체 |
+|-----------|--------|
+| `MemberInterface` | `Member`, `WhaleMember` |
+| `CardInterface` | `MemberCard`, `WhaleMemberCard` |
+| `PaymentInterface` | `MemberPayment`, `WhaleMemberPayment` |
+| `ProductInterface` | `Product`, `WhaleProduct` |
+| `SubscribeProductInterface` | `MemberSubscribeProduct`, `WhaleMemberSubscribeProduct` |
+
+### 사용 예시
+
+```php
+// Service에서 Factory를 통해 적절한 Repository 선택
+public function getList(MemberInterface $member): Collection
+{
+    return $this->repositoryFactory->create($member)->getList($member);
+}
+```
+
 ## 프로젝트 구조
 
 ```
@@ -107,13 +154,18 @@ app/
 │   ├── Controllers/     # 30+ 컨트롤러
 │   ├── Requests/        # 폼 검증 (64개)
 │   └── Resources/       # API 응답 포맷 (24개)
-├── Models/              # 38개 Eloquent 모델
+├── Models/
+│   ├── Interfaces/      # MemberInterface, CardInterface 등
+│   └── ...              # 38개 Eloquent 모델
 ├── Services/            # 35개 비즈니스 로직
 ├── Jobs/                # 18개 큐 작업
 ├── DTOs/                # 72개 데이터 전송 객체
 ├── Enums/               # 12개 열거형
 ├── Exceptions/          # 25개 커스텀 예외
-└── Repositories/        # 저장소 패턴
+└── Repositories/
+    ├── Eloquent/        # Repository 구현체
+    ├── Factories/       # Repository Factory
+    └── Interfaces/      # Repository 인터페이스
 
 resources/views/         # Blade 템플릿
 ├── layouts/             # 레이아웃
