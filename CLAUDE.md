@@ -247,9 +247,21 @@ $repository = $repositoryFactory->createByIsWhale($portOnePaymentDTO->isWhale())
 $payment = $repository->findByKey($paymentId);
 ```
 
-### 제한사항
+### 제한사항 및 향후 작업
 
-- **결제 재시도/취소 API**: 현재 파머스영어 결제만 지원
-  - `POST /api/payments/retry`, `POST /api/payments/cancel`
-  - `MemberPaymentService::findByKey()`, `findFailedPayment()`가 파머스 테이블만 조회
-  - 고래영어 결제 재시도/취소가 필요하면 Factory 패턴 적용 필요
+현재 **웹 UI를 통한 카드 등록 → 정기결제 → 웹훅 처리**는 파머스/고래 모두 정상 동작.
+
+아래 **관리자단 API**는 파머스영어만 지원 (고래영어 지원 필요시 Factory 패턴 적용):
+
+| API | 엔드포인트 | 이슈 |
+|-----|-----------|------|
+| 결제 재시도 | `POST /api/payments/retry` | `findFailedPayment()` 파머스만 조회 |
+| 결제 취소 | `POST /api/payments/cancel` | `findByKey()` 파머스만 조회 |
+| 결제 삭제 | `DELETE /api/payments/{id}` | `deleteFailedPayment()` 파머스만 조회 |
+| 구독 조회 | `GET /api/subscribes/{id}` | 파머스 테이블만 조회 |
+| 구독 활성화 | `PUT /api/subscribes/{id}/activate` | 파머스 테이블만 조회 |
+| 구독 해지 | `DELETE /api/subscribes/{id}` | 파머스 테이블만 조회 |
+
+**해결 방안 (택1):**
+1. 요청에 `is_whale` 파라미터 추가
+2. Sanctum 인증으로 전환 (관리자 AccessToken 활용)

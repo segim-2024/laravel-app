@@ -14,12 +14,11 @@ use App\Models\Interfaces\CardInterface;
 use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\PaymentInterface;
 use App\Models\LibraryProduct;
-use App\Models\MemberPayment;
 use App\Models\Product;
 use App\Models\WhaleProduct;
 use App\Repositories\Factories\MemberPaymentRepositoryFactory;
+use App\Repositories\Factories\ProductPaymentRepositoryFactory;
 use App\Repositories\Interfaces\MemberPaymentRepositoryInterface;
-use App\Repositories\Interfaces\ProductPaymentRepositoryInterface;
 use App\Services\Interfaces\LibraryPaymentServiceInterface;
 use App\Services\Interfaces\MemberPaymentServiceInterface;
 use App\Services\Interfaces\PortOneServiceInterface;
@@ -28,12 +27,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MemberPaymentService implements MemberPaymentServiceInterface {
     public function __construct(
-        protected PortOneServiceInterface           $portOneService,
-        protected ProductPaymentServiceInterface    $productPaymentService,
-        protected LibraryPaymentServiceInterface    $libraryPaymentService,
-        protected MemberPaymentRepositoryInterface  $repository,
-        protected ProductPaymentRepositoryInterface $productPaymentRepository,
-        protected MemberPaymentRepositoryFactory    $repositoryFactory
+        protected PortOneServiceInterface            $portOneService,
+        protected ProductPaymentServiceInterface     $productPaymentService,
+        protected LibraryPaymentServiceInterface     $libraryPaymentService,
+        protected MemberPaymentRepositoryInterface   $repository,
+        protected MemberPaymentRepositoryFactory     $repositoryFactory,
+        protected ProductPaymentRepositoryFactory    $productPaymentRepositoryFactory
     ) {}
 
     /**
@@ -49,7 +48,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getList(GetMemberPaymentListDTO $DTO)
     {
-        return $this->productPaymentRepository->getList($DTO);
+        return $this->productPaymentRepositoryFactory->create($DTO->member)->getList($DTO);
     }
 
     /**
@@ -65,7 +64,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getTotalAmount(MemberInterface $member): int
     {
-        return $this->productPaymentRepository->getTotalAmount($member->getMemberId());
+        return $this->productPaymentRepositoryFactory->create($member)->getTotalAmount($member->getMemberId());
     }
 
     /**
@@ -73,7 +72,7 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
      */
     public function getTotalPaymentCount(MemberInterface $member): int
     {
-        return $this->productPaymentRepository->getTotalPaymentCount($member->getMemberId());
+        return $this->productPaymentRepositoryFactory->create($member)->getTotalPaymentCount($member->getMemberId());
     }
 
     /**
