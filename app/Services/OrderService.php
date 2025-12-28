@@ -6,12 +6,14 @@ use App\DTOs\GetMemberOrderListDTO;
 use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
 use App\Models\Order;
+use App\Repositories\Factories\OrderRepositoryFactory;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Services\Interfaces\OrderServiceInterface;
 
 class OrderService implements OrderServiceInterface {
     public function __construct(
-        protected OrderRepositoryInterface $repository
+        protected OrderRepositoryInterface $repository,
+        protected OrderRepositoryFactory $repositoryFactory
     ) {}
 
     /**
@@ -35,7 +37,7 @@ class OrderService implements OrderServiceInterface {
      */
     public function getTotalAmount(MemberInterface $member): int
     {
-        return $this->repository->getTotalAmount($member);
+        return $this->repositoryFactory->create($member)->getTotalAmount($member);
     }
 
     /**
@@ -43,7 +45,7 @@ class OrderService implements OrderServiceInterface {
      */
     public function getTotalPaymentCount(MemberInterface $member): int
     {
-        return $this->repository->getTotalPaymentCount($member);
+        return $this->repositoryFactory->create($member)->getTotalPaymentCount($member);
     }
 
     /**
@@ -51,6 +53,6 @@ class OrderService implements OrderServiceInterface {
      */
     public function getList(GetMemberOrderListDTO $DTO)
     {
-        return $this->repository->getList($DTO);
+        return $this->repositoryFactory->create($DTO->member)->getList($DTO);
     }
 }
