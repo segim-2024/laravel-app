@@ -17,7 +17,7 @@ class MemberCardApiController extends Controller
     ) {}
 
     /**
-     * 카드 리스트
+     * 카드 리스트 (Sanctum 인증 필요)
      *
      * @param GetMemberCardApiRequest $request
      * @return AnonymousResourceCollection
@@ -29,7 +29,7 @@ class MemberCardApiController extends Controller
     }
 
     /**
-     * 카드 삭제
+     * 카드 삭제 (Sanctum 인증 필요)
      *
      * @param Request $request
      * @param $id
@@ -37,7 +37,8 @@ class MemberCardApiController extends Controller
      */
     public function destroy(Request $request, $id): JsonResponse
     {
-        $card = $this->service->findById($id);
+        $isWhale = $request->user()->isWhale();
+        $card = $this->service->findByIdWithIsWhale((int) $id, $isWhale);
         if (! $card) {
             return response()->json(['message' => '해당하는 카드를 찾을 수 없습니다.'], 404);
         }

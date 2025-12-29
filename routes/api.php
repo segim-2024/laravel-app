@@ -38,13 +38,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => CheckFromPamusMiddleware::class], static function () {
     Route::post('/e-cash/order', [MemberCashController::class, 'order']);
-    Route::post('/e-cash/manual-charge', [MemberCashController::class, 'manualCharge']);
-    Route::post('/e-cash/manual-spend', [MemberCashController::class, 'manualSpend']);
-    Route::post('/payments/retry', [MemberPaymentController::class, 'retry']);
-    Route::delete('/payments/{paymentId}', [MemberPaymentController::class, 'destroyFailedPayment']);
-    Route::post('/payments/cancel', [MemberPaymentController::class, 'cancel']);
-    Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
-    Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
 
     Route::post('/alim-tok/payment', [OrderAlimTokController::class, 'payment']);
     Route::post('/alim-tok/deposit-guidance', [OrderAlimTokController::class, 'depositGuidance']);
@@ -55,9 +48,6 @@ Route::group(['middleware' => CheckFromPamusMiddleware::class], static function 
     Route::patch('/library-products/{productId}', [LibraryProductController::class, 'update']);
 
     Route::post('/library-products/members/unsubscribe', [LibraryProductSubscribeApiController::class, 'unsubscribe']);
-
-    Route::get('/members/cards', [MemberCardApiController::class, 'index']);
-    Route::delete('/members/cards/{id}', [MemberCardApiController::class, 'destroy']);
 
     Route::post('/segim/orders/tickets/plus', [OrderSegimTicketController::class, 'plus']);
     Route::post('/segim/orders/tickets/minus', [OrderSegimTicketController::class, 'minus']);
@@ -71,9 +61,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
     /* 이캐쉬 - 수동 충전, 수동 소모 */
     Route::post('/e-cash/manually-charge', [MemberCashController::class, 'charge']);
     Route::post('/e-cash/manually-spend', [MemberCashController::class, 'spend']);
+    Route::post('/e-cash/manual-charge', [MemberCashController::class, 'manualCharge']);
+    Route::post('/e-cash/manual-spend', [MemberCashController::class, 'manualSpend']);
     Route::post('/e-cash/order2', [MemberCashController::class, 'order2']);
 
     Route::get('/e-cash/histories/excel', [MemberCashController::class, 'excel']);
+
+    /* 카드 관리 */
+    Route::get('/members/cards', [MemberCardApiController::class, 'index']);
+    Route::delete('/members/cards/{id}', [MemberCardApiController::class, 'destroy']);
+
+    /* 결제 관리 */
+    Route::post('/payments/retry', [MemberPaymentController::class, 'retry']);
+    Route::delete('/payments/{paymentId}', [MemberPaymentController::class, 'destroyFailedPayment']);
+    Route::post('/payments/cancel', [MemberPaymentController::class, 'cancel']);
+
+    /* 구독 관리 */
+    Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
+    Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
 
     /* 자료박사 - 공지 [리스트, 입력, 수정, 삭제] */
     Route::get('/doctor-file/notices', [DoctorFileNoticeController::class, 'index']);

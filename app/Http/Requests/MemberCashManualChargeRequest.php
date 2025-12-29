@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\DTOs\MemberCashDTO;
-use App\Models\Member;
+use App\Models\Interfaces\MemberInterface;
 use App\Services\Interfaces\MemberServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MemberCashManualChargeRequest extends FormRequest
 {
-    public Member $member;
+    public MemberInterface $member;
 
     public function __construct(
         protected MemberServiceInterface $memberService
@@ -49,7 +49,8 @@ class MemberCashManualChargeRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $member = $this->memberService->find($this->validated('mb_id'));
+                $isWhale = $this->user()?->isWhale() ?? false;
+                $member = $this->memberService->find($this->validated('mb_id'), $isWhale);
                 if (! $member) {
                     throw new NotFoundHttpException("회원을 찾을 수 없어요.");
                 }

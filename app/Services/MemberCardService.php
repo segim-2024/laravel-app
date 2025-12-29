@@ -30,6 +30,14 @@ class MemberCardService implements MemberCardServiceInterface {
     }
 
     /**
+     * isWhale 플래그로 카드 조회
+     */
+    public function findByIdWithIsWhale(int $id, bool $isWhale): ?CardInterface
+    {
+        return $this->repositoryFactory->createByIsWhale($isWhale)->findById($id);
+    }
+
+    /**
      * @inheritDoc
      */
     public function find(MemberInterface $member, int|string $id): ?CardInterface
@@ -67,6 +75,6 @@ class MemberCardService implements MemberCardServiceInterface {
      */
     public function getAllMemberCards(GetMemberCardApiDTO $DTO): LengthAwarePaginator
     {
-        return $this->repository->getAllMemberCardPaginate($DTO);
+        return $this->repositoryFactory->createByIsWhale($DTO->isWhale)->getAllMemberCardPaginate($DTO);
     }
 }

@@ -55,7 +55,8 @@ class PaymentRetryRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $payment = $this->memberPaymentService->findFailedPayment($this->validated('payment_id'));
+                $isWhale = $this->user()?->isWhale() ?? false;
+                $payment = $this->memberPaymentService->findFailedPaymentWithIsWhale($this->validated('payment_id'), $isWhale);
                 if (! $payment) {
                     throw new NotFoundHttpException("결제 정보를 찾을 수 없어요.");
                 }

@@ -25,4 +25,14 @@ class ProductRepositoryFactory
             default => throw new ProductRepositoryFactoryException(sprintf('Unsupported member type: %s', get_class($member))),
         };
     }
+
+    /**
+     * isWhale 플래그로 Repository 선택
+     */
+    public function createByIsWhale(bool $isWhale): ProductRepositoryInterface
+    {
+        return $isWhale
+            ? app(WhaleProductRepository::class)
+            : app(ProductRepository::class);
+    }
 }

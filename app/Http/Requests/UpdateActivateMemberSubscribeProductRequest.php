@@ -61,12 +61,14 @@ class UpdateActivateMemberSubscribeProductRequest extends FormRequest
                     throw new NotFoundHttpException("상품을 찾을 수 없어요.");
                 }
 
-                $product = $this->productService->find($this->route('productId'));
+                $isWhale = $this->user()?->isWhale() ?? false;
+
+                $product = $this->productService->findWithIsWhale($this->route('productId'), $isWhale);
                 if (! $product) {
                     throw new NotFoundHttpException("상품을 찾을 수 없어요.");
                 }
 
-                $member = $this->memberService->find($this->validated('mb_id'));
+                $member = $this->memberService->find($this->validated('mb_id'), $isWhale);
                 if (! $member) {
                     throw new NotFoundHttpException("회원을 찾을 수 없어요.");
                 }

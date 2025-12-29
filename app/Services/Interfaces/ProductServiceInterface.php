@@ -15,6 +15,15 @@ interface ProductServiceInterface
     public function find(string|int $id): ?ProductInterface;
 
     /**
+     * isWhale 플래그로 상품 조회
+     *
+     * @param string|int $id
+     * @param bool $isWhale
+     * @return ProductInterface|null
+     */
+    public function findWithIsWhale(string|int $id, bool $isWhale = false): ?ProductInterface;
+
+    /**
      * @param MemberInterface $member
      * @return Collection
      */

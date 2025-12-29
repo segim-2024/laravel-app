@@ -52,7 +52,8 @@ class PaymentCancelRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $payment = $this->memberPaymentService->findByKey($this->validated('payment_id'));
+                $isWhale = $this->user()?->isWhale() ?? false;
+                $payment = $this->memberPaymentService->findByKeyWithIsWhale($this->validated('payment_id'), $isWhale);
                 if (! $payment) {
                     throw new NotFoundHttpException("결제 정보를 찾을 수 없어요.");
                 }

@@ -26,6 +26,14 @@ class ProductService implements ProductServiceInterface {
     /**
      * @inheritDoc
      */
+    public function findWithIsWhale(int|string $id, bool $isWhale = false): ?ProductInterface
+    {
+        return $this->repositoryFactory->createByIsWhale($isWhale)->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getList(MemberInterface $member): Collection
     {
         return $this->repositoryFactory->create($member)->getList();

@@ -24,6 +24,15 @@ interface MemberPaymentServiceInterface
     public function findByKey(string $key): ?PaymentInterface;
 
     /**
+     * isWhale 플래그로 결제 정보 조회
+     *
+     * @param string $key
+     * @param bool $isWhale
+     * @return PaymentInterface|null
+     */
+    public function findByKeyWithIsWhale(string $key, bool $isWhale = false): ?PaymentInterface;
+
+    /**
      * @param GetMemberPaymentListDTO $DTO
      */
     public function getList(GetMemberPaymentListDTO $DTO);
@@ -33,6 +42,15 @@ interface MemberPaymentServiceInterface
      * @return PaymentInterface|null
      */
     public function findFailedPayment(string $paymentId): ?PaymentInterface;
+
+    /**
+     * isWhale 플래그로 실패한 결제 정보 조회
+     *
+     * @param string $paymentId
+     * @param bool $isWhale
+     * @return PaymentInterface|null
+     */
+    public function findFailedPaymentWithIsWhale(string $paymentId, bool $isWhale = false): ?PaymentInterface;
 
     /**
      * @param MemberInterface $member
@@ -96,4 +114,15 @@ interface MemberPaymentServiceInterface
      * @throws PaymentIsNotFailedException
      */
     public function deleteFailedPayment(string $paymentId): void;
+
+    /**
+     * isWhale 플래그로 실패한 결제 정보 삭제
+     *
+     * @param string $paymentId
+     * @param bool $isWhale
+     * @return void
+     * @throws ModelNotFoundException
+     * @throws PaymentIsNotFailedException
+     */
+    public function deleteFailedPaymentWithIsWhale(string $paymentId, bool $isWhale = false): void;
 }

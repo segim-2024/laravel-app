@@ -7,6 +7,7 @@ use App\Http\Requests\GetMemberCardApiRequest;
 class GetMemberCardApiDTO
 {
     public function __construct(
+        public bool $isWhale = false,
         public ?string $search = null,
         public int $page = 1,
         public int $perPage = 10,
@@ -20,6 +21,7 @@ class GetMemberCardApiDTO
     public static function createFromRequest(GetMemberCardApiRequest $request): self
     {
         return new self(
+            isWhale: $request->user()->isWhale(),
             search: $request->input('search'),
             page: (int) $request->input('page', 1),
             perPage: (int) $request->input('per_page', 10),

@@ -25,4 +25,14 @@ class MemberCardRepositoryFactory
             default => throw new MemberCardRepositoryFactoryException(sprintf('Unsupported member type: %s', get_class($member))),
         };
     }
+
+    /**
+     * isWhale 플래그로 Repository 선택
+     */
+    public function createByIsWhale(bool $isWhale): MemberCardRepositoryInterface
+    {
+        return $isWhale
+            ? app(WhaleMemberCardRepository::class)
+            : app(MemberCardRepository::class);
+    }
 }

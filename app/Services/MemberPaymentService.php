@@ -46,6 +46,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     /**
      * @inheritDoc
      */
+    public function findByKeyWithIsWhale(string $key, bool $isWhale = false): ?PaymentInterface
+    {
+        return $this->repositoryFactory->createByIsWhale($isWhale)->findByKey($key);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getList(GetMemberPaymentListDTO $DTO)
     {
         return $this->productPaymentRepositoryFactory->create($DTO->member)->getList($DTO);
@@ -57,6 +65,14 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
     public function findFailedPayment(string $paymentId): ?PaymentInterface
     {
         return $this->repository->findFailedPayment($paymentId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findFailedPaymentWithIsWhale(string $paymentId, bool $isWhale = false): ?PaymentInterface
+    {
+        return $this->repositoryFactory->createByIsWhale($isWhale)->findFailedPayment($paymentId);
     }
 
     /**
@@ -205,5 +221,23 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         }
 
         $this->repository->delete($payment);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteFailedPaymentWithIsWhale(string $paymentId, bool $isWhale = false): void
+    {
+        $repository = $this->repositoryFactory->createByIsWhale($isWhale);
+        $payment = $repository->findByKey($paymentId);
+        if (! $payment) {
+            throw new ModelNotFoundException("대상 결제 정보를 찾을 수 없습니다.");
+        }
+
+        if (! $payment->getState()->isFailed()) {
+            throw new PaymentIsNotFailedException("결제 실패 상태의 결제만 삭제할 수 있습니다.");
+        }
+
+        $repository->delete($payment);
     }
 }

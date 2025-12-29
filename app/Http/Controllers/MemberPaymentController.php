@@ -97,7 +97,8 @@ class MemberPaymentController extends Controller
     public function destroyFailedPayment(Request $request, string $paymentId): JsonResponse
     {
         try {
-            $this->service->deleteFailedPayment($paymentId);
+            $isWhale = $request->user()?->isWhale() ?? false;
+            $this->service->deleteFailedPaymentWithIsWhale($paymentId, $isWhale);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         } catch (PaymentIsNotFailedException $e) {
