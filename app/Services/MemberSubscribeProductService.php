@@ -43,7 +43,7 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
         $subscribe = $this->repositoryFactory->create($DTO->member)->upsertCard($DTO);
         $this->logging($DTO->member, MemberSubscribeProductLogDTO::subscribed($subscribe));
 
-        if ($DTO->member->mb_hp) {
+        if ($DTO->member->mb_hp && ! $DTO->member->isWhale()) {
             StartSubscribeSendAlimTokJob::dispatch($DTO->member)
                 ->afterCommit();
         }
@@ -56,8 +56,9 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
      */
     public function unsubscribe(UnsubscribeProductDTO $DTO): void
     {
-        $this->repositoryFactory->create($DTO->member)->delete($DTO->subscribe);
+        // 삭제 전에 로깅 (고래영어는 mysql_whale 연결로 즉시 커밋되므로 삭제 후 로깅 시 FK 에러 발생)
         $this->logging($DTO->member, MemberSubscribeProductLogDTO::unsubscribed($DTO->subscribe));
+        $this->repositoryFactory->create($DTO->member)->delete($DTO->subscribe);
     }
 
     /**

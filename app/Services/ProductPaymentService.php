@@ -43,7 +43,7 @@ class ProductPaymentService implements ProductPaymentServiceInterface {
      */
     public function processFailed(MemberPayment $payment): void
     {
-        if ($payment->member->mb_hp) {
+        if ($payment->member->mb_hp && ! $payment->member->isWhale()) {
             FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)->afterCommit();
         }
     }
