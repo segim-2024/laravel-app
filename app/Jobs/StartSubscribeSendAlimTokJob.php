@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\DTOs\AlimTokDTO;
-use App\Models\Member;
+use App\Models\Interfaces\MemberInterface;
 use App\Services\Interfaces\AlimTokClientServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -20,7 +20,7 @@ class StartSubscribeSendAlimTokJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public Member $member
+        public MemberInterface $member
     ) {}
 
     /**
