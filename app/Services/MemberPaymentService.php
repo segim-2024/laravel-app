@@ -154,9 +154,8 @@ class MemberPaymentService implements MemberPaymentServiceInterface {
         $productable = $payment->productable;
         // 상품에 따른 결제 완료 처리
         match (true) {
-            $productable instanceof Product => $this->productPaymentService->processPaid($payment, $DTO),
+            $productable instanceof Product, $productable instanceof WhaleProduct => $this->productPaymentService->processPaid($payment, $DTO),
             $productable instanceof LibraryProduct => $this->libraryPaymentService->processPaid($payment, $DTO),
-            $productable instanceof WhaleProduct => null, // Whale 상품은 별도 처리 없음
             default => null,
         };
 

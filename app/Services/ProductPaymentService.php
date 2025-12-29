@@ -7,7 +7,7 @@ use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\PortOneGetPaymentResponseDTO;
 use App\Enums\MemberCashTransactionTypeEnum;
 use App\Jobs\FailedSubscribePaymentSendAlimTokJob;
-use App\Models\MemberPayment;
+use App\Models\Interfaces\PaymentInterface;
 use App\Services\Interfaces\MemberCashServiceInterface;
 use App\Services\Interfaces\MemberSubscribeProductServiceInterface;
 use App\Services\Interfaces\ProductPaymentServiceInterface;
@@ -21,19 +21,20 @@ class ProductPaymentService implements ProductPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function processPaid(MemberPayment $payment, PortOneGetPaymentResponseDTO $DTO): void
+    public function processPaid(PaymentInterface $payment, PortOneGetPaymentResponseDTO $DTO): void
     {
-        $subscribeProduct = $this->subscribeService->findByMemberAndProduct($payment->member, $payment->productable);
+        $member = $payment->getMember();
+        $subscribeProduct = $this->subscribeService->findByMemberAndProduct($member, $payment->productable);
         if ($subscribeProduct) {
-            $this->subscribeService->updateLatestPayment($payment->member, $subscribeProduct);
-            $this->subscribeService->logging($payment->member, MemberSubscribeProductLogDTO::payment($subscribeProduct));
+            $this->subscribeService->updateLatestPayment($member, $subscribeProduct);
+            $this->subscribeService->logging($member, MemberSubscribeProductLogDTO::payment($subscribeProduct));
         }
 
         $this->cashService->charge(new MemberCashDTO(
-            $payment->member,
-            $payment->amount,
+            $member,
+            $payment->getAmount(),
             MemberCashTransactionTypeEnum::Increased,
-            $payment->title,
+            $payment->getTitle(),
             $payment->productable
         ));
     }
@@ -41,10 +42,11 @@ class ProductPaymentService implements ProductPaymentServiceInterface {
     /**
      * @inheritDoc
      */
-    public function processFailed(MemberPayment $payment): void
+    public function processFailed(PaymentInterface $payment): void
     {
-        if ($payment->member->mb_hp && ! $payment->member->isWhale()) {
-            FailedSubscribePaymentSendAlimTokJob::dispatch($payment->member)->afterCommit();
+        $member = $payment->getMember();
+        if ($member->mb_hp && ! $member->isWhale()) {
+            FailedSubscribePaymentSendAlimTokJob::dispatch($member)->afterCommit();
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\MemberPaymentStatusEnum;
+use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\PaymentInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -98,5 +99,15 @@ class MemberPayment extends Model implements PaymentInterface
     public function getAmount(): int
     {
         return $this->amount;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getMember(): MemberInterface
+    {
+        return $this->member;
     }
 }

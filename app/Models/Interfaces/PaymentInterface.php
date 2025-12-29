@@ -19,5 +19,9 @@ interface PaymentInterface
 
     public function getAmount(): int;
 
+    public function getTitle(): string;
+
+    public function getMember(): MemberInterface;
+
     public function productable(): MorphTo;
 }
