@@ -11,7 +11,7 @@ use App\Http\Requests\MemberCashManualChargeRequest;
 use App\Http\Requests\MemberCashManualSpendRequest;
 use App\Models\Interfaces\MemberInterface;
 use App\Models\Interfaces\OrderInterface;
-use App\Models\Product;
+use App\Models\Interfaces\ProductInterface;
 
 class MemberCashDTO
 {
@@ -20,7 +20,7 @@ class MemberCashDTO
         public readonly int $amount,
         public readonly MemberCashTransactionTypeEnum $type,
         public readonly string $title,
-        public readonly Product|OrderInterface|null $transactionable,
+        public readonly ProductInterface|OrderInterface|null $transactionable,
     ) {}
 
     public static function createFromMemberCashOrderRequest(CreateMemberCashOrderRequest $request):self
