@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\DTOs\UpsertMemberSubscribeProductDTO;
-use App\Models\MemberCard;
+use App\Models\Interfaces\CardInterface;
 use App\Models\Product;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UpsertMemberSubscribeProductRequest extends FormRequest
 {
     public Product $product;
-    public MemberCard $card;
+    public CardInterface $card;
 
     public function __construct(
         protected ProductServiceInterface $productService,
