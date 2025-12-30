@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\DTOs\UpsertMemberSubscribeProductDTO;
 use App\Models\Interfaces\CardInterface;
-use App\Models\Product;
+use App\Models\Interfaces\ProductInterface;
 use App\Services\Interfaces\MemberCardServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,17 +13,16 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UpsertMemberSubscribeProductRequest extends FormRequest
 {
-    public Product $product;
+    public ProductInterface $product;
+
     public CardInterface $card;
 
     public function __construct(
         protected ProductServiceInterface $productService,
         protected MemberCardServiceInterface $cardService,
-    )
-    {
+    ) {
         parent::__construct();
     }
-
 
     /**
      * Determine if the user is authorized to make this request.
@@ -40,8 +39,12 @@ class UpsertMemberSubscribeProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productModel = $this->user()->isWhale()
+            ? \App\Models\WhaleProduct::class
+            : \App\Models\Product::class;
+
         return [
-            'product_id' => ['required', 'exists:App\Models\Product,id'],
+            'product_id' => ['required', "exists:{$productModel},id"],
             'card_id' => ['required'],
         ];
     }
@@ -53,7 +56,8 @@ class UpsertMemberSubscribeProductRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $product = $this->productService->find($this->validated('product_id'));
+                $isWhale = $this->user()->isWhale();
+                $product = $this->productService->findWithIsWhale($this->validated('product_id'), $isWhale);
                 if (! $product) {
                     throw new NotFoundHttpException('상품 정보를 찾을 수 없어요');
                 }
@@ -66,11 +70,11 @@ class UpsertMemberSubscribeProductRequest extends FormRequest
                 }
 
                 $this->card = $card;
-            }
+            },
         ];
     }
 
-    public function toDTO():UpsertMemberSubscribeProductDTO
+    public function toDTO(): UpsertMemberSubscribeProductDTO
     {
         return UpsertMemberSubscribeProductDTO::createFromRequest($this);
     }
