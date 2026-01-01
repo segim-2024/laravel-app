@@ -40,6 +40,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\OrderSegimTicketServiceInterface::class, \App\Services\OrderSegimTicketService::class);
         $this->app->bind(\App\Services\Interfaces\CartServiceInterface::class, \App\Services\CartService::class);
         $this->app->bind(\App\Services\Interfaces\ReturnItemServiceInterface::class, \App\Services\ReturnItemService::class);
+        $this->app->bind(\App\Services\Interfaces\WhaleLearningDownloadServiceInterface::class, \App\Services\WhaleLearningDownloadService::class);
     }
 
     public function boot()

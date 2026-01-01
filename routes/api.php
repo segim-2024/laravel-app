@@ -10,6 +10,7 @@ use App\Http\Controllers\DoctorFileLessonMaterialController;
 use App\Http\Controllers\DoctorFileNoticeController;
 use App\Http\Controllers\DoctorFileSeriesController;
 use App\Http\Controllers\DoctorFileVolumeController;
+use App\Http\Controllers\WhaleLearningDownloadController;
 use App\Http\Controllers\LibraryProductController;
 use App\Http\Controllers\LibraryProductSubscribeApiController;
 use App\Http\Controllers\MemberCardApiController;
@@ -58,6 +59,9 @@ Route::post('/sign-in', [SignInController::class, 'signIn'])->middleware('checkP
 Route::post('/sign-in/app', [SignInController::class, 'signInApp']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    /* WhaleLearning 앱 다운로드 URL */
+    Route::get('/whale-learning/download', [WhaleLearningDownloadController::class, 'getUrl']);
+
     /* 이캐쉬 - 수동 충전, 수동 소모 */
     Route::post('/e-cash/manually-charge', [MemberCashController::class, 'charge']);
     Route::post('/e-cash/manually-spend', [MemberCashController::class, 'spend']);
