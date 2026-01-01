@@ -13,7 +13,8 @@ enum WhaleLearningPlatformEnum: string
         return match ($this) {
             self::Win64 => 'whale-learning/1.0.0/Whale Learning Setup 1.0.0.exe',
             self::MacIntel => 'whale-learning/1.0.0/Whale Learning-1.0.0.dmg',
-            self::MacArm => 'whale-learning/1.0.0/Whale Learning-1.0.0-arm64.dmg',
+            // self::MacArm => 'whale-learning/1.0.0/Whale Learning-1.0.0-arm64.dmg',
+            self::MacArm => 'whale-learning/1.0.0/Whale Learning-1.0.0-arm64.dmg.zip',
         };
     }
 }
