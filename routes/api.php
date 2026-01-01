@@ -60,7 +60,8 @@ Route::post('/sign-in/app', [SignInController::class, 'signInApp']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /* WhaleLearning 앱 다운로드 URL */
-    Route::get('/whale-learning/download', [WhaleLearningDownloadController::class, 'getUrl']);
+    Route::get('/whale-learning/download', [WhaleLearningDownloadController::class, 'getUrl'])
+        ->middleware('throttle:3,1');
 
     /* 이캐쉬 - 수동 충전, 수동 소모 */
     Route::post('/e-cash/manually-charge', [MemberCashController::class, 'charge']);
