@@ -233,6 +233,19 @@ php artisan test
                   customData: {"isWhale": false/true}
 ```
 
+### 구독 즉시 시작 API
+
+스케줄러를 기다리지 않고 특정 구독을 즉시 시작하고 결제 실행:
+
+```
+POST /api/products/{productId}/subscribes/force-start
+Body: { "mb_id": "member123" }
+```
+
+- `is_started=false` → `true` 변경 후 `ProductBillingPaymentJob` 디스패치
+- 파머스/고래 모두 지원 (Sanctum 토큰의 `isWhale()`로 자동 구분)
+- 검증: `is_started=true`이거나 `is_activated=false`면 412 에러
+
 ### PortOne 웹훅 처리
 
 파머스/고래 결제를 구분하기 위해 PortOne의 `customData` 필드 사용:
@@ -258,10 +271,15 @@ $payment = $repository->findByKey($paymentId);
 | 결제 재시도 | `POST /api/payments/retry` | `findFailedPayment()` 파머스만 조회 |
 | 결제 취소 | `POST /api/payments/cancel` | `findByKey()` 파머스만 조회 |
 | 결제 삭제 | `DELETE /api/payments/{id}` | `deleteFailedPayment()` 파머스만 조회 |
-| 구독 조회 | `GET /api/subscribes/{id}` | 파머스 테이블만 조회 |
-| 구독 활성화 | `PUT /api/subscribes/{id}/activate` | 파머스 테이블만 조회 |
-| 구독 해지 | `DELETE /api/subscribes/{id}` | 파머스 테이블만 조회 |
 
 **해결 방안 (택1):**
 1. 요청에 `is_whale` 파라미터 추가
 2. Sanctum 인증으로 전환 (관리자 AccessToken 활용)
+
+### 파머스/고래 모두 지원하는 관리자 API
+
+| API | 엔드포인트 |
+|-----|-----------|
+| 구독 활성화/비활성화 | `PATCH /api/products/{productId}/subscribes/activate` |
+| 구독 해지 | `POST /api/products/{productId}/unsubscribe` |
+| 구독 즉시 시작 | `POST /api/products/{productId}/subscribes/force-start` |
