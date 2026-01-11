@@ -73,4 +73,14 @@ class WhaleMemberSubscribeProductRepository extends BaseRepository implements Me
     {
         return WhaleMemberSubscribeProduct::where('member_id', $member->getMemberId())->exists();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateIsStarted(SubscribeProductInterface $subscribe, bool $isStarted): SubscribeProductInterface
+    {
+        $subscribe->is_started = $isStarted;
+        $subscribe->save();
+        return $subscribe;
+    }
 }

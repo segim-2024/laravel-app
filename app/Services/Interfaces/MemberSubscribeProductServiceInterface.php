@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\DTOs\ForceStartSubscribeDTO;
 use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
@@ -57,4 +58,10 @@ interface MemberSubscribeProductServiceInterface
      * @return bool
      */
     public function isExistsSubscribed(MemberInterface $member): bool;
+
+    /**
+     * @param ForceStartSubscribeDTO $DTO
+     * @return SubscribeProductInterface
+     */
+    public function forceStart(ForceStartSubscribeDTO $DTO): SubscribeProductInterface;
 }

@@ -39,4 +39,11 @@ interface MemberSubscribeProductRepositoryInterface extends BaseRepositoryInterf
      * @return bool
      */
     public function isExistsSubscribe(MemberInterface $member): bool;
+
+    /**
+     * @param SubscribeProductInterface $subscribe
+     * @param bool $isStarted
+     * @return SubscribeProductInterface
+     */
+    public function updateIsStarted(SubscribeProductInterface $subscribe, bool $isStarted): SubscribeProductInterface;
 }

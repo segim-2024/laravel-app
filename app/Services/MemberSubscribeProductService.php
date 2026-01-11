@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\ForceStartSubscribeDTO;
 use App\DTOs\MemberSubscribeProductLogDTO;
 use App\DTOs\UnsubscribeProductDTO;
 use App\DTOs\UpdateActivateMemberSubscribeProductDTO;
@@ -93,5 +94,15 @@ class MemberSubscribeProductService implements MemberSubscribeProductServiceInte
     public function isExistsSubscribed(MemberInterface $member): bool
     {
         return $this->repositoryFactory->create($member)->isExistsSubscribe($member);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function forceStart(ForceStartSubscribeDTO $DTO): SubscribeProductInterface
+    {
+        $subscribe = $this->repositoryFactory->create($DTO->member)->updateIsStarted($DTO->subscribe, true);
+        $this->logging($DTO->member, MemberSubscribeProductLogDTO::started($subscribe));
+        return $subscribe;
     }
 }

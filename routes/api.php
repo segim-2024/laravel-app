@@ -83,6 +83,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     /* 구독 관리 */
     Route::patch('/products/{productId}/subscribes/activate', [MemberSubscribeProductController::class, 'updateActivate']);
+    Route::post('/products/{productId}/subscribes/force-start', [MemberSubscribeProductController::class, 'forceStart']);
     Route::post('/products/{productId}/unsubscribe', [MemberSubscribeProductController::class, 'unsubscribe']);
 
     /* 자료박사 - 공지 [리스트, 입력, 수정, 삭제] */

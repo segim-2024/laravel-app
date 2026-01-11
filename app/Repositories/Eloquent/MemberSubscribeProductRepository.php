@@ -72,4 +72,14 @@ class MemberSubscribeProductRepository extends BaseRepository implements MemberS
     {
         return MemberSubscribeProduct::where('member_id', $member->getMemberId())->exists();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateIsStarted(SubscribeProductInterface $subscribe, bool $isStarted): SubscribeProductInterface
+    {
+        $subscribe->is_started = $isStarted;
+        $subscribe->save();
+        return $subscribe;
+    }
 }

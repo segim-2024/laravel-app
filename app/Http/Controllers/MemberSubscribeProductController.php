@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ForceStartSubscribeRequest;
 use App\Http\Requests\UnsubscribeProductRequest;
 use App\Http\Requests\UpdateActivateMemberSubscribeProductRequest;
 use App\Http\Requests\UpsertMemberSubscribeProductRequest;
+use App\Jobs\ProductBillingPaymentJob;
 use App\Http\Resources\MemberSubscribeProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\MemberCard;
@@ -109,5 +111,24 @@ class MemberSubscribeProductController extends Controller
         }
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function forceStart(ForceStartSubscribeRequest $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $subscribe = $this->service->forceStart($request->toDTO());
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception);
+            return response()->json(['message' => '구독 시작에 실패했습니다.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        // 결제 Job 디스패치 (트랜잭션 외부)
+        ProductBillingPaymentJob::dispatch($subscribe);
+
+        return (new MemberSubscribeProductResource($subscribe))
+            ->response()->setStatusCode(Response::HTTP_OK);
     }
 }
