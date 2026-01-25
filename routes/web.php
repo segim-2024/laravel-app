@@ -6,6 +6,7 @@ use App\Http\Controllers\LibraryProductSubscribeController;
 use App\Http\Controllers\MemberCardController;
 use App\Http\Controllers\MemberPaymentController;
 use App\Http\Controllers\MemberSubscribeProductController;
+use App\Http\Controllers\MileageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SSOController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,9 @@ Route::get('/whale-home', function () {
 })->name('whale.home');
 
 Route::middleware(['auth:web,whale'])->group(function () {
+    Route::get('/mileage', [MileageController::class, 'index'])->name('mileage.index');
+    Route::get('/mileage/list', [MileageController::class, 'list'])->name('mileage.list');
+
     Route::get('/payments', [MemberPaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/list', [MemberPaymentController::class, 'list'])->name('payments.list');
 

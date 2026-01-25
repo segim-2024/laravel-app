@@ -120,4 +120,12 @@ class WhaleMember extends Authenticatable implements MemberInterface
     {
         return true;
     }
+
+    /**
+     * 고래영어는 마일리지 미지원
+     */
+    public function hasMileageAccess(): bool
+    {
+        return false;
+    }
 }

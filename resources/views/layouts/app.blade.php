@@ -22,10 +22,15 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
 </head>
 <body>
-<div class="e-cash">
+<div class="e-cash @yield('body-class')">
     @include('partials.sidebar')
     @yield('content')
 </div>
 {{--@include('partials.layer')--}}
+@if(session('error'))
+<script>
+    alert('{{ session('error') }}');
+</script>
+@endif
 </body>
 </html>

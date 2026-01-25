@@ -283,3 +283,86 @@ $payment = $repository->findByKey($paymentId);
 | 구독 활성화/비활성화 | `PATCH /api/products/{productId}/subscribes/activate` |
 | 구독 해지 | `POST /api/products/{productId}/unsubscribe` |
 | 구독 즉시 시작 | `POST /api/products/{productId}/subscribes/force-start` |
+
+## 마일리지 시스템
+
+### 개요
+
+마일리지 멤버스 회원을 위한 마일리지 적립/사용/전환 기능. 현재 파머스영어만 지원.
+
+### 테이블 구조
+
+| 테이블 | 파머스영어 | 고래영어 | 설명 |
+|--------|:----------:|:--------:|------|
+| `mileage_balance` | O | X (TODO) | 회원별 마일리지 잔액 현황 |
+| `mileage_history` | O | X (TODO) | 마일리지 적립/사용/전환 이력 |
+| `mileage_policy` | O | X (TODO) | 마일리지 정책 (적립률, 전환 한도 등) |
+
+### 아키텍처
+
+```
+MileageController
+       ↓
+MileageService
+       ↓
+RepositoryFactory.create(member)
+       ↓
+┌──────────────────┬───────────────────┬──────────────────┐
+↓                  ↓                   ↓
+MileageBalanceRepo MileageHistoryRepo  MileagePolicyRepo
+```
+
+### Repository Factory
+
+| Factory | 파머스 Repository | 고래 Repository |
+|---------|-------------------|-----------------|
+| `MileageBalanceRepositoryFactory` | `MileageBalanceRepository` | TODO |
+| `MileageHistoryRepositoryFactory` | `MileageHistoryRepository` | TODO |
+| `MileagePolicyRepositoryFactory` | `MileagePolicyRepository` | TODO |
+
+### 주요 Enum
+
+```php
+// MileageActionEnum - 마일리지 액션 유형
+Accrue   // 적립 (파란색, +금액)
+Use      // 사용 (빨간색, -금액)
+Convert  // 포인트 전환 (빨간색, -금액)
+
+// MileageChannelEnum - 발생 채널
+System   // 시스템 자동
+Admin    // 관리자 수동
+User     // 사용자 요청
+```
+
+### 웹 페이지
+
+| 경로 | 기능 |
+|------|------|
+| `/mileage` | 나의 마일리지 (잔액 조회, 이력 목록) |
+
+### 고래영어 확장 시 작업 목록
+
+1. **DB 테이블 생성** (`mysql_whale`)
+   - `mileage_balance`
+   - `mileage_history`
+   - `mileage_policy`
+
+2. **모델 생성**
+   - `WhaleMileageBalance`
+   - `WhaleMileageHistory`
+   - `WhaleMileagePolicy`
+
+3. **Repository 생성**
+   - `WhaleMileageBalanceRepository`
+   - `WhaleMileageHistoryRepository`
+   - `WhaleMileagePolicyRepository`
+
+4. **Factory 분기 추가**
+   - 각 Factory에서 `$member->isWhale()` 분기 처리
+
+### 미구현 기능
+
+- [ ] 포인트 전환 API (`POST /mileage/convert`)
+- [ ] 마일리지 적립 API (교재 구매 시 자동 적립)
+- [ ] 마일리지 사용 API
+- [ ] 고래영어 지원

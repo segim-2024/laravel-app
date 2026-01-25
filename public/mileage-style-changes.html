@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마일리지 페이지 스타일 수정사항</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #3f51b5;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #3f51b5;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .important {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .copy-btn {
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .copy-btn:hover {
+            background-color: #303f9f;
+        }
+        .section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .comparison-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .comparison-box.original {
+            background-color: #fff5f5;
+        }
+        .comparison-box.new {
+            background-color: #f0fff4;
+        }
+        .comparison-box h4 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        ul {
+            line-height: 1.8;
+        }
+        code {
+            background-color: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        table.diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table.diff-table th, table.diff-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        table.diff-table th {
+            background-color: #f5f5f5;
+        }
+        table.diff-table td:first-child {
+            width: 150px;
+            font-weight: bold;
+        }
+        .added {
+            background-color: #e6ffed;
+            color: #22863a;
+        }
+        .removed {
+            background-color: #ffeef0;
+            color: #cb2431;
+        }
+        .changed {
+            background-color: #fff5b1;
+        }
+    </style>
+</head>
+<body>
+    <h1>마일리지 페이지 스타일 수정사항 (퍼블리셔 전달용)</h1>
+
+    <div class="important">
+        <strong>핵심 변경사항:</strong> 마일리지 상세내역 리스트가 <code>&lt;ul&gt;/&lt;li&gt;</code> 구조에서
+        <code>&lt;table&gt;</code> 구조(DataTables)로 변경되었습니다. 서버사이드 페이지네이션을 위해 필수적인 변경이며,
+        CSS로 기존 디자인과 동일하게 보이도록 스타일링했습니다.
+    </div>
+
+    <div class="section">
+        <h2>1. HTML 구조 변경 비교</h2>
+
+        <div class="comparison">
+            <div class="comparison-box original">
+                <h4>퍼블리셔 원본 (ul/li)</h4>
+<div class="code-block">&lt;ul class="list"&gt;
+  &lt;li&gt;
+    &lt;div class="area"&gt;
+      &lt;div class="icon"&gt;
+        &lt;img src="icn_save.png"&gt;
+      &lt;/div&gt;
+      &lt;div class="type"&gt;적립&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="area"&gt;
+      &lt;div class="date"&gt;2025.01.25&lt;/div&gt;
+      &lt;div class="desc"&gt;교재 구매&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="amount blue"&gt;+1,000&lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</div>
+            </div>
+
+            <div class="comparison-box new">
+                <h4>변경된 구조 (DataTables)</h4>
+<div class="code-block">&lt;table class="mileage-table"&gt;
+  &lt;thead&gt;...&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;!-- hidden --&gt;&lt;/td&gt;
+      &lt;td&gt;
+        &lt;div class="area"&gt;
+          &lt;div class="icon"&gt;
+            &lt;img src="icn_save.png"&gt;
+          &lt;/div&gt;
+          &lt;div class="type"&gt;적립&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/td&gt;
+      &lt;td&gt;
+        &lt;div class="area"&gt;
+          &lt;div class="date"&gt;2025.01.25&lt;/div&gt;
+          &lt;div class="desc"&gt;교재 구매&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/td&gt;
+      &lt;td&gt;
+        &lt;div class="amount blue"&gt;+1,000&lt;/div&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. CSS 셀렉터 변경 비교</h2>
+
+        <table class="diff-table">
+            <thead>
+                <tr>
+                    <th>요소</th>
+                    <th>퍼블리셔 원본</th>
+                    <th>변경됨 (DataTables용)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>컨테이너</td>
+                    <td><code>.list</code></td>
+                    <td><code>.mileage-table</code></td>
+                </tr>
+                <tr>
+                    <td>행(row)</td>
+                    <td><code>.list li</code></td>
+                    <td><code>.mileage-table tbody tr</code></td>
+                </tr>
+                <tr>
+                    <td>영역</td>
+                    <td><code>.list li .area</code></td>
+                    <td><code>.mileage-table tbody td > .area</code></td>
+                </tr>
+                <tr>
+                    <td>아이콘</td>
+                    <td><code>.list li .icon</code></td>
+                    <td><code>.mileage-table tbody td > .area .icon</code></td>
+                </tr>
+                <tr>
+                    <td>유형</td>
+                    <td><code>.list li .type</code></td>
+                    <td><code>.mileage-table tbody td > .area .type</code></td>
+                </tr>
+                <tr>
+                    <td>날짜</td>
+                    <td><code>.list li .date</code></td>
+                    <td><code>.mileage-table tbody td > .area .date</code></td>
+                </tr>
+                <tr>
+                    <td>설명</td>
+                    <td><code>.list li .desc</code></td>
+                    <td><code>.mileage-table tbody td > .area .desc</code></td>
+                </tr>
+                <tr>
+                    <td>금액</td>
+                    <td><code>.list li .amount</code></td>
+                    <td><code>.mileage-table tbody td > .amount</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. 추가된 핵심 CSS 속성</h2>
+
+        <table class="diff-table">
+            <thead>
+                <tr>
+                    <th>셀렉터</th>
+                    <th>추가된 속성</th>
+                    <th>설명</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="added">
+                    <td><code>.mileage-table thead</code></td>
+                    <td><code>display: none</code></td>
+                    <td>테이블 헤더 숨김</td>
+                </tr>
+                <tr class="added">
+                    <td><code>.mileage-table tbody td</code></td>
+                    <td><code>display: contents</code></td>
+                    <td>td 박스모델 제거 (li처럼 동작)</td>
+                </tr>
+                <tr class="added">
+                    <td><code>.mileage-table</code></td>
+                    <td><code>border-spacing: 0 10px</code></td>
+                    <td>행 간격 (margin-bottom 대체)</td>
+                </tr>
+                <tr class="changed">
+                    <td><code>.area .icon</code></td>
+                    <td><code>width: 50px</code> (원본 40px)</td>
+                    <td>아이콘 영역 너비 조정</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>4. 기타 수정사항</h2>
+
+        <div class="note">
+            <strong>hasDatepicker 클래스 제거:</strong><br>
+            시작일/종료일 input에서 <code>class="hasDatepicker"</code>를 제거했습니다.<br>
+            jQuery UI Datepicker가 자동으로 이 클래스를 추가하므로, 미리 설정되어 있으면 충돌이 발생합니다.
+        </div>
+
+        <h3>변경 전:</h3>
+        <div class="code-block">&lt;input type="text" id="start" class="hasDatepicker" placeholder="시작일"&gt;</div>
+
+        <h3>변경 후:</h3>
+        <div class="code-block">&lt;input type="text" id="start" placeholder="시작일"&gt;</div>
+    </div>
+
+    <div class="section">
+        <h2>5. 추가된 전체 CSS (복사용)</h2>
+        <p><code>.mileage-table</code> 클래스로 스코프되어 다른 테이블에 영향을 주지 않습니다.</p>
+
+        <button class="copy-btn" onclick="copyCSS()">CSS 복사하기</button>
+
+        <div class="code-block" id="cssCode">/* Mileage Table - DataTables를 리스트 형태로 스타일링 */
+.mileage-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.mileage-table thead {
+    display: none;
+}
+
+.mileage-table tbody tr {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    padding: 0 1.5625vw;
+    border: 1px solid #e1e4ea;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.mileage-table tbody td {
+    display: contents;
+}
+
+.mileage-table tbody td > .area {
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+.mileage-table tbody td > .area:first-child {
+    padding-left: 0.5vw;
+}
+
+.mileage-table tbody td > .area .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50px;
+    text-align: center;
+}
+
+.mileage-table tbody td > .area .icon img {
+    display: block;
+    margin: 0 auto;
+}
+
+.mileage-table tbody td > .area .type {
+    width: 5.7292vw;
+    max-width: 110px;
+    padding: 0 1.5625vw;
+    font-weight: 700;
+    text-align: center;
+}
+
+.mileage-table tbody td > .area .date {
+    width: 8.3333vw;
+    max-width: 160px;
+    padding: 0 1.5625vw;
+    text-align: center;
+}
+
+.mileage-table tbody td > .area .desc {
+    flex: 1;
+    min-width: 0;
+    padding: 0 1.5625vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mileage-table tbody td > .amount {
+    margin-left: auto;
+    width: 15.6250vw;
+    max-width: 220px;
+    padding: 0 1.5625vw;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.mileage-table tbody td > .amount.blue {
+    color: #3f51b5;
+}
+
+.mileage-table tbody td > .amount.red {
+    color: #e60012;
+}
+
+/* DataTables 기본 스타일 오버라이드 */
+.mileage-table.dataTable {
+    border: none;
+}
+
+.mileage-table.dataTable tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+#mileageTable_wrapper .dataTables_processing {
+    background: rgba(255,255,255,0.9);
+}
+
+/* 반응형 - 1360px */
+@media (max-width: 1360px) {
+    .mileage-table tbody td > .area .icon img {
+        width: 26px;
+    }
+    .mileage-table tbody td > .area .date {
+        width: 10vw;
+    }
+    .mileage-table tbody td > .amount {
+        font-size: 18px;
+    }
+}
+
+/* 반응형 - 1024px */
+@media (max-width: 1024px) {
+    .mileage-table tbody tr {
+        height: 14.8148vw;
+    }
+    .mileage-table tbody td > .area {
+        flex-direction: column;
+    }
+    .mileage-table tbody td > .area .icon {
+        width: auto;
+        padding-bottom: 6px;
+    }
+    .mileage-table tbody td > .area .icon img {
+        width: 100%;
+    }
+    .mileage-table tbody td > .area .type {
+        width: 9.7292vw;
+        font-size: 2.4074vw;
+    }
+    .mileage-table tbody td > .area .date {
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
+        font-size: 2.9630vw;
+        color: #6d6d6d;
+    }
+    .mileage-table tbody td > .area .desc {
+        font-size: 3.5185vw;
+    }
+    .mileage-table tbody td > .amount {
+        width: 24.625vw;
+        font-size: 4.0741vw;
+    }
+}</div>
+    </div>
+
+    <div class="section">
+        <h2>6. 구현 요약</h2>
+        <ul>
+            <li><strong>페이지네이션:</strong> DataTables 라이브러리 사용 (서버사이드)</li>
+            <li><strong>검색:</strong> 시작일, 종료일 (jQuery UI Datepicker), 키워드 검색</li>
+            <li><strong>필터:</strong> 종합 / 적립 / 사용·전환 버튼</li>
+            <li><strong>정렬:</strong> 날짜 내림차순 (최신순)</li>
+            <li><strong>스타일:</strong> 퍼블리싱 원본과 동일하게 유지</li>
+        </ul>
+    </div>
+
+    <script>
+        function copyCSS() {
+            const cssText = document.getElementById('cssCode').textContent;
+            navigator.clipboard.writeText(cssText).then(() => {
+                alert('CSS가 클립보드에 복사되었습니다!');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = cssText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('CSS가 클립보드에 복사되었습니다!');
+            });
+        }
+    </script>
+</body>
+</html>

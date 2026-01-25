@@ -1,6 +1,8 @@
 <!-- 고정 상태창 시작 -->
 @php
     $isWhale = request()->user()->isWhale();
+    $hasMileageAccess = request()->user()->hasMileageAccess();
+    $mileagePolicy = $hasMileageAccess ? \App\Models\MileagePolicy::current() : null;
 @endphp
 <div class="content-left">
     <div class="state">
@@ -14,23 +16,16 @@
                 <span>정기 결제 등급 관리자</span><br/>
                 {{request()->user()->mb_nick}}
             </div>
+            @if($hasMileageAccess && $mileagePolicy)
+            <div class="yellow_box">
+                <div class="title">PAMUS 마일리지 멤버스</div>
+                <div class="percent">적립률 {{ $mileagePolicy->accrual_rate_percent }}</div>
+            </div>
+            @endif
             <div class="blue_box use">
                 <div>
-                    <p>
-                        E-Cash 월간 정기 결제
-                        @if(request()->user()->productSubscribes()->count() > 0)
-                            이용중
-                        @else
-                            대기중
-                        @endif
-                    </p>
-                    @if(! $isWhale)
-                        <p>
-                            @if(request()->user()->librarySubscribe)
-                                {{request()->user()->librarySubscribe->product->name}} 이용중
-                            @endif
-                        </p>
-                    @endif
+                    <p>E-Cash 월간 정기 결제 @if(request()->user()->productSubscribes()->count() > 0)이용중@else대기중@endif</p>
+                    <p>@if(! $isWhale && request()->user()->librarySubscribe){{request()->user()->librarySubscribe->product->name}} 이용중@endif</p>
                 </div>
             </div>
             <div class="blue_box">
@@ -80,6 +75,19 @@
 
     <div class="nav">
         <div class="box">
+            @if($hasMileageAccess)
+            <div class="nav_title">
+                마일리지 관리
+            </div>
+            <ul class="nav-wrap">
+                <li class="{{ request()->routeIs('mileage.*') ? 'active' : '' }}">
+                    <a href="{{ route('mileage.index') }}">나의 마일리지</a>
+                </li>
+                <li class="">
+                    <a href="#">마일리지 사용</a>
+                </li>
+            </ul>
+            @endif
             <div class="nav_title">
                 E-Cash 관리
             </div>
@@ -136,21 +144,8 @@
                     </p>
                     <div class="blue_box use">
                         <div>
-                            <p>
-                                E-Cash 월간 정기 결제
-                                @if(request()->user()->productSubscribes()->count() > 0)
-                                    이용중
-                                @else
-                                    대기중
-                                @endif
-                            </p>
-                            @if(! $isWhale)
-                                <p>
-                                    @if(request()->user()->librarySubscribe)
-                                        {{request()->user()->librarySubscribe->product->name}} 이용중
-                                    @endif
-                                </p>
-                            @endif
+                            <p>E-Cash 월간 정기 결제 @if(request()->user()->productSubscribes()->count() > 0)이용중@else대기중@endif</p>
+                            <p>@if(! $isWhale && request()->user()->librarySubscribe){{request()->user()->librarySubscribe->product->name}} 이용중@endif</p>
                         </div>
                     </div>
                     <div class="blue_box">
@@ -197,6 +192,19 @@
             </div>
 
             <div class="nav">
+                @if($hasMileageAccess)
+                <div class="nav_title">
+                    마일리지 관리
+                </div>
+                <ul class="nav-wrap">
+                    <li class="{{ request()->routeIs('mileage.*') ? 'active' : '' }}">
+                        <a href="{{ route('mileage.index') }}">나의 마일리지</a>
+                    </li>
+                    <li class="">
+                        <a href="#">마일리지 사용</a>
+                    </li>
+                </ul>
+                @endif
                 <div class="nav_title">
                     E-Cash 관리
                 </div>

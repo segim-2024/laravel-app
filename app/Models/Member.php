@@ -82,6 +82,24 @@ class Member extends Authenticatable implements MemberInterface
             ->where('state', "!=", LibraryProductSubscribeStateEnum::Unsubscribe);
     }
 
+    public function mileage(): HasOne
+    {
+        return $this->hasOne(MemberMileage::class, 'mb_no', 'mb_no');
+    }
+
+    public function mileageHistories(): HasMany
+    {
+        return $this->hasMany(MileageHistory::class, 'mb_no', 'mb_no');
+    }
+
+    /**
+     * 마일리지 사용 권한이 있는지 확인 (레코드 존재 여부)
+     */
+    public function hasMileageAccess(): bool
+    {
+        return $this->mileage !== null;
+    }
+
     /**
      * @inheritDoc
      */
