@@ -35,8 +35,7 @@ class MileageController extends Controller
         $convertibleAmount = $this->service->getConvertibleAmount($member);
         $policy = $this->service->getCurrentPolicy($member);
 
-        // 총 보유 포인트 (추후 포인트 시스템 연동 필요)
-        $totalPoints = 0;
+        $totalPoints = $member->mb_point ?? 0;
 
         return view('mileage.mileage_list', compact(
             'currentBalance',
