@@ -88,6 +88,7 @@ $(document).ready(function() {
 
 // 포인트 전환 팝업 열기
 function openConvertPopup() {
+    $('#convertAmount').text('0');
     $('#convertModal').show();
 }
 
