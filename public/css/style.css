@@ -2320,6 +2320,23 @@ word-break: break-all;
     font-weight: 700;
 }
 
+.gray_popup .price_wrap .area input#convertAmount {
+    font-size: 24px;
+    font-weight: 700;
+    width: 150px;
+    border: none;
+    border-bottom: 2px solid #4a90d9;
+    background: transparent;
+    text-align: right;
+    outline: none;
+}
+
+.gray_popup .price_wrap .area input#convertAmount::placeholder {
+    font-size: 14px;
+    font-weight: 400;
+    color: #999;
+}
+
 .gray_popup .price_wrap .area button {
     margin-left: 10px;
     width: 50px;
@@ -2399,6 +2416,10 @@ word-break: break-all;
     }
     .gray_popup .price_wrap .area div {
         font-size: 2.7778vw;
+    }
+    .gray_popup .price_wrap .area input#convertAmount {
+        font-size: 2.7778vw;
+        width: 22vw;
     }
     .gray_popup .price_wrap .area button {
         width: 7.4074vw;

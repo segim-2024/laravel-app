@@ -40,6 +40,7 @@ Route::get('/whale-home', function () {
 Route::middleware(['auth:web,whale'])->group(function () {
     Route::get('/mileage', [MileageController::class, 'index'])->name('mileage.index');
     Route::get('/mileage/list', [MileageController::class, 'list'])->name('mileage.list');
+    Route::get('/mileage/status', [MileageController::class, 'status'])->name('mileage.status');
     Route::post('/mileage/convert', [MileageController::class, 'convert'])->name('mileage.convert');
 
     Route::get('/payments', [MemberPaymentController::class, 'index'])->name('payments.index');

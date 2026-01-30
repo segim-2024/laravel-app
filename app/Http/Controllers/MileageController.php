@@ -67,6 +67,21 @@ class MileageController extends Controller
         ));
     }
 
+    public function status(Request $request): JsonResponse
+    {
+        $member = $request->user();
+
+        if (! $member->hasMileageAccess()) {
+            return response()->json(['error' => '권한이 없습니다.'], 403);
+        }
+
+        return response()->json([
+            'currentBalance' => $this->service->getCurrentBalance($member),
+            'convertibleAmount' => $this->service->getConvertibleAmount($member),
+            'totalPoints' => $member->mb_point ?? 0,
+        ]);
+    }
+
     public function convert(ConvertMileageToPointRequest $request): JsonResponse
     {
         $member = $request->user();

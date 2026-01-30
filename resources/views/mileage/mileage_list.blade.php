@@ -100,7 +100,7 @@
                 <div class="price_wrap">
                     <p>전환액</p>
                     <div class="area">
-                        <div id="convertAmount">0</div>
+                        <input type="text" id="convertAmount" value="0" inputmode="numeric" placeholder="전환할 금액 입력">
                         <button type="button" onclick="setFullAmount()">전액</button>
                     </div>
                 </div>

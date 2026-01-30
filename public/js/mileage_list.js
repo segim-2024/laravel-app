@@ -84,12 +84,29 @@ $(document).ready(function() {
             return false;
         }
     });
+
+    // 전환액 입력 시 숫자만 허용하고 천단위 콤마 적용
+    $(document).on('input', '#convertAmount', function() {
+        let value = $(this).val().replace(/[^0-9]/g, '');
+        if (value) {
+            $(this).val(parseInt(value).toLocaleString());
+        } else {
+            $(this).val('');
+        }
+    });
 });
 
 // 포인트 전환 팝업 열기
 function openConvertPopup() {
-    $('#convertAmount').text('0');
+    $('#convertAmount').val('0');
     $('#convertModal').show();
+
+    $.get('/mileage/status', function(data) {
+        $('#convertModal').data('convertible', data.convertibleAmount);
+        $('#convertModal .total input').val(data.currentBalance.toLocaleString());
+        $('#convertModal .convertible input').val(data.convertibleAmount.toLocaleString());
+        $('#convertModal .gray_box .price').text(data.totalPoints.toLocaleString());
+    });
 }
 
 // 포인트 전환 팝업 닫기
@@ -100,7 +117,7 @@ function closeConvertPopup() {
 // 전액 버튼 클릭
 function setFullAmount() {
     const convertible = $('#convertModal').data('convertible') || 0;
-    $('#convertAmount').text(convertible.toLocaleString());
+    $('#convertAmount').val(convertible.toLocaleString());
 }
 
 // 이용안내 팝업 열기
@@ -122,7 +139,7 @@ $(document).on('click', '.modal', function(e) {
 
 // 포인트 전환 실행
 function doConvert() {
-    const convertAmountText = $('#convertAmount').text().replace(/,/g, '');
+    const convertAmountText = $('#convertAmount').val().replace(/,/g, '');
     const convertAmount = parseInt(convertAmountText) || 0;
 
     if (convertAmount <= 0) {
