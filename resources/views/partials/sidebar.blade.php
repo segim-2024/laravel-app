@@ -83,9 +83,6 @@
                 <li class="{{ request()->routeIs('mileage.*') ? 'active' : '' }}">
                     <a href="{{ route('mileage.index') }}">나의 마일리지</a>
                 </li>
-                <li class="">
-                    <a href="#">마일리지 사용</a>
-                </li>
             </ul>
             @endif
             <div class="nav_title">
@@ -199,9 +196,6 @@
                 <ul class="nav-wrap">
                     <li class="{{ request()->routeIs('mileage.*') ? 'active' : '' }}">
                         <a href="{{ route('mileage.index') }}">나의 마일리지</a>
-                    </li>
-                    <li class="">
-                        <a href="#">마일리지 사용</a>
                     </li>
                 </ul>
                 @endif
