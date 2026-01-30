@@ -56,5 +56,10 @@ class AppServiceProvider extends ServiceProvider
             ])
             ->baseUrl('https://admin.epamus.com/ss/api');
         });
+
+        Http::macro('pamus', function () {
+            return Http::asForm()
+                ->baseUrl('https://epamus.com');
+        });
     }
 }

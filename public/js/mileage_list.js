@@ -118,3 +118,42 @@ $(document).on('click', '.modal', function(e) {
         $(this).hide();
     }
 });
+
+// 포인트 전환 실행
+function doConvert() {
+    const convertAmountText = $('#convertAmount').text().replace(/,/g, '');
+    const convertAmount = parseInt(convertAmountText) || 0;
+
+    if (convertAmount <= 0) {
+        alert('전환할 금액을 입력해주세요.');
+        return;
+    }
+
+    if (!confirm(convertAmount.toLocaleString() + '원을 포인트로 전환하시겠습니까?')) {
+        return;
+    }
+
+    $.ajax({
+        url: '/mileage/convert',
+        method: 'POST',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            amount: convertAmount
+        },
+        beforeSend: function() {
+            $('.btn_blue').prop('disabled', true).text('전환 중...');
+        },
+        success: function(response) {
+            alert(response.message);
+            closeConvertPopup();
+            location.reload();
+        },
+        error: function(xhr) {
+            const error = xhr.responseJSON?.error || xhr.responseJSON?.message || '전환 중 오류가 발생했습니다.';
+            alert(error);
+        },
+        complete: function() {
+            $('.btn_blue').prop('disabled', false).text('전환하기');
+        }
+    });
+}

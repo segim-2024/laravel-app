@@ -104,7 +104,7 @@
                         <button type="button" onclick="setFullAmount()">전액</button>
                     </div>
                 </div>
-                <button class="btn_blue" type="button">전환하기</button>
+                <button class="btn_blue" type="button" onclick="doConvert()">전환하기</button>
                 <div class="title">포인트 현황</div>
                 <div class="gray_box">
                     <p>보유 포인트</p>
