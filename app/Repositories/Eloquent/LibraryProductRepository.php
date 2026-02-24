@@ -18,7 +18,7 @@ class LibraryProductRepository extends BaseRepository implements LibraryProductR
      */
     public function getList(): Collection
     {
-        return LibraryProduct::all();
+        return LibraryProduct::orderBy('ticket_provide_qty')->get();
     }
 
     public function getListWithSubscribeForMember(): Collection
