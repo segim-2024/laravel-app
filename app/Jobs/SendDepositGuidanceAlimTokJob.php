@@ -7,6 +7,7 @@ use App\DTOs\OrderDTO;
 use App\Services\Interfaces\AlimTokClientServiceInterface;
 use DateTime;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -42,11 +43,13 @@ class SendDepositGuidanceAlimTokJob implements ShouldQueue
             'orderPrice' => number_format($DTO->order->od_misu),
         ])->render();
 
-        $service->send(new AlimTokDTO(
+        $response = $service->send(new AlimTokDTO(
             phoneNumber: $DTO->order->od_hp,
             templateCode: 'deliver03',
             message: $content
         ));
+
+        Log::info('[알림톡:입금안내] ' . json_encode($response, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE));
     }
 
     /**
