@@ -1344,7 +1344,8 @@ input[type="radio"].pick:checked:disabled+div:after {
         height: auto;
     }
 
-    .content-right {
+    /* 라이브러리 페이지는 데스크탑/모바일 마크업이 분리되어 있어 데스크탑용은 숨김 */
+    .content-right.subscription {
         display: none;
     }
 
