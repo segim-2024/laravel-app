@@ -371,20 +371,25 @@ User     // 사용자 요청
 
 ## 강의 파일 업로드 (lecture-api)
 
-가비아 관리자 페이지에서 강의 영상/교육자료를 S3에 브라우저로 직접 업로드하기 위한 API.
+가비아 관리자 페이지에서 강의 영상/교육자료를 S3에 업로드하기 위한 API.
+presign 발급은 가비아 서버가 중계하고, 파일 전송만 브라우저가 S3로 직접 수행한다.
 라우트는 `routes/lecture-api.php`로 분리되어 있고 `/lecture-api` 프리픽스를 사용한다.
 
 ### 흐름
 
 ```
-브라우저 --(1) presign 요청(파머스 토큰)--> [이 앱의 presign API]  ← 브라우저가 직접 호출
-브라우저 <--(2) upload_url----------------
-브라우저 ==(3) PUT 파일 직접=============> [S3 segim-edu]
-브라우저 --(4) 파일명만 POST------------> [가비아 lecture_form_update.php]
+브라우저 --(1) presign 요청--> [가비아 adm/lecture_presign.php]  ← 관리자 세션 검증
+                                       ↓ (2) 서버 간 호출
+                              [이 앱의 presign API]
+브라우저 <--(3) upload_url-----
+브라우저 ==(4) PUT 파일 직접==> [S3 segim-edu]
+브라우저 --(5) 파일명만 POST-> [가비아 lecture_form_update.php]
 ```
 
-(1)이 브라우저 직접 호출이므로 **Laravel `config/cors.php`의 `paths`에 `lecture-api/*`가 있어야 한다.**
-빠지면 응답은 200이지만 브라우저가 CORS 위반으로 버려 업로드가 실패한다.
+**파머스 Sanctum 토큰은 가비아 서버 안에만 존재하며 브라우저로 나가지 않는다.**
+(2)가 서버 간 호출이라 이 앱으로 오는 요청에는 브라우저 CORS가 개입하지 않는다.
+`config/cors.php`의 `paths`에 `lecture-api/*`가 남아 있으나 현 구조에서는 불필요하다
+(브라우저가 직접 호출하던 시기의 잔재이며, 제거해도 동작에 영향 없음).
 
 ### 엔드포인트
 
@@ -408,13 +413,10 @@ User     // 사용자 요청
 | env | `AWS_EDU_REGION`, `AWS_EDU_BUCKET`, `AWS_EDU_URL` |
 
 - 버킷 정책에 `Principal: *`의 `s3:GetObject`가 있어 객체는 **공개 읽기**다. 업로드 시 ACL 지정이 필요 없다
-- **버킷 CORS는 이미 설정되어 있다** (PUT 허용, 모든 Origin). 브라우저 직접 업로드에 필요한 설정이며 추가 작업 불필요
+- **버킷 CORS는 이미 설정되어 있다** (PUT 허용, 모든 Origin). 브라우저가 S3로 직접 PUT하는 (4)단계에 필요한 설정이며 추가 작업 불필요
 - CloudFront 배포(`E1ENGFTX79U4HJ`)가 `media/*`를 서빙하도록 열려 있으나, **재생 URL은 CloudFront가 아닌 S3 직접 URL을 사용**한다 (기존 강의 자료와 동일)
 - presigned URL의 Content-Type은 서명에 포함되지 않아 강제되지 않는다. 응답의 `headers`는 권장값이며, 클라이언트가 보낸 값이 그대로 객체에 저장된다
 
-### 알려진 보안 이슈
+### 미구현
 
-브라우저가 presign API를 직접 호출하는 구조라 **파머스 Sanctum 토큰이 브라우저에 노출된다.**
-이 토큰은 `routes/api.php`의 `auth:sanctum` 그룹 전체(카드 관리, 결제 취소, 이캐시 충전/소모, 구독 관리 등)에 동일하게 통하므로, 관리자 화면에 XSS가 하나라도 있으면 피해 범위가 강의 파일에 그치지 않는다.
-근본 해결은 가비아 서버가 중계하는 방식(브라우저는 가비아만 호출)으로 되돌리는 것이다.
 - [ ] 고래영어 지원
