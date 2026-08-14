@@ -188,9 +188,11 @@ php artisan migrate
 # 테스트
 php artisan test
 
-# 코드 포매팅
-./vendor/bin/pint
+# 코드 포매팅 (반드시 변경한 파일만 인자로 지정할 것)
+./vendor/bin/pint app/Services/SomeService.php
 ```
+
+> `./vendor/bin/pint`를 인자 없이 실행하면 기존 파일 수백 개가 함께 재포매팅되어 불필요한 diff가 발생한다.
 
 ## 인증 미들웨어
 
@@ -202,6 +204,7 @@ php artisan test
 - **PortOne**: 결제 웹훅 처리 (V2 API)
 - **알림톡**: 카카오 알림톡 발송
 - **SEGIM 티켓**: 티켓 발급/차감
+- **S3**: `s3` 디스크(기본), `s3_edu` 디스크(강의 파일 → [강의 파일 업로드](#강의-파일-업로드-lecture-api))
 
 ## 정기결제 시스템
 
@@ -365,4 +368,53 @@ User     // 사용자 요청
 - [ ] 포인트 전환 API (`POST /mileage/convert`)
 - [ ] 마일리지 적립 API (교재 구매 시 자동 적립)
 - [ ] 마일리지 사용 API
+
+## 강의 파일 업로드 (lecture-api)
+
+가비아 관리자 페이지에서 강의 영상/교육자료를 S3에 브라우저로 직접 업로드하기 위한 API.
+라우트는 `routes/lecture-api.php`로 분리되어 있고 `/lecture-api` 프리픽스를 사용한다.
+
+### 흐름
+
+```
+브라우저 --(1) presign 요청(파머스 토큰)--> [이 앱의 presign API]  ← 브라우저가 직접 호출
+브라우저 <--(2) upload_url----------------
+브라우저 ==(3) PUT 파일 직접=============> [S3 segim-edu]
+브라우저 --(4) 파일명만 POST------------> [가비아 lecture_form_update.php]
+```
+
+(1)이 브라우저 직접 호출이므로 **Laravel `config/cors.php`의 `paths`에 `lecture-api/*`가 있어야 한다.**
+빠지면 응답은 200이지만 브라우저가 CORS 위반으로 버려 업로드가 실패한다.
+
+### 엔드포인트
+
+| Method | 경로 | 기능 |
+|--------|------|------|
+| `POST` | `/lecture-api/lecture-files/presigned-url` | 업로드용 presigned PUT URL 발급 (유효시간 30분) |
+| `DELETE` | `/lecture-api/lecture-files` | 강의 파일 삭제 (`type` + `file_name`) |
+
+- **인증**: `auth:sanctum` + 파머스 회원만 (`authorize()`에서 `isWhale() === false` 검사). 고래영어 접근 불가
+- **파일명**: 백엔드가 `Str::orderedUuid().'.'.{ext}`로 생성. 요청의 `ca_idx1`/`ca_idx2`는 가비아가 계속 전송하지만 검증 규칙에 없어 무시된다
+- **확장자**: `LectureFileTypeEnum::allowedExtensions()` 화이트리스트로 제한
+
+### S3 버킷 (segim-edu)
+
+`config/filesystems.php`의 `s3_edu` 디스크. 기존 `s3` 디스크와 **다른 버킷**이며 크레덴셜만 동일하다.
+
+| 항목 | 값 |
+|------|-----|
+| 버킷 / 리전 | `segim-edu` / `ap-northeast-2` |
+| prefix | `media/lecture/video/`, `media/lecture/edufile/` |
+| env | `AWS_EDU_REGION`, `AWS_EDU_BUCKET`, `AWS_EDU_URL` |
+
+- 버킷 정책에 `Principal: *`의 `s3:GetObject`가 있어 객체는 **공개 읽기**다. 업로드 시 ACL 지정이 필요 없다
+- **버킷 CORS는 이미 설정되어 있다** (PUT 허용, 모든 Origin). 브라우저 직접 업로드에 필요한 설정이며 추가 작업 불필요
+- CloudFront 배포(`E1ENGFTX79U4HJ`)가 `media/*`를 서빙하도록 열려 있으나, **재생 URL은 CloudFront가 아닌 S3 직접 URL을 사용**한다 (기존 강의 자료와 동일)
+- presigned URL의 Content-Type은 서명에 포함되지 않아 강제되지 않는다. 응답의 `headers`는 권장값이며, 클라이언트가 보낸 값이 그대로 객체에 저장된다
+
+### 알려진 보안 이슈
+
+브라우저가 presign API를 직접 호출하는 구조라 **파머스 Sanctum 토큰이 브라우저에 노출된다.**
+이 토큰은 `routes/api.php`의 `auth:sanctum` 그룹 전체(카드 관리, 결제 취소, 이캐시 충전/소모, 구독 관리 등)에 동일하게 통하므로, 관리자 화면에 XSS가 하나라도 있으면 피해 범위가 강의 파일에 그치지 않는다.
+근본 해결은 가비아 서버가 중계하는 방식(브라우저는 가비아만 호출)으로 되돌리는 것이다.
 - [ ] 고래영어 지원
