@@ -56,6 +56,16 @@ return [
             'throw' => true,
         ],
 
+        's3_edu' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_EDU_REGION', 'ap-northeast-2'),
+            'bucket' => env('AWS_EDU_BUCKET', 'segim-edu'),
+            'url' => env('AWS_EDU_URL'),
+            'throw' => true,
+        ],
+
     ],
 
     /*
