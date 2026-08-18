@@ -425,9 +425,25 @@ User     // 사용자 요청
 |------|--------|-------------|
 | `video` | `media/lecture/video/` | mp4, mov, m4v |
 | `edufile` | `media/lecture/edufile/` | pdf, zip, hwp, hwpx, ppt, pptx, doc, docx, xls, xlsx |
-| `board_file` | `board/files/` | pdf, hwp, hwpx, doc, docx, xls, xlsx, ppt, pptx, zip, ai, psd, jpg, jpeg, png, gif |
+| `board_file` | `board/files/` | 32종 (아래) |
 
-> `board_file`은 기존에 확장자 제한이 없던 기능이라 실사용 파일(`ai` 등)까지 포함해 넓게 잡았다.
+`board_file`은 기존에 확장자 제한이 없던 기능이라 업무 파일을 넓게 허용한다.
+
+| 분류 | 확장자 |
+|------|--------|
+| 문서 | pdf, hwp, hwpx, hwt, doc, docx, xls, xlsx, ppt, pptx, odt, ods, odp, rtf, txt, csv |
+| 이미지·디자인 | jpg, jpeg, png, gif, bmp, webp, heic, tif, tiff, ai, psd |
+| 압축 | zip, 7z, rar |
+| 미디어 | mp4, mp3 |
+
+**의도적으로 제외한 확장자** (요청이 와도 추가하지 말 것)
+
+| 확장자 | 이유 |
+|--------|------|
+| `svg`, `html`, `htm` | 버킷이 공개 읽기라 브라우저에서 열리면 스크립트가 실행된다 |
+| `xlsm`, `docm`, `pptm` | VBA 매크로 포함 |
+| `exe`, `bat`, `sh`, `php`, `js` 등 | 실행 파일·스크립트 |
+
 > **파일 크기는 백엔드에서 강제할 수 없다** — presigned PUT URL은 `Content-Length`를 서명에 포함하지 못한다. 크기 제한이 필요하면 호출하는 쪽에서 검사해야 한다.
 
 ### S3 버킷 (segim-edu)

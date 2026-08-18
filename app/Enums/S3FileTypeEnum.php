@@ -36,10 +36,19 @@ enum S3FileTypeEnum: string
         return match ($this) {
             self::Video => ['mp4', 'mov', 'm4v'],
             self::EduFile => ['pdf', 'zip', 'hwp', 'hwpx', 'ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
-            // 본부장 게시판은 기존에 확장자 제한이 없어 실사용 파일(ai 등)까지 포함한다
+            // 본부장 게시판은 기존에 확장자 제한이 없던 기능이라 업무 파일을 넓게 허용한다.
+            // 제외 대상: svg/html(공개 버킷에서 스크립트 실행 가능), xlsm/docm/pptm(VBA 매크로),
+            //           실행 파일·스크립트(exe, bat, sh, php, js 등)
             self::BoardFile => [
-                'pdf', 'hwp', 'hwpx', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-                'zip', 'ai', 'psd', 'jpg', 'jpeg', 'png', 'gif',
+                // 문서
+                'pdf', 'hwp', 'hwpx', 'hwt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+                'odt', 'ods', 'odp', 'rtf', 'txt', 'csv',
+                // 이미지 · 디자인
+                'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'heic', 'tif', 'tiff', 'ai', 'psd',
+                // 압축
+                'zip', '7z', 'rar',
+                // 미디어
+                'mp4', 'mp3',
             ],
         };
     }
