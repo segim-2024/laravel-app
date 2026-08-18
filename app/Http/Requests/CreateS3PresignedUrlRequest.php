@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\DTOs\CreateLecturePresignedUrlDTO;
-use App\Enums\LectureFileTypeEnum;
+use App\DTOs\CreateS3PresignedUrlDTO;
+use App\Enums\S3FileTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
-class CreateLecturePresignedUrlRequest extends FormRequest
+class CreateS3PresignedUrlRequest extends FormRequest
 {
     /**
-     * 파머스(새김) 회원만 강의 파일을 업로드할 수 있다.
+     * 파머스(새김) 회원만 파일을 업로드할 수 있다.
      */
     public function authorize(): bool
     {
@@ -37,7 +37,7 @@ class CreateLecturePresignedUrlRequest extends FormRequest
     {
         // ca_idx1, ca_idx2는 가비아가 계속 전송하지만 파일명이 UUID로 바뀌어 사용하지 않는다 (검증 없이 무시)
         $rules = [
-            'type' => ['required', 'string', new Enum(LectureFileTypeEnum::class)],
+            'type' => ['required', 'string', new Enum(S3FileTypeEnum::class)],
             'extension' => ['required', 'string'],
         ];
 
@@ -56,10 +56,10 @@ class CreateLecturePresignedUrlRequest extends FormRequest
         ];
     }
 
-    public function getDTO(): CreateLecturePresignedUrlDTO
+    public function getDTO(): CreateS3PresignedUrlDTO
     {
-        return new CreateLecturePresignedUrlDTO(
-            LectureFileTypeEnum::from($this->validated('type')),
+        return new CreateS3PresignedUrlDTO(
+            S3FileTypeEnum::from($this->validated('type')),
             $this->validated('extension')
         );
     }
@@ -67,10 +67,10 @@ class CreateLecturePresignedUrlRequest extends FormRequest
     /**
      * 확장자 화이트리스트 결정을 위해 검증 전 단계에서 유형을 해석한다.
      */
-    private function resolveType(): ?LectureFileTypeEnum
+    private function resolveType(): ?S3FileTypeEnum
     {
         $type = $this->input('type');
 
-        return is_string($type) ? LectureFileTypeEnum::tryFrom($type) : null;
+        return is_string($type) ? S3FileTypeEnum::tryFrom($type) : null;
     }
 }

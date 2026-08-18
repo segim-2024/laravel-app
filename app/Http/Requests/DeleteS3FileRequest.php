@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\DTOs\DeleteLectureFileDTO;
-use App\Enums\LectureFileTypeEnum;
+use App\DTOs\DeleteS3FileDTO;
+use App\Enums\S3FileTypeEnum;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class DeleteLectureFileRequest extends FormRequest
+class DeleteS3FileRequest extends FormRequest
 {
     /**
-     * 파머스(새김) 회원만 강의 파일을 삭제할 수 있다.
+     * 파머스(새김) 회원만 파일을 삭제할 수 있다.
      */
     public function authorize(): bool
     {
@@ -28,12 +28,12 @@ class DeleteLectureFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'string', new Enum(LectureFileTypeEnum::class)],
+            'type' => ['required', 'string', new Enum(S3FileTypeEnum::class)],
             'file_name' => [
                 'required',
                 'string',
                 static function (string $attribute, mixed $value, Closure $fail): void {
-                    if (! LectureFileTypeEnum::isValidFileName($value)) {
+                    if (! S3FileTypeEnum::isValidFileName($value)) {
                         $fail('올바른 파일명이 아닙니다.');
                     }
                 },
@@ -41,10 +41,10 @@ class DeleteLectureFileRequest extends FormRequest
         ];
     }
 
-    public function getDTO(): DeleteLectureFileDTO
+    public function getDTO(): DeleteS3FileDTO
     {
-        return new DeleteLectureFileDTO(
-            LectureFileTypeEnum::from($this->validated('type')),
+        return new DeleteS3FileDTO(
+            S3FileTypeEnum::from($this->validated('type')),
             $this->validated('file_name')
         );
     }

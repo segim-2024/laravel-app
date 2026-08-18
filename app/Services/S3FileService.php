@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\DTOs\CreateLecturePresignedUrlDTO;
-use App\DTOs\DeleteLectureFileDTO;
-use App\DTOs\LecturePresignedUrlDTO;
-use App\Enums\LectureFileTypeEnum;
-use App\Services\Interfaces\LectureFileServiceInterface;
+use App\DTOs\CreateS3PresignedUrlDTO;
+use App\DTOs\DeleteS3FileDTO;
+use App\DTOs\S3PresignedUrlDTO;
+use App\Enums\S3FileTypeEnum;
+use App\Services\Interfaces\S3FileServiceInterface;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class LectureFileService implements LectureFileServiceInterface
+class S3FileService implements S3FileServiceInterface
 {
     private const DISK = 's3_edu';
 
@@ -21,7 +21,7 @@ class LectureFileService implements LectureFileServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function createUploadUrl(CreateLecturePresignedUrlDTO $DTO): LecturePresignedUrlDTO
+    public function createUploadUrl(CreateS3PresignedUrlDTO $DTO): S3PresignedUrlDTO
     {
         $fileName = Str::orderedUuid().'.'.$DTO->extension;
         $key = $DTO->type->buildKey($fileName);
@@ -31,7 +31,7 @@ class LectureFileService implements LectureFileServiceInterface
         $disk = Storage::disk(self::DISK);
         $presigned = $disk->temporaryUploadUrl($key, $expiresAt, ['ContentType' => $contentType]);
 
-        return new LecturePresignedUrlDTO(
+        return new S3PresignedUrlDTO(
             $presigned['url'],
             ['Content-Type' => $contentType],
             $key,
@@ -44,9 +44,9 @@ class LectureFileService implements LectureFileServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function delete(DeleteLectureFileDTO $DTO): void
+    public function delete(DeleteS3FileDTO $DTO): void
     {
-        if (! LectureFileTypeEnum::isValidFileName($DTO->fileName)) {
+        if (! S3FileTypeEnum::isValidFileName($DTO->fileName)) {
             throw new AccessDeniedHttpException('삭제할 수 없는 파일명입니다.');
         }
 

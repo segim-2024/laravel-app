@@ -34,6 +34,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('api')
+                ->prefix('file-api')
+                ->group(base_path('routes/file-api.php'));
+
+            // DEPRECATED: 가비아가 /file-api 로 전환을 마치면 제거한다
+            Route::middleware('api')
                 ->prefix('lecture-api')
                 ->group(base_path('routes/lecture-api.php'));
 

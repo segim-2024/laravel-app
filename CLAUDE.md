@@ -204,7 +204,7 @@ php artisan test
 - **PortOne**: 결제 웹훅 처리 (V2 API)
 - **알림톡**: 카카오 알림톡 발송
 - **SEGIM 티켓**: 티켓 발급/차감
-- **S3**: `s3` 디스크(기본), `s3_edu` 디스크(강의 파일 → [강의 파일 업로드](#강의-파일-업로드-lecture-api))
+- **S3**: `s3` 디스크(기본), `s3_edu` 디스크(강의 파일·게시판 첨부 → [S3 파일 업로드](#s3-파일-업로드-file-api))
 
 ## 정기결제 시스템
 
@@ -369,22 +369,37 @@ User     // 사용자 요청
 - [ ] 마일리지 적립 API (교재 구매 시 자동 적립)
 - [ ] 마일리지 사용 API
 
-## 강의 파일 업로드 (lecture-api)
+## S3 파일 업로드 (file-api)
 
-가비아 관리자 페이지에서 강의 영상/교육자료를 S3에 업로드하기 위한 API.
-presign 발급은 가비아 서버가 중계하고, 파일 전송만 브라우저가 S3로 직접 수행한다.
-라우트는 `routes/lecture-api.php`로 분리되어 있고 `/lecture-api` 프리픽스를 사용한다.
+가비아 관리자에서 S3(`segim-edu`)에 파일을 올리기 위한 presigned URL 발급/삭제 API.
+강의박사(영상·교육자료)와 본부장 게시판(첨부파일)이 **같은 엔드포인트를 `type`으로 구분해** 사용한다.
+
+### 라우트
+
+| 프리픽스 | 파일 | 상태 |
+|----------|------|------|
+| `/file-api` | `routes/file-api.php` | 정식 |
+| `/lecture-api` | `routes/lecture-api.php` | **DEPRECATED** — 가비아 전환 완료 후 제거 |
+
+두 경로는 같은 컨트롤러를 쓰며 동작이 완전히 동일하다. 구 경로는 하위 호환용으로만 남아 있다.
 
 ### 흐름
 
 ```
-브라우저 --(1) presign 요청--> [가비아 adm/lecture_presign.php]  ← 관리자 세션 검증
-                                       ↓ (2) 서버 간 호출
-                              [이 앱의 presign API]
-브라우저 <--(3) upload_url-----
-브라우저 ==(4) PUT 파일 직접==> [S3 segim-edu]
-브라우저 --(5) 파일명만 POST-> [가비아 lecture_form_update.php]
+브라우저 --(1) presign 요청--> [가비아 PHP]  ← 관리자 세션 검증
+                                  ↓ (2) 서버 간 호출
+                          [이 앱의 presign API]
+브라우저 <--(3) upload_url----
+       ==(4) PUT 파일=======> [S3 segim-edu]
+브라우저 --(5) 파일명만 POST-> [가비아 저장 처리]
 ```
+
+(4)를 누가 수행하는지는 용도에 따라 다르다.
+
+| 용도 | (4) PUT 주체 | 이유 |
+|------|--------------|------|
+| 강의 영상 | **브라우저**가 S3로 직접 | 300MB 초과라 PHP 업로드 제한을 넘음 |
+| 게시판 첨부 | **가비아 PHP**가 서버에서 | 실측 최대 1.2MB로 제한과 무관, 기존 폼 흐름 유지 |
 
 **파머스 Sanctum 토큰은 가비아 서버 안에만 존재하며 브라우저로 나가지 않는다.**
 (2)가 서버 간 호출이라 이 앱으로 오는 요청에는 브라우저 CORS가 개입하지 않는다.
@@ -395,12 +410,25 @@ presign 발급은 가비아 서버가 중계하고, 파일 전송만 브라우�
 
 | Method | 경로 | 기능 |
 |--------|------|------|
-| `POST` | `/lecture-api/lecture-files/presigned-url` | 업로드용 presigned PUT URL 발급 (유효시간 30분) |
-| `DELETE` | `/lecture-api/lecture-files` | 강의 파일 삭제 (`type` + `file_name`) |
+| `POST` | `/file-api/files/presigned-url` | 업로드용 presigned PUT URL 발급 (유효시간 30분) |
+| `DELETE` | `/file-api/files` | 파일 삭제 (`type` + `file_name`) |
 
 - **인증**: `auth:sanctum` + 파머스 회원만 (`authorize()`에서 `isWhale() === false` 검사). 고래영어 접근 불가
-- **파일명**: 백엔드가 `Str::orderedUuid().'.'.{ext}`로 생성. 요청의 `ca_idx1`/`ca_idx2`는 가비아가 계속 전송하지만 검증 규칙에 없어 무시된다
-- **확장자**: `LectureFileTypeEnum::allowedExtensions()` 화이트리스트로 제한
+- **파일명**: 백엔드가 `Str::orderedUuid().'.'.{ext}`로 생성 (36+1+확장자 = **최대 41자**)
+  - 게시판의 `BRANCH_BOARD_FILE.server_file_name`이 `varchar(50)`이라 **접두사를 붙이면 안 된다**
+  - 요청의 `ca_idx1`/`ca_idx2`는 가비아가 전송하더라도 검증 규칙에 없어 무시된다
+- **확장자**: `S3FileTypeEnum::allowedExtensions()` 화이트리스트로 type별 제한
+
+### type별 prefix / 확장자
+
+| type | prefix | 허용 확장자 |
+|------|--------|-------------|
+| `video` | `media/lecture/video/` | mp4, mov, m4v |
+| `edufile` | `media/lecture/edufile/` | pdf, zip, hwp, hwpx, ppt, pptx, doc, docx, xls, xlsx |
+| `board_file` | `board/files/` | pdf, hwp, hwpx, doc, docx, xls, xlsx, ppt, pptx, zip, ai, psd, jpg, jpeg, png, gif |
+
+> `board_file`은 기존에 확장자 제한이 없던 기능이라 실사용 파일(`ai` 등)까지 포함해 넓게 잡았다.
+> **파일 크기는 백엔드에서 강제할 수 없다** — presigned PUT URL은 `Content-Length`를 서명에 포함하지 못한다. 크기 제한이 필요하면 호출하는 쪽에서 검사해야 한다.
 
 ### S3 버킷 (segim-edu)
 
@@ -409,12 +437,13 @@ presign 발급은 가비아 서버가 중계하고, 파일 전송만 브라우�
 | 항목 | 값 |
 |------|-----|
 | 버킷 / 리전 | `segim-edu` / `ap-northeast-2` |
-| prefix | `media/lecture/video/`, `media/lecture/edufile/` |
 | env | `AWS_EDU_REGION`, `AWS_EDU_BUCKET`, `AWS_EDU_URL` |
 
 - 버킷 정책에 `Principal: *`의 `s3:GetObject`가 있어 객체는 **공개 읽기**다. 업로드 시 ACL 지정이 필요 없다
-- **버킷 CORS는 이미 설정되어 있다** (PUT 허용, 모든 Origin). 브라우저가 S3로 직접 PUT하는 (4)단계에 필요한 설정이며 추가 작업 불필요
+  - **이 공개 읽기에 의존하는 기능이 있다.** 게시판 첨부 다운로드는 브라우저가 S3 URL로 직접 XHR GET을 보내 Blob으로 받고(원본 한글 파일명 유지 목적), 강의 영상 재생도 S3 직접 URL을 쓴다. **`GetObject`를 막으면 둘 다 중단된다** (`ListBucket`만 제거하는 것은 무관)
+- **버킷 CORS는 이미 설정되어 있다** (GET/PUT 등 허용, 모든 Origin). 브라우저의 직접 PUT과 첨부 다운로드 XHR 양쪽에 필요하다
 - CloudFront 배포(`E1ENGFTX79U4HJ`)가 `media/*`를 서빙하도록 열려 있으나, **재생 URL은 CloudFront가 아닌 S3 직접 URL을 사용**한다 (기존 강의 자료와 동일)
+- IAM 사용자 `arn:aws:iam::343030089446:user/s3`에 prefix별 권한이 필요하다. **새 type을 추가할 때 IAM Resource에 해당 prefix를 추가하지 않으면 presign은 발급되지만 실제 PUT이 403으로 실패한다**
 - presigned URL의 Content-Type은 서명에 포함되지 않아 강제되지 않는다. 응답의 `headers`는 권장값이며, 클라이언트가 보낸 값이 그대로 객체에 저장된다
 
 ### 미구현

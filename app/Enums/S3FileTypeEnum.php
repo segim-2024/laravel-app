@@ -6,12 +6,13 @@ use Illuminate\Support\Str;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
- * 강의 파일 유형 (S3 segim-edu 버킷 업로드 대상)
+ * S3 segim-edu 버킷 업로드 대상 파일 유형
  */
-enum LectureFileTypeEnum: string
+enum S3FileTypeEnum: string
 {
     case Video = 'video';
     case EduFile = 'edufile';
+    case BoardFile = 'board_file';
 
     /**
      * S3 키 prefix
@@ -21,6 +22,7 @@ enum LectureFileTypeEnum: string
         return match ($this) {
             self::Video => 'media/lecture/video/',
             self::EduFile => 'media/lecture/edufile/',
+            self::BoardFile => 'board/files/',
         };
     }
 
@@ -34,6 +36,11 @@ enum LectureFileTypeEnum: string
         return match ($this) {
             self::Video => ['mp4', 'mov', 'm4v'],
             self::EduFile => ['pdf', 'zip', 'hwp', 'hwpx', 'ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
+            // 본부장 게시판은 기존에 확장자 제한이 없어 실사용 파일(ai 등)까지 포함한다
+            self::BoardFile => [
+                'pdf', 'hwp', 'hwpx', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+                'zip', 'ai', 'psd', 'jpg', 'jpeg', 'png', 'gif',
+            ],
         };
     }
 

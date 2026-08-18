@@ -2,12 +2,12 @@
 
 namespace App\DTOs;
 
-use App\Enums\LectureFileTypeEnum;
+use App\Enums\S3FileTypeEnum;
 
-class DeleteLectureFileDTO
+class DeleteS3FileDTO
 {
     public function __construct(
-        public LectureFileTypeEnum $type,
+        public S3FileTypeEnum $type,
         public string $fileName
     ) {}
 }

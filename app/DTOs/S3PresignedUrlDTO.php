@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use Carbon\CarbonInterface;
 
-class LecturePresignedUrlDTO
+class S3PresignedUrlDTO
 {
     /**
      * @param  array<string, string>  $headers  업로드 PUT 요청 시 그대로 사용해야 하는 헤더

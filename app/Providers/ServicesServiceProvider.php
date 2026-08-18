@@ -43,11 +43,8 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\WhaleLearningDownloadServiceInterface::class, \App\Services\WhaleLearningDownloadService::class);
         $this->app->bind(\App\Services\Interfaces\MileageServiceInterface::class, \App\Services\MileageService::class);
         $this->app->bind(\App\Services\Interfaces\PamusPointApiServiceInterface::class, \App\Services\PamusPointApiService::class);
-        $this->app->bind(\App\Services\Interfaces\LectureFileServiceInterface::class, \App\Services\LectureFileService::class);
+        $this->app->bind(\App\Services\Interfaces\S3FileServiceInterface::class, \App\Services\S3FileService::class);
     }
 
-    public function boot()
-    {
-
-    }
+    public function boot() {}
 }

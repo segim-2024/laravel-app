@@ -1,21 +1,22 @@
 <?php
 
-use App\Http\Controllers\LectureFileController;
+use App\Http\Controllers\S3FileController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Lecture API Routes
+| Lecture API Routes (DEPRECATED)
 |--------------------------------------------------------------------------
 |
-| 가비아 관리자(adm/lecture_presign.php)에서 호출하는 강의 파일 관련 API.
-| S3(segim-edu) 업로드용 presigned URL 발급과 객체 삭제를 담당한다.
+| 강의박사 전용이던 시절의 구 경로. routes/file-api.php 로 대체되었으며
+| 동작은 완전히 동일하다 (같은 컨트롤러 · 같은 요청/응답 형식).
 |
-| 인증: 파머스(새김) 로그인 토큰(Sanctum)이 필요하다. 고래영어 회원은 접근할 수 없다.
+| 가비아가 /file-api 로 전환을 마치면 이 파일과 RouteServiceProvider 의
+| lecture-api 프리픽스 등록을 함께 제거한다.
 |
 */
 
 Route::middleware('auth:sanctum')->group(static function () {
-    Route::post('/lecture-files/presigned-url', [LectureFileController::class, 'presignedUrl']);
-    Route::delete('/lecture-files', [LectureFileController::class, 'destroy']);
+    Route::post('/lecture-files/presigned-url', [S3FileController::class, 'presignedUrl']);
+    Route::delete('/lecture-files', [S3FileController::class, 'destroy']);
 });
