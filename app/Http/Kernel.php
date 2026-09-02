@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkPamusIP' => \App\Http\Middleware\CheckPamusIPMiddleware::class,
+        'library.server' => \App\Http\Middleware\CheckLibraryServerMiddleware::class,
         'referrer.check' => \App\Http\Middleware\ReferrerCheckMiddleware::class,
         'ecash.logging' => \App\Http\Middleware\ECashLoggingMiddleware::class,
     ];

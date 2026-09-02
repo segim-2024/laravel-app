@@ -194,9 +194,27 @@ php artisan test
 
 > `./vendor/bin/pint`를 인자 없이 실행하면 기존 파일 수백 개가 함께 재포매팅되어 불필요한 diff가 발생한다.
 
+### 테스트와 운영 DB 격리
+
+`.env`의 DB 설정은 **운영 RDS를 가리킨 이력이 있다**. 테스트가 운영 데이터를 삭제하는 사고를 막기 위해 3중으로 차단되어 있다.
+
+둘 다 `tests/CreatesApplication.php`에 있다.
+
+| 방어선 | 메서드 | 내용 |
+|--------|--------|------|
+| 1 | `forceSqliteConnections()` | `database.connections` **전부**를 sqlite `:memory:`로 덮는다 |
+| 2 | `guardAgainstRemoteDatabase()` | 그래도 원격 호스트를 가리키는 커넥션이 남아 있으면 예외로 중단 |
+
+- `DB_CONNECTION`만 sqlite로 바꾸는 것으로는 **부족하다.** `WhaleMember`처럼 `$connection`을 명시한 모델은 default를 따르지 않고 자기 커넥션 정의를 그대로 쓴다
+- 커넥션 이름을 나열하지 않고 전부 덮으므로 **새 커넥션이 추가돼도 자동 적용**되고, `.env`·`phpunit.xml`의 `DB_*` 값에 **전혀 의존하지 않는다**
+- 두 처리 모두 `RefreshDatabase`가 마이그레이션을 실행하기 **전** 시점(`createApplication()`)에서 일어난다. `setUp()` 이후로 옮기면 이미 늦다
+- 방어선 2는 1이 빠지거나 잘못됐을 때를 잡는 회귀 방어다. 정상 상태에서는 걸리지 않는다
+- **`config/database.php`는 의도적으로 건드리지 않았다.** 커넥션 driver를 env로 빼면 테스트 격리에 쓸 수는 있지만, 운영에서 mysql로 고정인 값을 변수화해 "env가 빈 값이면 driver가 깨진다"는 실패 모드만 새로 생긴다. 격리는 테스트 코드 안에서 해결하는 것이 맞다
+
 ## 인증 미들웨어
 
 - `CheckFromPamusMiddleware`: 파머스 시스템 요청 검증
+- `CheckLibraryServerMiddleware`: 라이브러리 서버 요청 검증 (IP + API 키) → [라이브러리 API](#라이브러리-서버-회원-조회-api-library-api)
 - `Sanctum`: API 토큰 인증
 
 ## 외부 연동
@@ -465,3 +483,183 @@ User     // 사용자 요청
 ### 미구현
 
 - [ ] 고래영어 지원
+
+## 라이브러리 서버 회원 조회 API (library-api)
+
+외부 외주 업체가 운영하는 라이브러리 서버가 파머스/고래 회원의 자격증명을 검증하고 프로필을 조회하는 API.
+
+### 엔드포인트
+
+```
+GET /library-api/{target}/member          target ∈ {pamus, whale}
+
+X-Library-Api-Key: <서버 간 API 키>              → 미들웨어 검증
+Authorization: Basic base64(account:password)    → 회원 인증
+```
+
+- **라우트**: `routes/library-api.php` (`RouteServiceProvider`에 `library-api` prefix 등록)
+- **미들웨어**: `CheckLibraryServerMiddleware` (alias `library.server`) — IP 허용 목록 + API 키를 `hash_equals`로 검증
+- **문서**: 외주 업체 전달용 산출물이며 `docs/`는 **gitignore 대상이라 저장소에 없다**
+  - `docs/openapi/library-api.yaml` — OAS 3.1 스펙
+  - `docs/library-api.html` / `.pdf` — 영문판
+  - `docs/library-api-ko.html` / `.pdf` — 한글판
+
+  HTML이 원본이고 PDF는 headless Chrome 출력물이다. **문서를 고칠 때 영문·한글 양쪽을 함께 수정해야 한다.**
+
+  ```bash
+  # PDF 재생성 (macOS)
+  for f in library-api library-api-ko; do
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+      --no-pdf-header-footer --print-to-pdf="$PWD/docs/$f.pdf" "file://$PWD/docs/$f.html"
+  done
+  ```
+
+> **전용 rate limiter를 쓴다.** `api` 그룹의 `throttle:api`(60/min) 대신 `throttle:library-api`를 적용한다. `api` limiter는 키가 IP라 **고정 IP 한 곳에서 호출하는 외부 서버는 전체 트래픽이 한 버킷을 공유**하게 되어 부적합하다.
+>
+> 현재 `library-api` limiter는 `Limit::none()`이다 — 라이브러리 서버의 예상 호출량을 알 수 없기 때문이며, 접근 제어는 IP 허용 목록 + API 키가 담당한다. **제한이 필요해지면 `RouteServiceProvider`의 `library-api` limiter 반환값만 `Limit::perMinute(n)`으로 바꾸면 된다** (라우트 정의는 손댈 필요 없음).
+>
+> `Limit::none()`은 `Unlimited`를 반환하고 `ThrottleRequests`가 이를 만나면 캐시 접근 없이 즉시 통과시키므로(`ThrottleRequests.php:121`) 오버헤드가 없다. 제한을 걸면 **429가 새 응답 코드로 추가되므로 `docs/openapi/library-api.yaml`과 PDF도 함께 갱신할 것** (현재 문서에는 429가 없다).
+>
+> 같은 문제가 `file-api`/`lecture-api`에도 있다. 가비아 서버 단일 IP가 `throttle:api` 60/min을 공유하므로, 관리자가 첨부를 연속 업로드하면 걸릴 수 있다. 필요해지면 동일한 방식으로 전용 limiter를 분리할 것.
+
+> **호출 측은 `Accept: application/json`을 보내야 한다.** 잘못된 `target`으로 인한 404는 라우트 매칭 실패라 라우트 미들웨어보다 앞서 발생하고, 이 헤더가 없으면 본문이 HTML이다. 코드로 강제할 수 없어 문서로만 안내한다.
+
+### 응답 코드
+
+| 상황 | 코드 | `code` |
+|------|:----:|--------|
+| 성공 | 200 | — (`Cache-Control: no-store, private`) |
+| 회원 없음 / 탈퇴 / 차단 | 204 | — (본문 없음) |
+| 비밀번호 불일치 · 미설정 | 403 | `PASSWORD_MISMATCH` |
+| IP 불허 | 401 | `IP_NOT_ALLOWED` |
+| API 키 불일치·누락 | 401 | `INVALID_API_KEY` |
+| Basic 헤더 누락·형식 오류 | 401 | `CREDENTIALS_REQUIRED` |
+| 잘못된 `target` | 404 | — (라우트 미매칭) |
+
+탈퇴·차단 회원을 403이 아닌 **204로 응답해 존재 여부를 노출하지 않는다.**
+
+> `Cache-Control: no-store, private`는 **200 응답에만** 붙인다(컨트롤러에서 설정). 204/401/403은 Laravel 기본값 `no-cache, private`이다. **의도적으로 통일하지 않았다** — 경로상 캐시 계층이 전혀 없고(CloudFront 미배치, ALB는 캐시 기능 없음, nginx에 `proxy_cache`/`fastcgi_cache` 없음), 개인정보가 담긴 응답은 200뿐이며, `no-cache`도 재사용 전 재검증을 강제해 stale 응답 위험이 없기 때문이다. **CloudFront 등 캐시 계층을 도입하면 재검토할 것.**
+
+### 응답 필드 ↔ g5_member 컬럼
+
+응답은 `JsonResource` 기본 동작대로 **`data` 키로 래핑된다**(`{"data": {...}}`). 이 프로젝트는 전역 `withoutWrapping()`을 쓰지 않으므로 다른 API와 동일한 형태다.
+
+| 응답 필드 | 컬럼 | 비고 |
+|-----------|------|------|
+| `account` | `mb_id` | |
+| `name` | `mb_name` | |
+| `level` | `mb_level` | 그누보드 권한 레벨. 운영 실측값 0~4, 6, 7, 10 (대부분 3) |
+| `type` | **`mb_type`** | `MemberTypeEnum`으로 변환 (student/campus/admin/headquarters/other/unknown) |
+| `target` | — | path 파라미터를 에코 (`MemberTargetEnum`) |
+| `campus_account` | **`mb_4`** | 학원이면 자기 `mb_id`, 그 외에는 `mb_4`(빈 문자열이면 `null`) |
+
+**`mb_level`로 회원 유형을 판별하면 안 된다.** 파머스 기준 `mb_level=1`에 학원 766명과 학생 183명이 섞여 있다. 유형 판별은 `mb_type`(→ `type`)으로만 한다.
+
+| `mb_type` | 의미 | 파머스 | 고래 | `mb_4` 채워짐 |
+|:---------:|------|-------:|-----:|--------------|
+| 3 | **학원** (레거시 코드로 확정) | 1,359 | 366 | **0% (전원 비어 있음)** |
+| 4 | **학생** (레거시 코드로 확정) | 54,692 | 7,603 | 100% |
+| 5 | 미상 (파머스 전용) | 2,682 | — | 97.5% |
+| 2 | 본부(추정) | 42 | 34 | 0% |
+| 1 | 관리자(추정) | 6 | 1 | 0% |
+| 0 | 미설정 | 1 | — | 0% |
+
+- **학원 계정은 `mb_4`가 전원 비어 있어**(전건 확인) `campus_account`에 자기 `mb_id`를 채워 응답한다(`LibraryMemberResource::resolveCampusAccount()`). 호출 측이 유형별로 분기하지 않고 캠퍼스 단위로 묶을 수 있게 하기 위함이다. 컬럼값을 그대로 내보내면 학원 계정에서 항상 빈 값이 되어, 레거시 `userLogin.php`가 겪는 문제를 그대로 물려받는다
+- `mb_4`는 **FK도 인덱스도 없는 비공식 참조**다. 고래 학생의 약 30%가 존재하지 않는 학원 계정을 가리킨다(매칭률 69.3% 실측). 학원 마스터와 INNER JOIN 하면 그만큼 소실된다
+- `mb_type` 1·2·5의 의미는 건수와 데이터 구조로 추론한 것이고 코드 근거가 없다. 3·4만 확정
+
+`mb_4`가 캠퍼스 계정인 근거: 파머스 57,151건(97.5%)이 채워져 있고 그중 **95.5%가 다른 회원의 `mb_id`와 일치**한다. 서로 다른 값은 1,052개(캠퍼스 수). 고래 DB에도 같은 컬럼이 있다. `mb_recommend`(14건)와 `mb_2`(캠퍼스 회원만)는 무관하다.
+
+### 회원 조회 범위 (조사 완료, 재논의 불필요)
+
+**`target`은 조회할 DB만 고르고 별도 필터를 걸지 않는다.** 아래는 그렇게 정한 근거다.
+
+**두 DB는 상당 부분 미러링 관계다** (실측)
+
+| 항목 | 건수 |
+|------|-----:|
+| 고래 DB(`englishwhale`) 전체 | 8,004 |
+| 파머스 DB의 `mb_is_whale='Y'` | 8,050 |
+| 양쪽에 같은 `mb_id` 존재 | 7,855 |
+| 파머스에만 있는 고래 회원 | **216** |
+| 고래에만 있는 회원 | 149 |
+
+겹치는 7,855명은 `mb_type` 100% 일치, 소속 캠퍼스 7,854, 이름 7,847, **비밀번호 99.8% 일치**(상이 17건). 즉 겹치는 회원은 `target`을 어느 쪽으로 보내든 인증 결과가 사실상 같다.
+
+**`mb_is_segim`과 `mb_is_whale`은 상호배타적이다** (둘 다 `Y`는 1건뿐)
+
+| `mb_is_segim` | `mb_is_whale` | 건수 | 고래 DB에도 존재 |
+|:---:|:---:|-----:|-----:|
+| Y | N | 48,552 | 1 |
+| N | Y | 8,049 | 7,834 |
+| N | N | 2,180 | 20 |
+
+**결정과 이유**
+
+- `target=whale` → **고래 DB만** 조회한다. 파머스 fallback을 두지 않는다
+- `target=pamus` → **조건 없이** 파머스 DB 전체를 조회한다. `mb_is_whale='N'`이나 `mb_is_segim='Y'`를 붙이지 않는다
+- 조건을 붙이면 논리적으로는 깔끔해지지만, **파머스에만 있는 고래 회원 216명이 어느 경로로도 조회되지 않는다.** 현행에서는 이들을 `target=pamus`로 찾을 수 있다
+- `mb_is_segim='Y'`까지 거는 안은 특히 위험하다. 플래그가 없는 2,180명(학생 1,132·학원 995)이 통째로 빠진다
+- 대가로 **고래 전용 회원 8,049명이 `target=pamus`로도 조회된다.** 호출 측이 회원 소속을 알고 `target`을 지정하는 구조이므로 실질적 문제로 보지 않는다
+- 호출 측이 **두 `target`을 각각 조회해 합치면 7,855건이 중복**된다. `account` 기준 dedup이 필요하고, 비밀번호가 다른 케이스가 17건 있어 어느 레코드를 우선할지도 정해야 한다. 이 주의사항은 외부 문서(PDF 6장)에도 넣었다
+
+**`user_level`을 따르지 않는 이유**
+
+고래영어 레거시의 `api/userLogin.php`가 `mb_type`을 `user_level`(1=학생/2=학원/3=관리자)로 재매핑해 내보내지만, **그 값은 코드베이스에서 생성 1곳·소비 0곳**으로 클라우봇(외부 학습프로그램) 전용이다. 이 API는 정보 손실이 없도록 `mb_type`을 `MemberTypeEnum`으로 그대로 노출한다. `user_level`로 바꾸자는 제안이 나오면 이 항목을 근거로 재논의하지 않는다.
+
+> 고래 레거시 API가 `englishwhale UNION segim WHERE mb_is_whale='N'`으로 조회하는 것은 **중복 없이 전체 회원**을 만들기 위한 것이다(8,004 + 50,732). 고래 학습프로그램은 파머스 회원도 로그인 대상으로 삼는다. 이 API는 그 구조를 따르지 않는다.
+
+### 비밀번호 검증 (`GnuboardPasswordVerifier`)
+
+`mb_password`는 운영 전량이 **길이 41 = MySQL `PASSWORD()` 출력**이다 (`*` + 40자리 대문자 HEX). 그누보드4 계열 `sql_password()` 방식이며, bcrypt·sha256(40자)는 **0건**이다.
+
+```php
+'*'.strtoupper(sha1(sha1($plain, true)))   // MySQL 8.0 에서 PASSWORD() 가 제거되어 PHP 로 재현
+```
+
+- 길이 41이 아니거나 `*`로 시작하지 않으면 **무조건 거부**한다
+- 비밀번호가 비어 있는 회원이 존재한다 (파머스 262건 + 이상치 1건, 고래 68건). 빈 평문·빈 해시는 항상 거부
+
+### 인프라 전제 (조사 완료, 재확인 불필요)
+
+> **AWS 계정은 `343030089446`이고 aws cli `pamus` 프로필로 조회한다.** 기본(`default`) 프로필은 아누타 계정(`989126025677`)이라 **이 앱과 무관한 리소스가 조회된다.** 인프라를 확인할 때 프로필을 반드시 지정할 것.
+
+| 항목 | 사실 |
+|------|------|
+| 호스트 / ALB | `app.epamus.com` → `lb-epamus-app` (타겟에 EC2 `i-0ff5094ecf4af47d3` 등록) |
+| ALB `xff_header_processing.mode` | `append` — 클라이언트 XFF 뒤에 실제 peer IP를 덧붙임 |
+| ALB 앞단 | CloudFront **없음**. hop = 1 |
+| EC2 직접 접근 | 80 포트 차단됨(22만 열림) → ALB 우회 불가 |
+| `TrustProxies::$proxies = '*'` | **안전하다.** Laravel은 `'*'`를 "모든 프록시 신뢰"가 아니라 `setTrustedProxyIpAddressesToTheCallingIp()` → REMOTE_ADDR 하나만 신뢰로 처리한다. XFF를 위조해도 `$request->ip()`는 공격자의 실제 IP를 반환한다 |
+| nginx | `real_ip_module` 미사용, 기본 combined 로그 |
+
+→ **`$request->ip()`를 그대로 쓰면 되고, XFF를 직접 파싱할 필요가 없다.**
+
+자격증명을 쿼리스트링에 두면 안 된다. combined 로그는 `"$request"`에 쿼리스트링을 포함하지만 `Authorization` 헤더는 기록하지 않는다.
+
+### nginx User-Agent 차단 (외주 업체에 반드시 고지)
+
+`/etc/nginx/sites-available/laravel-app`에 봇 차단 규칙이 있어 **애플리케이션에 닿기 전에 403(HTML)** 이 반환된다.
+
+```nginx
+if ($http_user_agent ~* (python-requests|wget|scanner|nikto|sqlmap)) { return 403; }
+```
+
+운영 서버 실측 — 차단: `python-requests/2.31.0`, `Wget/1.21.3` / 통과: `Python-urllib`, `python-httpx`, `PycURL`, `curl`, `GuzzleHttp`, UA 없음.
+
+Python이라서 막히는 게 아니라 `requests` 라이브러리의 기본 UA가 걸리는 것이다. 이 403은 `PASSWORD_MISMATCH` 403과 상태 코드로 구분되지 않고 Laravel 로그에도 남지 않는다. **정상 API 오류는 항상 `code` 필드를 가진 JSON이고, 차단은 HTML이다.**
+
+### 환경변수
+
+```
+LIBRARY_INBOUND_API_KEY=      # 비워두면 모든 요청이 401
+LIBRARY_INBOUND_IPS=          # 쉼표(,) 또는 파이프(|)로 다중 IP 지정
+```
+
+허용 IP 목록 파싱은 `preg_split('/[,|]/')` 이며 항목의 앞뒤 공백은 무시한다. **둘 중 어느 구분자를 써도 되고 섞어 써도 된다.** 빈 값·공백뿐인 값·구분자뿐인 값은 모두 빈 목록이 되어 **모든 요청이 401로 거부된다**(안전한 기본값). 부분 문자열 일치는 하지 않는다(`10.10.10.100`은 `10.10.10.10`을 허용하지 않는다).
+
+기존 `LIBRARY_API_KEY`(`services.library.api_key`)는 **아웃바운드 서명용**(`LibraryPaymentDoneApiRequestDTO`)이며 방향이 다르므로 재사용하지 않는다.
+
+### 미구현
+
+- [ ] 운영에서 문서를 열람하는 라우트 (`GET /library-api/docs`)

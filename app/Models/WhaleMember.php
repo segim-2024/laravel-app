@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMemberActivation;
 use App\Models\Interfaces\CashInterface;
 use App\Models\Interfaces\MemberInterface;
 use DateTimeInterface;
@@ -27,13 +28,18 @@ use Laravel\Sanctum\Sanctum;
  * @property string $mb_hp 핸드폰
  * @property string $mb_homepage 홈페이지
  * @property string $mb_level 레벨
+ * @property ?int $mb_type 회원 구분 (3=학원, 4=학생) — MemberTypeEnum 참고
+ * @property ?string $mb_4 소속 캠퍼스 계정 (학원 계정은 비어 있음)
+ * @property ?string $withdrawn_at 탈퇴일시
+ * @property ?string $mb_leave_date 탈퇴일 (YYYYMMDD)
+ * @property ?string $mb_intercept_date 접근차단일 (YYYYMMDD)
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property WhaleMemberCash $cash via cash() relationship getter magic method
  */
 class WhaleMember extends Authenticatable implements MemberInterface
 {
-    use HasApiTokens;
+    use HasApiTokens, HasMemberActivation;
 
     protected $connection = "mysql_whale";
     protected $table = "g5_member";

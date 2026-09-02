@@ -44,6 +44,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(\App\Services\Interfaces\MileageServiceInterface::class, \App\Services\MileageService::class);
         $this->app->bind(\App\Services\Interfaces\PamusPointApiServiceInterface::class, \App\Services\PamusPointApiService::class);
         $this->app->bind(\App\Services\Interfaces\S3FileServiceInterface::class, \App\Services\S3FileService::class);
+        $this->app->bind(\App\Services\Interfaces\LibraryMemberServiceInterface::class, \App\Services\LibraryMemberService::class);
     }
 
     public function boot() {}

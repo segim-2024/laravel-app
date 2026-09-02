@@ -55,7 +55,14 @@ return [
     ],
 
     'library' => [
+        // 아웃바운드: 이 앱이 라이브러리 서버를 호출할 때 요청 서명에 사용
         'api_key' => env('LIBRARY_API_KEY'),
+
+        // 인바운드: 라이브러리 서버가 이 앱의 /library-api 를 호출할 때 검증
+        'inbound' => [
+            'api_key' => env('LIBRARY_INBOUND_API_KEY'),
+            'ips' => env('LIBRARY_INBOUND_IPS'),
+        ],
     ],
 
     'segim' => [
