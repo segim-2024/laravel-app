@@ -5,35 +5,56 @@ namespace App\Enums;
 /**
  * g5_member.mb_type 회원 구분.
  *
- * Campus(3)/Student(4)만 레거시 코드로 확정된 값이고, 나머지는 건수와 데이터 구조로
- * 추론한 것이다. 응답에 값을 실어야 하므로 이름은 부여하되 의미를 단정하지 않는다.
+ * 값의 의미는 파머스 관리자 화면의 라벨로 확정되었다
+ * (/yc5/adm/member_form.php 의 라디오 라벨, member_list_new_t.php 의 "강사 관리").
  *
- * mb_level(그누보드 권한 레벨)로는 회원 유형을 판별할 수 없다. 파머스 기준
- * mb_level=1 에 학원 766명과 학생 183명이 섞여 있다.
+ * mb_level(그누보드 게시판 권한 레벨)로는 회원 유형을 판별할 수 없다.
+ * 파머스 기준 mb_level=1 에 학원 766명과 학생 183명이 섞여 있다.
  */
 enum MemberTypeEnum: string
 {
     /** mb_type=0 또는 미설정 (파머스 1건) */
     case Unknown = 'unknown';
 
-    /** mb_type=1 (파머스 6건, 고래 1건) */
+    /** mb_type=1 어드민 (파머스 6건, 고래 1건) */
     case Admin = 'admin';
 
-    /** mb_type=2 (파머스 42건, 고래 34건) */
+    /** mb_type=2 본부장 (파머스 42건, 고래 34건) */
     case Headquarters = 'headquarters';
 
     /** mb_type=3 학원. 소속 캠퍼스(mb_4)는 파머스 1,359건·고래 366건 전원 비어 있다 */
     case Campus = 'campus';
 
-    /** mb_type=4 학생. mb_4 가 100% 채워져 있다 */
+    /** mb_type=4 학생. mb_4 에 소속 학원의 mb_id 를 담는다 */
     case Student = 'student';
 
-    /** mb_type=5 (파머스 전용 2,682건). 학생과 구조가 같고 소속 학원 매칭률 98.3% */
-    case Other = 'other';
+    /** mb_type=5 강사. 파머스 전용(2,682건)이며 학생과 같이 mb_4 에 소속 학원을 담는다 */
+    case Teacher = 'teacher';
 
     public function isCampus(): bool
     {
         return $this === self::Campus;
+    }
+
+    /**
+     * 라이브러리 API(/library-api) 응답의 level 값.
+     *
+     * 소비자인 클라우봇(외부 학습프로그램)의 등급 체계이며, 고래영어 레거시의
+     * api/userLogin.php 와 whale/index.php 가 mb_type 을 변환하던 방식을 따른다.
+     * 강사(4)는 클라우봇이 신설한 등급이다.
+     *
+     * 본부장은 레거시 SSO 에서도 차단 대상이라 0 이다.
+     * g5_member.mb_level 과는 무관한 값이다.
+     */
+    public function libraryLevel(): int
+    {
+        return match ($this) {
+            self::Student => 1,
+            self::Campus => 2,
+            self::Admin => 3,
+            self::Teacher => 4,
+            default => 0,
+        };
     }
 
     /**
@@ -46,7 +67,7 @@ enum MemberTypeEnum: string
             2 => self::Headquarters,
             3 => self::Campus,
             4 => self::Student,
-            5 => self::Other,
+            5 => self::Teacher,
             default => self::Unknown,
         };
     }

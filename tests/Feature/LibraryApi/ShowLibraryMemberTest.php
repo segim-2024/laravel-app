@@ -96,7 +96,8 @@ class ShowLibraryMemberTest extends TestCase
                 'data' => [
                     'account' => 'student01',
                     'name' => '홍길동',
-                    'level' => 3,
+                    // mb_level 이 3 이어도 학생의 등급은 1 이다 (mb_type 기반)
+                    'level' => 1,
                     'type' => 'student',
                     'target' => 'pamus',
                     'campus_account' => 'campus01',
@@ -143,6 +144,7 @@ class ShowLibraryMemberTest extends TestCase
             ->assertOk()
             ->assertJson(['data' => [
                 'account' => 'campus01',
+                'level' => 2,
                 'type' => 'campus',
                 'campus_account' => 'campus01',
             ]]);
@@ -156,6 +158,23 @@ class ShowLibraryMemberTest extends TestCase
         $this->mockRepository($this->member(['mb_type' => 4, 'mb_4' => '']));
 
         $this->callApi()->assertOk()->assertJson(['data' => ['campus_account' => null]]);
+    }
+
+    /**
+     * 강사(mb_type=5)는 파머스 전용이며 학생처럼 mb_4 에 소속 학원을 담는다.
+     * 클라우봇이 신설한 등급 4 로 응답해야 한다.
+     */
+    public function test_강사_계정은_type이_teacher이고_등급이_4다(): void
+    {
+        $this->mockRepository($this->member(['mb_type' => 5, 'mb_4' => 'campus01']));
+
+        $this->callApi()
+            ->assertOk()
+            ->assertJson(['data' => [
+                'level' => 4,
+                'type' => 'teacher',
+                'campus_account' => 'campus01',
+            ]]);
     }
 
     public function test_정의되지_않은_회원_구분은_unknown으로_응답한다(): void

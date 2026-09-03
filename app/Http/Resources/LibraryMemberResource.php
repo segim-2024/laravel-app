@@ -25,7 +25,7 @@ class LibraryMemberResource extends JsonResource
         return [
             'account' => $this->mb_id,
             'name' => $this->mb_name,
-            'level' => (int) $this->mb_level,
+            'level' => $type->libraryLevel(),
             'type' => $type->value,
             'target' => MemberTargetEnum::fromMember($this->resource)->value,
             'campus_account' => $this->resolveCampusAccount($type),
