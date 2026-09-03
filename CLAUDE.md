@@ -499,7 +499,15 @@ Authorization: Basic base64(account:password)    → 회원 인증
 
 - **라우트**: `routes/library-api.php` (`RouteServiceProvider`에 `library-api` prefix 등록)
 - **미들웨어**: `CheckLibraryServerMiddleware` (alias `library.server`) — IP 허용 목록 + API 키를 `hash_equals`로 검증
-- **문서**: 외주 업체 전달용 산출물이며 `docs/`는 **gitignore 대상이라 저장소에 없다**
+- **문서**: 외주 업체 전달용 산출물이며 `docs/`는 **gitignore 대상이라 저장소에 없다**. 현재 **v2.0.0**
+
+  | 버전 | 변경 |
+  |------|------|
+  | 1.0.0 | 최초 배포 |
+  | 2.0.0 | `level`을 `mb_level` → `mb_type` 변환값으로 교체, `type`에 `teacher` 추가·`other` 제거 |
+
+  응답 필드의 **의미가 바뀌거나 `type` enum 값이 제거되면 major를 올린다.** 2.0.0이 그런 경우였다 — 문서화된 `level`의 의미가 바뀌었고 `other`가 사라져, 호출 측이 코드를 고쳐야 했다. 필드 추가처럼 하위 호환이면 minor로 충분하다.
+
   - `docs/openapi/library-api.yaml` — OAS 3.1 스펙
   - `docs/library-api.html` / `.pdf` — 영문판
   - `docs/library-api-ko.html` / `.pdf` — 한글판
