@@ -49,6 +49,7 @@ class ShowLibraryMemberTest extends TestCase
             'mb_level' => 3,
             'mb_type' => 4,
             'mb_4' => 'campus01',
+            'mb_is_whale' => 'N',
             'withdrawn_at' => null,
             'mb_intercept_date' => '',
             'mb_leave_date' => '',
@@ -226,6 +227,27 @@ class ShowLibraryMemberTest extends TestCase
         $this->mockRepository($this->member(['mb_leave_date' => '20260101']));
 
         $this->callApi()->assertNoContent();
+    }
+
+    /**
+     * 파머스 DB 의 mb_is_whale='Y' 레코드는 고래영어 회원의 사본이라 인증 원천이 아니다.
+     * 고래영어 회원은 whale 로 조회해야 한다.
+     */
+    public function test_고래영어_회원의_사본은_pamus에서_204를_반환한다(): void
+    {
+        $this->mockRepository($this->member(['mb_is_whale' => 'Y']));
+
+        $this->callApi()->assertNoContent();
+    }
+
+    /**
+     * 비밀번호를 검증하기 전에 걸러내야 존재 여부가 드러나지 않는다.
+     */
+    public function test_고래영어_회원의_사본은_비밀번호가_틀려도_204를_반환한다(): void
+    {
+        $this->mockRepository($this->member(['mb_is_whale' => 'Y']));
+
+        $this->callApi(headers: ['Authorization' => $this->basic('student01', 'wrong')])->assertNoContent();
     }
 
     // ---------------------------------------------------------------- 403

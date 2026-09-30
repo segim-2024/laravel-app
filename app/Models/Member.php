@@ -126,4 +126,16 @@ class Member extends Authenticatable implements MemberInterface
     {
         return false;
     }
+
+    /**
+     * 파머스 DB 에 남아 있는 고래영어 회원의 사본인지 여부 (mb_is_whale != 'N').
+     *
+     * englishwhale 레코드의 불완전한 사본이라 인증 원천으로 쓰지 않는다.
+     * 레거시(파머스 웹 get_member(), 파머스 SSO, 고래 api/ UNION)도 모두 mb_is_whale='N' 레코드로만 인증한다.
+     * isWhale() 은 "고래 DB 모델인가"(Repository 라우팅용)로, 이 값과 무관하다.
+     */
+    public function isWhaleCopy(): bool
+    {
+        return $this->mb_is_whale !== 'N';
+    }
 }
